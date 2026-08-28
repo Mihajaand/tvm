@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Loader2, AlertTriangle } from 'lucide-react';
 
@@ -62,7 +61,7 @@ const Attendance: React.FC<AttendanceProps> = ({ user, autoStart, onFinish }) =>
 
     detectLocation(true);
     startCamera('user');
-  }, [isLoading]);
+  }, [isLoading, detectLocation, startCamera]);
 
   // Update duty type when autoStart or activeRecord changes (no camera restart)
   useEffect(() => {
@@ -91,7 +90,14 @@ const Attendance: React.FC<AttendanceProps> = ({ user, autoStart, onFinish }) =>
       return;
     }
 
-    if (status !== 'idle' || !location) return;
+    if (status !== 'idle') return;
+
+    // Contournement : Si aucune position n'a pu être capturée, on applique des coordonnées génériques
+    const finalLocation = location || {
+      lat: 0.0000,
+      lng: 0.0000,
+      address: 'Position ignorée (Contournement)'
+    };
 
     let selfieData: string | null = null;
 
@@ -108,7 +114,7 @@ const Attendance: React.FC<AttendanceProps> = ({ user, autoStart, onFinish }) =>
 
     if (!selfieData) return;
 
-    await submitPunch(dutyType, remarks, location, selfieData);
+    await submitPunch(dutyType, remarks, finalLocation, selfieData);
   };
 
   const handleBack = () => {
@@ -172,7 +178,8 @@ const Attendance: React.FC<AttendanceProps> = ({ user, autoStart, onFinish }) =>
         onSubmit={handlePunchSubmit}
         status={status}
         activeRecord={activeRecord}
-        isDisabled={!canPunch || !location || isLocating || status !== 'idle' || !hasPhoto || (dutyType === 'FACTORY' && !remarks.trim())}
+        /* CONTOURNEMENT : Le bouton ne bloque plus sur la vérification de la position */
+        isDisabled={!canPunch || status !== 'idle' || !hasPhoto || (dutyType === 'FACTORY' && !remarks.trim())}
       />
 
       <canvas ref={canvasRef} className="hidden" />

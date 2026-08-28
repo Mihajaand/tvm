@@ -32,23 +32,23 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate, onLogout, ro
 
   // Super Admin has a different menu
   const superAdminMenuItems = [
-    { id: 'super-admin', label: 'Organizations', icon: Shield, roles: ['SUPER_ADMIN'] },
-    { id: 'profile', label: 'My Profile', icon: UserCircle, roles: ['SUPER_ADMIN'] },
+    { id: 'super-admin', label: 'Organisation', icon: Shield, roles: ['SUPER_ADMIN'] },
+    { id: 'profile', label: 'Mon Profil', icon: UserCircle, roles: ['SUPER_ADMIN'] },
   ];
 
   const regularMenuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
-    { id: 'profile', label: 'My Profile', icon: UserCircle, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
-    { id: 'attendance-logs', label: 'My Attendance', icon: History, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
-    { id: 'attendance-audit', label: 'Attendance Audit', icon: List, roles: ['ADMIN', 'HR', 'MANAGER'] },
-    { id: 'leave', label: 'Leave', icon: CalendarDays, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
-    { id: 'announcements', label: 'Announcements', icon: Megaphone, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
+    { id: 'dashboard', label: 'Tableaux de Bord', icon: LayoutDashboard, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
+    { id: 'profile', label: 'Mon Profil', icon: UserCircle, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
+    { id: 'attendance-logs', label: 'Mes Pointages', icon: History, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
+    { id: 'attendance-audit', label: 'Audit de Présence', icon: List, roles: ['ADMIN', 'HR', 'MANAGER'] },
+    { id: 'leave', label: 'Congé', icon: CalendarDays, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
+    { id: 'announcements', label: 'Annonces', icon: Megaphone, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
     { id: 'admin-notifications', label: 'Notifications', icon: Bell, roles: ['ADMIN', 'HR'] },
-    { id: 'employees', label: 'Team Directory', icon: Users, roles: ['ADMIN', 'HR', 'MANAGER'] },
+    { id: 'employees', label: 'Gestion des Employés', icon: Users, roles: ['ADMIN', 'HR', 'MANAGER'] },
     { id: 'performance-review', label: 'Performance', icon: ClipboardCheck, roles: ['ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'] },
-    { id: 'organization', label: 'Organization', icon: Network, roles: ['ADMIN', 'HR'] },
-    { id: 'reports', label: 'Reports', icon: BarChart3, roles: ['ADMIN', 'HR'] },
-    { id: 'settings', label: 'Settings', icon: Settings, roles: ['ADMIN', 'HR'] },
+    { id: 'organization', label: 'Organisation', icon: Network, roles: ['ADMIN', 'HR'] },
+    { id: 'reports', label: 'Rapports', icon: BarChart3, roles: ['ADMIN', 'HR'] },
+    { id: 'settings', label: 'Paramètres', icon: Settings, roles: ['ADMIN', 'HR'] },
   ];
 
   const menuItems = isSuperAdmin ? superAdminMenuItems : regularMenuItems;
@@ -110,13 +110,13 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate, onLogout, ro
               <div className="p-3 bg-white rounded-2xl shadow-sm text-slate-600 group-hover:text-rose-600 transition-colors">
                 <LogOut size={20} />
               </div>
-              <span className="font-semibold text-sm text-slate-900 uppercase tracking-tight">Sign Out</span>
+              <span className="font-semibold text-sm text-slate-900 uppercase tracking-tight">Déconnexion</span>
             </div>
             <ChevronRight size={18} className="text-slate-300 group-hover:text-rose-300 transition-colors" />
           </button>
 
           <div className="text-center">
-            <p className="text-[10px] font-semibold text-slate-300 uppercase tracking-[0.3em]">OpenHRApp v2.9.0</p>
+            <p className="text-[10px] font-semibold text-slate-300 uppercase tracking-[0.3em]"></p>
           </div>
         </div>
       </nav>
