@@ -37,8 +37,8 @@ export const DashboardStats: React.FC<Props> = ({ leaveUsed, upcomingHoliday, is
           <CalendarDays size={18} className="md:w-5 md:h-5" />
         </div>
         <div>
-          <h3 className="text-lg md:text-xl font-semibold text-slate-900 leading-none">{leaveUsed} Days</h3>
-          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-tight">Leave Used</p>
+          <h3 className="text-lg md:text-xl font-semibold text-slate-900 leading-none">{leaveUsed} Jours</h3>
+          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-tight">Congés pris</p>
         </div>
       </div>
       <div className="bg-white p-4 md:p-5 rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm flex flex-col gap-3">
@@ -50,7 +50,7 @@ export const DashboardStats: React.FC<Props> = ({ leaveUsed, upcomingHoliday, is
             {upcomingHoliday ? new Date(upcomingHoliday.date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' }) : 'N/A'}
           </h3>
           <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-1 tracking-tight truncate">
-            {upcomingHoliday ? upcomingHoliday.name : 'No Holidays'}
+            {upcomingHoliday ? upcomingHoliday.name : 'Pas de vacances'}
           </p>
         </div>
       </div>

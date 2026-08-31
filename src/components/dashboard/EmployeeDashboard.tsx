@@ -51,7 +51,7 @@ export const EmployeeDashboard: React.FC<Props> = ({ data, isLoading, onNavigate
                  <span className="text-[8px] font-semibold uppercase tracking-widest text-slate-400">Manager</span>
               </div>
               <h3 className="font-semibold text-slate-800 text-xs md:text-sm line-clamp-2 leading-tight pl-1">
-                {data.myManager?.name || 'No Manager'}
+                {data.myManager?.name || 'Aucun Manager'}
               </h3>
            </div>
 
@@ -65,12 +65,12 @@ export const EmployeeDashboard: React.FC<Props> = ({ data, isLoading, onNavigate
                     <Plus size={14} className="text-white" />
                  </div>
                  <div className="text-left">
-                    <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-white/90">New Request</span>
+                    <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-white/90">Nouvelle demande</span>
                  </div>
               </div>
               
               <div className="flex items-center gap-2 text-[9px] font-bold opacity-80 group-hover:opacity-100 transition-opacity">
-                 <span>Apply Leave</span>
+                 <span>Demander un congé</span>
                  <ArrowRight size={14} />
               </div>
            </button>

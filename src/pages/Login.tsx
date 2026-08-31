@@ -43,11 +43,10 @@ const BrandLogo = () => (
     </div>
     <div className="text-center">
       <h1 className="text-3xl md:text-4xl font-semibold tracking-tighter flex items-center justify-center">
-        <span className="text-primary">Open</span>
-        <span className="text-[#f59e0b]">HR</span>
-        <span className="text-[#10b981]">App</span>
+        <span className="text-primary">Bienvenue</span>
+        
       </h1>
-      <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">Personnel Gateway</p>
+      <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">Application de Pointage</p>
     </div>
   </div>
 );
@@ -128,7 +127,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
   // Steps run in best-effort order; any individual failure must not block the
   // final reload.
   const handleSystemReset = async () => {
-    if (!confirm("Reset App Cache? This will sign you out and reload the app.")) return;
+    if (!confirm("Réinitialiser le cache de l'application ? Cela vous déconnectera et rechargera l'application.")) return;
     try {
       // 1. Wipe Workbox / runtime caches (the SW unregister below does NOT
       //    clear these — they live independently in CacheStorage).
@@ -168,32 +167,29 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
     }
   };
 
-  // Non-destructive sibling of the Reset button: ask the active service
-  // worker to check for a new build. If one is waiting, vite-plugin-pwa's
-  // controllerchange handler will reload the page automatically; otherwise
-  // the user gets a toast that they are already current.
+ 
   const handleCheckForUpdates = async () => {
     if (!('serviceWorker' in navigator)) {
-      showToast('Service workers not supported in this browser.', 'error');
+      showToast('Les Service Workers ne sont pas pris en charge par ce navigateur.', 'error');
       return;
     }
     try {
       const reg = await navigator.serviceWorker.getRegistration();
       if (!reg) {
-        showToast('App is not installed as a PWA.', 'info');
+        showToast('l\'application n\'est pas encore installer en mode PWA.', 'info');
         return;
       }
       await reg.update();
       if (reg.waiting) {
-        showToast('Update found — reloading…', 'success');
+        showToast('Mise à jour trouvée — rechargement en cours…', 'success');
         // Ask the waiting SW to take over; controllerchange triggers reload.
         reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       } else {
-        showToast('You are on the latest version.', 'success');
+        showToast('Vous disposez de la dernière version.', 'success');
       }
     } catch (err: any) {
-      console.error('[Login] Update check failed:', err);
-      showToast('Could not check for updates.', 'error');
+      console.error('[Connexion] Échec de la vérification des mises à jour :', err);
+      showToast('Impossible de vérifier les mises à jour.', 'error');
     }
   };
 
@@ -201,33 +197,16 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
     if (!email) return;
     try {
       const result = await hrService.requestVerificationEmail(email);
-      showToast(result.message || "A new verification link has been sent to your email.", result.success ? "success" : "info");
+      showToast(result.message || "Un nouveau lien de vérification a été envoyé à votre adresse e-mail.", result.success ? "success" : "info");
       if (result.success && result.message.includes('already verified')) {
         // Account is already confirmed — clear the error so user can retry login
         setError("");
       }
       setShowResend(false);
     } catch (e) {
-      showToast("Failed to send verification email.", "error");
+      showToast("Échec de l'envoi du mail de vérification.", "error");
     }
   };
-
-  // Trigger iOS Safari / WKWebView "Save Password" via hidden form submission.
-  //
-  // Why this works:
-  //   Safari only triggers the password save dialog on a real form navigation,
-  //   not on XHR/fetch-only logins. We create a hidden form targeting a hidden
-  //   iframe and submit it. The iframe absorbs the resulting 404.
-  //
-  // iOS PWA (standalone) specifics:
-  //   WKWebView requires the form to be rendered (painted) for at least one
-  //   animation frame before submission, otherwise credential detection is skipped.
-  //   We also set the iframe src to about:blank first so WKWebView treats it as
-  //   a valid navigation target (empty iframes can be ignored in standalone mode).
-  //
-  // IMPORTANT: This must be called BEFORE onLoginSuccess triggers a route change,
-  //   otherwise the login form's DOM context is lost and Safari won't associate
-  //   the credentials with this page. We wrap onLoginSuccess in the rAF callback
   //   so the form is submitted first, then login completes.
   const triggerSafariPasswordSave = (onComplete: () => void) => {
     try {
@@ -239,8 +218,6 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
 
       const form = document.createElement('form');
       form.method = 'POST';
-      // Use the current page URL so Safari associates saved credentials with this origin.
-      // The iframe absorbs the navigation; the 405/404 response doesn't matter.
       form.action = window.location.href;
       form.target = 'safari-password-save';
       form.autocomplete = 'on';
@@ -287,7 +264,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
     if (result.ok) {
       setForgotStatus('sent');
     } else {
-      setForgotError(result.error || 'Could not send reset email. Try again.');
+      setForgotError(result.error || 'Impossible d\'envoyer l\'e-mail de réinitialisation. Veuillez réessayer.');
       setForgotStatus('error');
     }
   };
@@ -295,7 +272,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isConfigured) {
-      setError(`CRITICAL: Backend is not configured.`);
+      setError(`CRITIQUE : Le backend n'est pas configuré.`);
       return;
     }
     setIsLoading(true);
@@ -305,20 +282,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
     try {
       const result = await hrService.login(email, password);
       if (result.user) {
-        // Detect iOS: all iOS browsers use WebKit, so PasswordCredential is never
-        // truly supported even if the global exists (e.g. Chrome on iOS is WKWebView).
+        
         const ua = navigator.userAgent;
         const isIOSDevice = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
 
-        // "Save Password" — two strategies by platform:
-        //   1. Chrome/Edge/Android browser & PWA: Credential Management API
-        //   2. iOS Safari & iOS PWA (standalone): hidden form submission trick
-        //
-        // For iOS: the hidden form MUST be submitted while the login page DOM is
-        // still mounted. If we call onLoginSuccess first, React unmounts the page
-        // and Safari loses the credential context. So on iOS we submit the form
-        // first (via rAF) and call onLoginSuccess in the completion callback.
-        // For non-iOS: we complete login first, then save credentials async.
+       
 
         if (isIOSDevice) {
           triggerSafariPasswordSave(() => {
@@ -341,9 +309,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
           }, 300);
         }
       } else {
-        const msg = result.error || 'Verification Failed. Check credentials.';
+        const msg = result.error || 'Échec de la vérification. Vérifiez vos identifiants.';
         setError(msg);
-        if (msg.toLowerCase().includes('verified') || msg.toLowerCase().includes('verification')) {
+        if (msg.toLowerCase().includes('verified') || msg.toLowerCase().includes('vérification')) {
           setShowResend(true);
         }
       }
@@ -376,9 +344,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                       <CheckCircle2 size={36} className="text-emerald-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">Check your email</p>
+                      <p className="text-sm font-semibold text-slate-800">Consultez vos e-mails</p>
                       <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                        A password reset link was sent to <span className="font-bold text-slate-600">{forgotEmail}</span>. Check spam if you don't see it.
+                       Un lien de réinitialisation du mot de passe a été envoyé à <span className="font-bold text-slate-600">{forgotEmail}</span>. Vérifiez vos spams si vous ne le voyez pas.
                       </p>
                     </div>
                     <button
@@ -392,11 +360,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                 ) : (
                   <form onSubmit={handleForgotPassword} className="space-y-5">
                     <div className="text-center space-y-1">
-                      <p className="text-sm font-semibold text-slate-800">Reset Password</p>
-                      <p className="text-xs text-slate-400">Enter your email and we'll send a reset link.</p>
+                      <p className="text-sm font-semibold text-slate-800">Réinitialiser le mot de passe</p>
+                      <p className="text-xs text-slate-400">Saisissez votre adresse e-mail et nous vous enverrons un lien de réinitialisation.</p>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Organization Email</label>
+                      <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Email</label>
                       <div className="relative group">
                         <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors z-10" size={18} />
                         <input
@@ -421,14 +389,14 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                       disabled={forgotStatus === 'loading'}
                       className="w-full py-4 bg-primary text-white rounded-xl font-semibold text-xs uppercase tracking-[0.2em] shadow-sm hover:bg-primary-hover active:scale-[0.97] transition-all flex items-center justify-center gap-3 disabled:opacity-70"
                     >
-                      {forgotStatus === 'loading' ? <RefreshCw className="animate-spin" size={18} /> : <>Send Reset Link <ArrowRight size={16} /></>}
+                      {forgotStatus === 'loading' ? <RefreshCw className="animate-spin" size={18} /> : <>Envoyer le lien <ArrowRight size={16} /></>}
                     </button>
                     <button
                       type="button"
                       onClick={() => { setShowForgot(false); setForgotStatus('idle'); setForgotError(''); }}
                       className="w-full py-2.5 text-slate-400 text-[10px] font-semibold uppercase tracking-widest hover:text-primary transition-colors"
                     >
-                      Back to Login
+                      Revenir à la page de connexion
                     </button>
                   </form>
                 )}
@@ -437,7 +405,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
             <form onSubmit={handleLogin} className="space-y-6" autoComplete="on" method="post" action=".">
               <div className="space-y-5">
                 <div className="space-y-1.5">
-                  <label htmlFor="login-email" className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Organization Email</label>
+                  <label htmlFor="login-email" className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Email</label>
                   <div className="relative group">
                     <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors z-10" size={18} />
                     <input
@@ -449,13 +417,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                       className="w-full pl-14 pr-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-900 outline-none transition-all focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary-light placeholder:text-slate-300"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      placeholder="e.g. name@company.com"
+                      placeholder="email@exemple.com"
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-1.5">
-                  <label htmlFor="login-password" className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Security Credentials</label>
+                  <label htmlFor="login-password" className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Mot de passe</label>
                   <div className="relative group">
                     <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors z-10" size={18} />
                     <input
@@ -467,7 +435,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                       className="w-full pl-14 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-900 outline-none transition-all focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary-light placeholder:text-slate-300"
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      placeholder="Your secret key"
+                      placeholder="*************"
                     />
                     <button 
                       type="button" 
@@ -493,13 +461,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                         onClick={handleResendVerification}
                         className="ml-auto flex items-center gap-1 bg-white px-2 py-1 rounded-md shadow-sm text-rose-600 hover:text-rose-800 transition-colors"
                       >
-                        <Send size={10} /> Resend Link
+                        <Send size={10} /> Renvoyer le lien
                       </button>
                     )}
                   </div>
                   {showResend && (
                     <p className="text-[11px] font-medium normal-case tracking-normal text-rose-500/90 leading-snug">
-                      Already requested a link? <span className="font-bold">Check your spam or junk folder</span> before resending — verification emails from <span className="font-mono">noreply@openhrapp.com</span> sometimes land there.
+                      Vous avez déjà demandé un lien ?<span className="font-bold">Vérifiez votre spam ou de courrier indésirable.</span> avant de renvoyer les e-mails de vérification de <span className="font-mono">noreply@openhrapp.com</span> y atterrissent parfois.
                     </p>
                   )}
                 </div>
@@ -511,7 +479,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                   disabled={isLoading}
                   className="w-full py-4 bg-primary text-white rounded-xl font-semibold text-xs uppercase tracking-[0.2em] shadow-sm hover:bg-primary-hover active:scale-[0.97] transition-all flex items-center justify-center gap-3 disabled:opacity-70 mt-2"
                 >
-                  {isLoading ? <RefreshCw className="animate-spin" size={18} /> : <>Continue <ArrowRight size={16} /></>}
+                  {isLoading ? <RefreshCw className="animate-spin" size={18} /> : <>Continuer <ArrowRight size={16} /></>}
                 </button>
 
                 <button
@@ -519,7 +487,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                   onClick={() => { setShowForgot(true); setForgotEmail(email); setForgotStatus('idle'); setForgotError(''); }}
                   className="w-full py-2 text-slate-400 text-[10px] font-semibold uppercase tracking-widest hover:text-primary transition-colors"
                 >
-                  Forgot Password?
+                  Mot de Passe Oublié?
                 </button>
 
                 <button
@@ -527,7 +495,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                   onClick={onRegisterClick}
                   className="w-full py-3 bg-slate-50 text-slate-600 border border-slate-200 rounded-xl font-semibold text-[10px] uppercase tracking-widest hover:bg-white hover:border-slate-300 transition-all flex items-center justify-center gap-2"
                 >
-                  <Building2 size={14} /> Register New Organization
+                  <Building2 size={14} /> Creer un nouveau organisation
                 </button>
 
                 {/* Back to Home */}
@@ -537,7 +505,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                     onClick={onBackToLanding}
                     className="w-full py-2.5 text-slate-400 text-[10px] font-semibold uppercase tracking-widest hover:text-primary transition-colors flex items-center justify-center gap-2"
                   >
-                    <Home size={12} /> Back to Home
+                    <Home size={12} /> Revenir au menu
                   </button>
                 )}
 
@@ -549,7 +517,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                      onClick={handleInstallClick}
                      className="flex items-center gap-2 px-4 py-2 text-slate-400 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:text-primary transition-colors"
                    >
-                     <Download size={12} /> {isIOS && !canPrompt ? 'App Guide' : 'Install App'}
+                     <Download size={12} /> {isIOS && !canPrompt ? 'App Guide' : 'Installer le PWA'}
                    </button>
                    )}
 
@@ -561,7 +529,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                      className="flex items-center gap-2 px-4 py-2 text-slate-400 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:text-primary transition-colors"
                      title="Check for app updates without signing out"
                    >
-                     <RefreshCw size={12} /> Updates
+                     <RefreshCw size={12} /> Mettre à jour
                    </button>
 
                    <div className="w-px h-3 bg-slate-200"></div>
@@ -572,7 +540,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
                      className="flex items-center gap-2 px-4 py-2 text-slate-400 rounded-xl text-[10px] font-semibold uppercase tracking-widest hover:text-rose-600 transition-colors"
                      title="Clear all app data and reload (destructive — signs you out)"
                    >
-                     <RotateCcw size={12} /> Reset Cache
+                     <RotateCcw size={12} /> vider Caches
                    </button>
                 </div>
               </div>
@@ -582,13 +550,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
         </div>
 
         {/* System Version */}
-        <p className="text-center mt-6 text-[8px] font-semibold text-slate-300 uppercase tracking-[0.4em]">v3.0 Multi-Tenant</p>
+        <p className="text-center mt-6 text-[8px] font-semibold text-slate-300 uppercase tracking-[0.4em]">v1.2 Fonctionnel</p>
       </div>
 
       {/* Database Connection Indicator */}
       <div className="fixed top-6 right-6 hidden md:flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-slate-100 shadow-sm">
         <div className={`w-1.5 h-1.5 rounded-full ${isConfigured ? 'bg-emerald-500' : 'bg-rose-500'} animate-pulse`}></div>
-        <span className="text-[8px] font-semibold uppercase text-slate-500 tracking-[0.2em]">{isConfigured ? 'Node Connected' : 'No Connection'}</span>
+        <span className="text-[8px] font-semibold uppercase text-slate-500 tracking-[0.2em]">{isConfigured ? 'Serveur cloud connecté' : 'Pas de connection'}</span>
       </div>
 
       {/* Installation Instructions Popup */}
@@ -597,65 +565,65 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, onRegisterClick, onBackTo
            <div className="bg-white w-full max-w-sm rounded-[2rem] p-6 shadow-xl animate-in slide-in-from-bottom-10 border border-slate-100">
               <div className="flex justify-between items-center mb-6">
                  <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                   <Download size={16} className="text-primary"/> Install Guide
+                   <Download size={16} className="text-primary"/>Guide d'installation
                  </h3>
                  <button onClick={() => setShowInstallHelp(false)} className="p-2 bg-slate-100 rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-900 transition-colors"><X size={16}/></button>
               </div>
               
               {isIOS ? (
                 <div className="space-y-5">
-                   <p className="text-xs font-medium text-slate-500 leading-relaxed">To install this app on your iPhone or iPad, please follow these steps:</p>
+                   <p className="text-xs font-medium text-slate-500 leading-relaxed">Pour installer cette application sur votre iPhone ou iPad, veuillez suivre ces étapes :</p>
                    <div className="space-y-3">
                       <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
                          <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-blue-500"><Share size={18} /></div>
-                         <div className="text-xs font-bold text-slate-700">1. Tap the <span className="text-blue-600">Share</span> button in Safari</div>
+                         <div className="text-xs font-bold text-slate-700">1. Appuyez sur <span className="text-blue-600">Partager</span> Safari</div>
                       </div>
                       <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
                          <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-900 font-semibold text-[10px]">+</div>
-                         <div className="text-xs font-bold text-slate-700">2. Select <span className="text-slate-900">Add to Home Screen</span></div>
+                         <div className="text-xs font-bold text-slate-700">2. Choisir <span className="text-slate-900">Ajouter à l'écran d'accueil</span></div>
                       </div>
                       <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
-                         <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-900 font-semibold text-[10px]">Add</div>
-                         <div className="text-xs font-bold text-slate-700">3. Tap <span className="text-blue-600">Add</span> (top right)</div>
+                         <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-900 font-semibold text-[10px]">Ajouter</div>
+                         <div className="text-xs font-bold text-slate-700">3. Appuyez <span className="text-blue-600">Ajouter</span> (en haut à droite)</div>
                       </div>
                    </div>
                 </div>
               ) : isMobile ? (
                 <div className="space-y-5">
-                   <p className="text-xs font-medium text-slate-500 leading-relaxed">For the best experience, open this page in <span className="text-slate-900 font-bold">Google Chrome</span> browser. If you are already using Chrome or another browser, follow these steps:</p>
+                   <p className="text-xs font-medium text-slate-500 leading-relaxed">Pour une expérience optimale, ouvrez cette page dans <span className="text-slate-900 font-bold">Google Chrome</span> Si vous utilisez déjà Chrome ou un autre navigateur, suivez ces étapes :</p>
                    <div className="space-y-3">
                       <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
                          <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-600"><MoreVertical size={18} /></div>
-                         <div className="text-xs font-bold text-slate-700">1. Tap the <span className="text-slate-900">Menu</span> button (⋮ or ⋯)</div>
+                         <div className="text-xs font-bold text-slate-700">1. Appuyez sur le <span className="text-slate-900">Menu</span> button (⋮ ou ⋯)</div>
                       </div>
                       <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
                          <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary"><Download size={18} /></div>
-                         <div className="text-xs font-bold text-slate-700">2. Look for <span className="text-slate-900">Install App</span>, <span className="text-slate-900">Add to Home Screen</span>, or <span className="text-slate-900">Add shortcut</span></div>
+                         <div className="text-xs font-bold text-slate-700">2. Rechercher <span className="text-slate-900">Installer l'application</span>, <span className="text-slate-900">Ajouter à l'écran d'accueil</span>, ou <span className="text-slate-900">Ajouter un raccourci</span></div>
                       </div>
                       <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
                          <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-500 font-semibold text-[10px]">✓</div>
-                         <div className="text-xs font-bold text-slate-700">3. Confirm and the app will be added to your <span className="text-slate-900">Home Screen</span></div>
+                         <div className="text-xs font-bold text-slate-700">3. Confirmez et l'application sera ajoutée à votre <span className="text-slate-900">Écran d'accueil</span></div>
                       </div>
                    </div>
 
                 </div>
               ) : (
                 <div className="space-y-5">
-                   <p className="text-xs font-medium text-slate-500 leading-relaxed">If the automatic prompt didn't appear, you can install manually:</p>
+                   <p className="text-xs font-medium text-slate-500 leading-relaxed">Si l'invite automatique ne s'est pas affichée, vous pouvez procéder à une installation manuelle :</p>
                    <div className="space-y-3">
                       <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
                          <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-600"><MoreVertical size={18} /></div>
-                         <div className="text-xs font-bold text-slate-700">1. Click the <span className="text-slate-900">Browser Menu</span> (⋮ three dots)</div>
+                         <div className="text-xs font-bold text-slate-700">1. Cliquez sur <span className="text-slate-900">le menu du navigateur</span> (⋮)</div>
                       </div>
                       <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
                          <div className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary"><Download size={18} /></div>
-                         <div className="text-xs font-bold text-slate-700">2. Select <span className="text-slate-900">Install App</span> or <span className="text-slate-900">Install OpenHRApp</span></div>
+                         <div className="text-xs font-bold text-slate-700">2. Choisir <span className="text-slate-900"> Installer l'application</span> ou <span className="text-slate-900">Installer en PWA</span></div>
                       </div>
                    </div>
                 </div>
               )}
               
-              <button onClick={() => setShowInstallHelp(false)} className="w-full mt-6 py-4 bg-primary text-white rounded-2xl font-semibold uppercase text-[10px] tracking-widest shadow-lg shadow-primary-light">Close Instructions</button>
+              <button onClick={() => setShowInstallHelp(false)} className="w-full mt-6 py-4 bg-primary text-white rounded-2xl font-semibold uppercase text-[10px] tracking-widest shadow-lg shadow-primary-light">Fermer l'instruction</button>
            </div>
         </div>
       )}
