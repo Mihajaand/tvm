@@ -118,7 +118,7 @@ const AuditLog: React.FC<Props> = ({ organizations = [] }) => {
           <Search size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
           <input
             type="text"
-            placeholder="Search by person, organization, field or record ID — press Enter"
+            placeholder="Recherche par personne, organisation, domaine ou identifiant d'enregistrement — appuyez sur Entrée"
             className="w-full pl-12 pr-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -128,13 +128,13 @@ const AuditLog: React.FC<Props> = ({ organizations = [] }) => {
         <div className="flex flex-wrap gap-3">
           {organizations.length > 0 && (
             <select className={selectCls} value={orgFilter} onChange={e => setOrgFilter(e.target.value)}>
-              <option value="">All organizations</option>
+              <option value="">Toutes les organisations</option>
               {organizations.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
             </select>
           )}
 
           <select className={selectCls} value={tableFilter} onChange={e => setTableFilter(e.target.value)}>
-            <option value="">All records</option>
+            <option value="">Tous les enregistrements</option>
             {AUDITED_TABLES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
 
@@ -143,10 +143,10 @@ const AuditLog: React.FC<Props> = ({ organizations = [] }) => {
             value={actionFilter}
             onChange={e => setActionFilter(e.target.value as AuditAction | '')}
           >
-            <option value="">All actions</option>
-            <option value="INSERT">Created</option>
-            <option value="UPDATE">Changed</option>
-            <option value="DELETE">Deleted</option>
+            <option value="">Toutes les actions</option>
+            <option value="INSERT">Créé</option>
+            <option value="UPDATE">Modifié</option>
+            <option value="DELETE">Supprimé</option>
           </select>
 
           <select
@@ -175,9 +175,9 @@ const AuditLog: React.FC<Props> = ({ organizations = [] }) => {
 
       {!isLoading && !error && entries.length === 0 && (
         <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center shadow-sm space-y-2">
-          <p className="text-sm font-semibold text-slate-700">No activity recorded in this period</p>
+          <p className="text-sm font-semibold text-slate-700">Aucune activité enregistrée dans cette période</p>
           <p className="text-xs font-bold text-slate-400">
-            The audit trail starts from when it was switched on — it cannot show changes made before that.
+            La piste d'audit commence à partir du moment où elle a été activée — elle ne peut pas afficher les modifications apportées avant cela.
           </p>
         </div>
       )}
@@ -243,9 +243,9 @@ const AuditLog: React.FC<Props> = ({ organizations = [] }) => {
                         <table className="w-full min-w-[30rem] text-xs">
                           <thead>
                             <tr className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                              <th className="text-left py-2 pr-4">Field</th>
-                              <th className="text-left py-2 pr-4">Before</th>
-                              <th className="text-left py-2">After</th>
+                              <th className="text-left py-2 pr-4">Champ</th>
+                              <th className="text-left py-2 pr-4">Avant</th>
+                              <th className="text-left py-2">Après</th>
                             </tr>
                           </thead>
                           <tbody>

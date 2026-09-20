@@ -60,7 +60,7 @@ export const AnnouncementFormModal: React.FC<Props> = ({ isOpen, onClose, onSubm
       });
       onClose();
     } catch (err) {
-      console.error('Failed to save announcement', err);
+      console.error('Échec de l\'enregistrement de l\'annonce', err);
     } finally {
       setIsSaving(false);
     }
@@ -74,7 +74,7 @@ export const AnnouncementFormModal: React.FC<Props> = ({ isOpen, onClose, onSubm
         {/* Header */}
         <div className="flex items-center justify-between p-6 pb-4 border-b border-slate-100">
           <h2 className="text-lg font-semibold text-slate-900">
-            {editingAnnouncement ? 'Edit Announcement' : 'New Announcement'}
+            {editingAnnouncement ? 'Modifier l\'annonce' : 'Nouvelle annonce'}
           </h2>
           <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
             <X size={18} />
@@ -85,7 +85,7 @@ export const AnnouncementFormModal: React.FC<Props> = ({ isOpen, onClose, onSubm
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Title */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Title</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Titre</label>
             <input
               type="text"
               value={title}
@@ -93,26 +93,26 @@ export const AnnouncementFormModal: React.FC<Props> = ({ isOpen, onClose, onSubm
               maxLength={200}
               required
               className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-              placeholder="Announcement title..."
+              placeholder="Titre de l'annonce..."
             />
           </div>
 
           {/* Content */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Content</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Contenu</label>
             <textarea
               value={content}
               onChange={e => setContent(e.target.value)}
               required
               rows={4}
               className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
-              placeholder="Write your announcement..."
+              placeholder="Rédigez votre annonce..."
             />
           </div>
 
           {/* Priority Toggle */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Priority</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Priorité</label>
             <div className="flex gap-2">
               <button
                 type="button"
@@ -142,7 +142,7 @@ export const AnnouncementFormModal: React.FC<Props> = ({ isOpen, onClose, onSubm
           {/* Target Roles */}
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-              Target Roles <span className="text-slate-400 normal-case font-medium">(empty = everyone)</span>
+              Utilisateurs cibles <span className="text-slate-400 normal-case font-medium">(par défaut tout le monde)</span>
             </label>
             <div className="flex flex-wrap gap-2">
               {ALL_ROLES.map(role => (
@@ -165,7 +165,7 @@ export const AnnouncementFormModal: React.FC<Props> = ({ isOpen, onClose, onSubm
           {/* Expiry Date */}
           <div>
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-              Expiry Date <span className="text-slate-400 normal-case font-medium">(optional)</span>
+              Date d'expiration <span className="text-slate-400 normal-case font-medium">(facultative)</span>
             </label>
             <input
               type="date"
@@ -181,7 +181,7 @@ export const AnnouncementFormModal: React.FC<Props> = ({ isOpen, onClose, onSubm
             disabled={isSaving || !title.trim() || !content.trim()}
             className="w-full py-4 bg-primary text-white rounded-2xl font-semibold text-sm uppercase tracking-widest shadow-lg shadow-primary-light/50 hover:bg-primary-hover transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSaving ? 'Saving...' : editingAnnouncement ? 'Update Announcement' : 'Post Announcement'}
+            {isSaving ? 'Enregistrement...' : editingAnnouncement ? 'Mettre à jour l\'annonce' : 'Publier l\'annonce'}
           </button>
         </form>
       </div>

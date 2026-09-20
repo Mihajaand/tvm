@@ -265,12 +265,12 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">
-              {isAuditMode ? (isAdmin ? 'Attendance Audit' : 'Team Attendance') : 'My Attendance History'}
+             {isAuditMode ? (isAdmin ? 'Audit des présences' : 'Présences de l\'équipe') : 'Mon historique de présence'}
             </h1>
             <HelpButton helpPointId={isAuditMode ? 'attendance.audit' : 'attendance.logs'} />
           </div>
           <p className="text-sm text-slate-500 font-medium">
-            {isAuditMode ? 'Consolidated organization tracking (First-In / Last-Out)' : 'Your consolidated workday records'}
+            {isAuditMode ? 'Suivi consolidé de l’organisation (Premier entré / Dernier sorti)' : 'Vos relevés consolidés de journée de travail'}
           </p>
         </div>
         <div className="flex gap-2">
@@ -279,7 +279,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
               onClick={() => setShowAbsentModal(true)}
               className="p-3 bg-rose-50 border border-rose-100 rounded-2xl shadow-sm text-rose-600 hover:bg-rose-100 transition-all flex items-center gap-2"
             >
-              <UserX size={20} /> <span className="text-xs font-bold uppercase hidden md:inline">Mark Absent</span>
+              <UserX size={20} /> <span className="text-xs font-bold uppercase hidden md:inline">Marquer comme absent</span>
             </button>
           )}
           <button 
@@ -298,7 +298,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
             <input 
               type="text" 
-              placeholder="Search by name, date or status..."
+              placeholder="Rechercher par nom, date ou statut..."
               className="w-full pl-14 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-bold outline-none focus:ring-4 focus:ring-primary-light"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -314,7 +314,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                   value={employeeFilter}
                   onChange={(e) => setEmployeeFilter(e.target.value)}
                 >
-                  <option value="ALL">{isAdmin ? 'All Organization' : 'All Managed Staff'}</option>
+                  <option value="ALL">{isAdmin ? 'Toute l\'organisation' : 'Tout le personnel géré'}</option>
                   {employees.map(emp => (
                     <option key={emp.id} value={emp.id}>{emp.name}</option>
                   ))}
@@ -328,7 +328,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                     value={deptFilter}
                     onChange={(e) => setDeptFilter(e.target.value)}
                   >
-                    <option value="ALL">All Departments</option>
+                    <option value="ALL">Tous les départements</option>
                     {departments.map(d => (
                       <option key={d} value={d}>{d}</option>
                     ))}
@@ -343,7 +343,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
             className="px-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] flex items-center justify-center gap-3 text-slate-500 hover:text-primary hover:bg-white transition-all whitespace-nowrap"
           >
             {sortOrder === 'desc' ? <SortDesc size={20} /> : <SortAsc size={20} />}
-            <span className="text-[10px] font-semibold uppercase tracking-widest">{sortOrder === 'desc' ? 'Latest' : 'Oldest'}</span>
+           <span className="text-[10px] font-semibold uppercase tracking-widest">{sortOrder === 'desc' ? 'Plus récents' : 'Plus anciens'}</span>
           </button>
         </div>
       </div>
@@ -413,7 +413,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
         {!isLoading && filteredAndSortedLogs.length === 0 && (
           <div className="py-20 text-center space-y-4">
              <History size={48} className="mx-auto text-slate-100" />
-             <p className="text-slate-400 font-semibold uppercase text-xs tracking-widest">No matching logs found.</p>
+             <p className="text-slate-400 font-semibold uppercase text-xs tracking-widest">Aucun journal correspondant n'a été trouvé.</p>
           </div>
         )}
       </div>
@@ -425,9 +425,9 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
             <div className="bg-primary p-8 flex justify-between items-center text-white">
               <div className="space-y-1">
                 <h3 className="text-xl font-semibold uppercase tracking-tight">
-                  {isAuditMode ? (isAdmin ? 'Modify Audit Record' : 'Team Member Activity') : 'Log Details'}
+                  {isAuditMode ? (isAdmin ? 'Modifier l\'enregistrement d\'audit' : 'Activité du membre de l\'équipe') : 'Détails du journal'}
                 </h3>
-                {isAuditMode && isAdmin && <p className="text-white/40 text-[10px] font-semibold uppercase tracking-widest">Manual Correction Mode</p>}
+                {isAuditMode && isAdmin && <p className="text-white/40 text-[10px] font-semibold uppercase tracking-widest">Mode de correction manuelle</p>}
               </div>
               <button onClick={() => setSelectedLog(null)} className="hover:bg-white/10 p-2 rounded-xl transition-all"><X size={28} /></button>
             </div>
@@ -444,7 +444,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
 
                 <div className="flex-1 w-full space-y-6">
                   <div className="space-y-1">
-                    <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Employee Profile</p>
+                    <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Profil de l'employé</p>
                     <p className="font-semibold text-slate-900 text-xl leading-none">
                       {selectedLog.employeeName || (isAdmin || isManager ? employees.find(e => e.id === selectedLog.employeeId)?.name : user.name)}
                     </p>
@@ -458,14 +458,14 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                     <div className="p-4 bg-primary-light/20 border border-primary-light rounded-2xl space-y-3">
                        <div className="flex items-center justify-between">
                           <p className="text-[9px] font-semibold text-primary uppercase tracking-widest flex items-center gap-2">
-                            <Calculator size={10} /> Calculation Parameters
+                            <Calculator size={10} /> Paramètres de calcul
                           </p>
-                          <span className="text-[8px] font-bold text-primary-hover uppercase tracking-widest">Does not save to DB</span>
+                          <span className="text-[8px] font-bold text-primary-hover uppercase tracking-widest">Ne pas enregistrer</span>
                        </div>
                        
                        <div className="flex gap-2">
                           <div className="flex-1 min-w-0 space-y-1">
-                             <label className="text-[8px] font-semibold text-primary uppercase tracking-widest">Shift Start</label>
+                             <label className="text-[8px] font-semibold text-primary uppercase tracking-widest">Début du service</label>
                              <input
                                type="time"
                                className="w-full min-w-0 px-2 py-1.5 bg-white border border-primary-light rounded-lg text-xs font-bold text-slate-900"
@@ -474,7 +474,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                              />
                           </div>
                           <div className="flex-1 min-w-0 space-y-1">
-                             <label className="text-[8px] font-semibold text-primary uppercase tracking-widest">Shift End</label>
+                             <label className="text-[8px] font-semibold text-primary uppercase tracking-widest">Fin du service</label>
                              <input
                                type="time"
                                className="w-full min-w-0 px-2 py-1.5 bg-white border border-primary-light rounded-lg text-xs font-bold text-slate-900"
@@ -495,10 +495,10 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
 
                        <div className="flex justify-between items-center pt-1">
                           <p className="text-[10px] font-medium text-primary">
-                             Duration: {calculateDuration(editState.checkIn || '', editState.checkOut || '')} Hrs
+                             Durée : {calculateDuration(editState.checkIn || '', editState.checkOut || '')} h
                           </p>
                           <button onClick={autoCalculateStatus} className="text-[9px] font-semibold text-white bg-primary px-3 py-1 rounded-lg uppercase tracking-widest hover:bg-primary-hover transition-colors">
-                             Recalculate Status
+                             Recalculer le statut
                           </button>
                        </div>
                     </div>
@@ -506,7 +506,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Log Date</label>
+                      <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Date du log</label>
                       <input 
                         type="date" 
                         readOnly={!isAdmin}
@@ -523,11 +523,11 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                           value={editState.status}
                           onChange={e => setEditState({...editState, status: e.target.value as any})}
                         >
-                          <option value="PRESENT">Present</option>
-                          <option value="LATE">Late</option>
+                          <option value="PRESENT">Présent</option>
+                          <option value="LATE">En retard</option>
                           <option value="ABSENT">Absent</option>
-                          <option value="EARLY_OUT">Early Out</option>
-                          <option value="LEAVE">Leave</option>
+                          <option value="EARLY_OUT">Sortie anticipée</option>
+                          <option value="LEAVE">Congé</option>
                         </select>
                       ) : (
                         <div className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold text-primary uppercase">
@@ -541,7 +541,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div className="space-y-1.5">
-                    <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Actual Check-In</label>
+                    <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Vérification d'entrée réelle</label>
                     <input 
                       type="time" 
                       step="1"
@@ -552,7 +552,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                     />
                  </div>
                  <div className="space-y-1.5">
-                    <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Actual Check-Out</label>
+                    <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Vérification de sortie réelle</label>
                     <input 
                       type="time" 
                       step="1"
@@ -566,7 +566,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
 
               <div className="space-y-1.5">
                 <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-                  <MapPin size={12} className="text-rose-500" /> GPS Validation (Initial)
+                  <MapPin size={12} className="text-rose-500" /> Validation GPS (Initiale)
                 </label>
                 <div className="p-5 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between">
                    <div className="flex-1 pr-4">
@@ -578,7 +578,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Workday Activity Audit Trail</label>
+                <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Piste d'audit des activités du jour de travail</label>
                 <textarea 
                   readOnly={!isAdmin}
                   placeholder="Notes for this workday..."
@@ -595,7 +595,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                     <button onClick={handleUpdate} disabled={isProcessing} className="flex-[1.5] py-5 bg-primary text-white rounded-xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-xl hover:bg-primary-hover transition-all">{isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Save size={16} />} Save Corrections</button>
                   </>
                 ) : (
-                  <button onClick={() => setSelectedLog(null)} className="w-full py-5 bg-slate-900 text-white rounded-xl font-semibold uppercase text-[10px] tracking-widest shadow-xl">Close Log View</button>
+                  <button onClick={() => setSelectedLog(null)} className="w-full py-5 bg-slate-900 text-white rounded-xl font-semibold uppercase text-[10px] tracking-widest shadow-xl">Fermer</button>
                 )}
               </div>
             </div>
@@ -608,26 +608,26 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl w-full max-w-md shadow-xl overflow-hidden animate-in zoom-in">
              <div className="p-6 bg-slate-900 text-white flex justify-between items-center">
-               <h3 className="text-sm font-semibold uppercase tracking-widest">Manual Absent Entry</h3>
+               <h3 className="text-sm font-semibold uppercase tracking-widest">Entrée Absent Manuelle</h3>
                <button onClick={() => setShowAbsentModal(false)}><X size={20}/></button>
              </div>
              <div className="p-8 space-y-6">
                <div className="space-y-1">
                  <label className="text-[10px] font-semibold text-slate-400 uppercase">Employee</label>
                  <select className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold" value={absentForm.employeeId} onChange={e => setAbsentForm({...absentForm, employeeId: e.target.value})}>
-                   <option value="">Select Employee</option>
+                   <option value="">Sélectionner un employé </option>
                    {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                  </select>
                </div>
                <div className="space-y-1">
-                 <label className="text-[10px] font-semibold text-slate-400 uppercase">Date of Absence</label>
+                 <label className="text-[10px] font-semibold text-slate-400 uppercase">Date d'absence</label>
                  <input type="date" className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold" value={absentForm.date} onChange={e => setAbsentForm({...absentForm, date: e.target.value})} />
                </div>
                <div className="space-y-1">
-                 <label className="text-[10px] font-semibold text-slate-400 uppercase">Reason / Remarks</label>
+                 <label className="text-[10px] font-semibold text-slate-400 uppercase">Motif / Remarques</label>
                  <input type="text" className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold" value={absentForm.remarks} onChange={e => setAbsentForm({...absentForm, remarks: e.target.value})} />
                </div>
-               <button onClick={handleManualAbsent} disabled={isProcessing} className="w-full py-4 bg-rose-600 text-white rounded-xl font-semibold uppercase text-xs tracking-widest shadow-lg hover:bg-rose-700 transition-all">Confirm Absent Record</button>
+               <button onClick={handleManualAbsent} disabled={isProcessing} className="w-full py-4 bg-rose-600 text-white rounded-xl font-semibold uppercase text-xs tracking-widest shadow-lg hover:bg-rose-700 transition-all">Confirmer</button>
              </div>
           </div>
         </div>

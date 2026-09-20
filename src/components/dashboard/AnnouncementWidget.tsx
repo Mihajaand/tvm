@@ -33,7 +33,7 @@ export const AnnouncementWidget: React.FC<Props> = ({ user, onNavigate }) => {
           <div className="p-1.5 bg-primary-light rounded-lg">
             <Megaphone size={14} className="text-primary" />
           </div>
-          <h3 className="font-semibold text-sm text-slate-900">Announcements</h3>
+          <h3 className="font-semibold text-sm text-slate-900">Annonces</h3>
           {visibleAnnouncements.length > 0 && (
             <span className="px-2 py-0.5 bg-primary-light text-primary text-[10px] font-bold rounded-full">
               {visibleAnnouncements.length}
@@ -44,7 +44,7 @@ export const AnnouncementWidget: React.FC<Props> = ({ user, onNavigate }) => {
           onClick={() => onNavigate('announcements')}
           className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary-hover transition-colors"
         >
-          View All <ArrowRight size={12} />
+          Voir plus <ArrowRight size={12} />
         </button>
       </div>
 
@@ -53,7 +53,7 @@ export const AnnouncementWidget: React.FC<Props> = ({ user, onNavigate }) => {
         {topAnnouncements.length === 0 ? (
           <div className="text-center py-6">
             <Inbox size={28} className="mx-auto text-slate-200 mb-2" />
-            <p className="text-xs text-slate-400">No announcements</p>
+            <p className="text-xs text-slate-400">Aucune annonce</p>
           </div>
         ) : (
           <div className="space-y-2">

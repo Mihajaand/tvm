@@ -102,13 +102,13 @@ export const DEFAULT_OVERALL_RATINGS: {
 export const HR_OVERALL_RATINGS = DEFAULT_OVERALL_RATINGS;
 
 export const DEFAULT_LEAVE_TYPES: CustomLeaveType[] = [
-  { id: 'ANNUAL', name: 'Annual Leave', color: 'bg-primary', hasBalance: true },
-  { id: 'CASUAL', name: 'Casual Leave', color: 'bg-emerald-500', hasBalance: true },
-  { id: 'SICK', name: 'Sick Leave', color: 'bg-rose-500', hasBalance: true },
-  { id: 'MATERNITY', name: 'Maternity Leave', color: 'bg-pink-500', hasBalance: false },
-  { id: 'PATERNITY', name: 'Paternity Leave', color: 'bg-indigo-500', hasBalance: false },
-  { id: 'EARNED', name: 'Earned Leave', color: 'bg-amber-500', hasBalance: false },
-  { id: 'UNPAID', name: 'Unpaid Leave', color: 'bg-slate-500', hasBalance: false },
+  { id: 'ANNUEL', name: 'Congé annuel', color: 'bg-primary', hasBalance: true },
+  { id: 'OCCASIONNEL', name: 'Congé occasionnel', color: 'bg-emerald-500', hasBalance: true },
+  { id: 'MALADIE', name: 'Congé maladie', color: 'bg-rose-500', hasBalance: true },
+  { id: 'MATERNITE', name: 'Congé de maternité', color: 'bg-pink-500', hasBalance: false },
+  { id: 'PATERNITE', name: 'Congé de paternité', color: 'bg-indigo-500', hasBalance: false },
+  { id: 'ACQUIS', name: 'Congé acquis', color: 'bg-amber-500', hasBalance: false },
+  { id: 'NON_REMUNERE', name: 'Congé non rémunéré', color: 'bg-slate-500', hasBalance: false },
 ];
 
 export const DEFAULT_REVIEW_CONFIG: OrgReviewConfig = {

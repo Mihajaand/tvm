@@ -49,6 +49,7 @@ export const COUNTRIES: Country[] = [
   { code: 'IL', name: 'Israel', phoneCode: '+972' },
   { code: 'IT', name: 'Italy', phoneCode: '+39' },
   { code: 'JP', name: 'Japan', phoneCode: '+81' },
+  { code: 'MG', name: 'Madagascar', phoneCode: '+261' },
   { code: 'JO', name: 'Jordan', phoneCode: '+962' },
   { code: 'KE', name: 'Kenya', phoneCode: '+254' },
   { code: 'KR', name: 'South Korea', phoneCode: '+82' },

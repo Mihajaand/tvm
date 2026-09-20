@@ -37,7 +37,7 @@ export const ManagerDashboard: React.FC<Props> = ({ data, isLoading, onNavigate 
           {/* Leave Allocation Card */}
           <div className="bg-white rounded-xl border border-slate-100 shadow-xl overflow-hidden animate-in slide-in-from-bottom-4">
             <div className="bg-primary p-8 pb-12 relative overflow-hidden flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-white tracking-tight mt-4">Leave Allocation</h2>
+              <h2 className="text-2xl font-semibold text-white tracking-tight mt-4">Répartition des congés</h2>
               <ShieldCheck className="text-white/20 absolute -right-4 -bottom-4 w-32 h-32" />
             </div>
             
@@ -46,21 +46,21 @@ export const ManagerDashboard: React.FC<Props> = ({ data, isLoading, onNavigate 
                 <div className="flex justify-around items-center divide-x divide-slate-100">
                   {balanceTypes.map(lt => (
                     <div key={lt.id} className="text-center flex-1">
-                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-2">{lt.name.replace(' Leave', '')}</p>
+                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-2">{lt.name.replace(' congé', '')}</p>
                       <p className="text-2xl font-semibold text-primary">{(data.userBalance?.[lt.id] as number) || 0}</p>
                     </div>
                   ))}
                 </div>
 
                 <p className="text-center text-sm text-slate-500 font-medium">
-                  You have <span className="font-semibold text-slate-900">{totalRemaining} total days</span> remaining for the current fiscal year.
+                  Il vous reste<span className="font-semibold text-slate-900">{totalRemaining} jours</span> restant poour l'année en cours.
                 </p>
 
                 <button 
                   onClick={() => onNavigate('leave', { autoOpen: true })}
                   className="w-full py-5 bg-primary text-white rounded-2xl font-semibold uppercase tracking-widest text-xs flex items-center justify-center gap-3 shadow-xl shadow-primary-light hover:bg-primary-hover transition-all active:scale-95"
                 >
-                  <Plus size={18} /> Apply for Leave
+                  <Plus size={18} />Demander un congé
                 </button>
               </div>
             </div>
@@ -77,15 +77,15 @@ export const ManagerDashboard: React.FC<Props> = ({ data, isLoading, onNavigate 
                 <Users size={24} />
               </div>
               <div>
-                <h4 className="font-semibold text-slate-900 leading-none">Team Directory</h4>
+                <h4 className="font-semibold text-slate-900 leading-none">Annuaire de l'équipe</h4>
                 <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
                   {data.teamInfo?.name || data.freshUser.department}
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-xs font-semibold text-emerald-600">{data.activeTeamMembers} Active</p>
-              <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">Out of {data.teamMembersCount}</p>
+              <p className="text-xs font-semibold text-emerald-600">{data.activeTeamMembers} Actif</p>
+              <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">Sur {data.teamMembersCount}</p>
             </div>
           </div>
 

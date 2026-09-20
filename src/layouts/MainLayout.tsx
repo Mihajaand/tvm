@@ -74,7 +74,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, currentPath, onNaviga
                  <h2 className="font-semibold text-xl tracking-tighter text-primary md:hidden truncate min-w-0">OpenHRApp</h2>
                  <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full border bg-slate-50 text-slate-400 border-slate-100">
                    <Database size={12} />
-                   <span className="text-[9px] font-semibold uppercase tracking-widest">Cloud Node Alpha</span>
+                   <span className="text-[9px] font-semibold uppercase tracking-widest">Cloud Online</span>
                  </div>
               </div>
            </div>

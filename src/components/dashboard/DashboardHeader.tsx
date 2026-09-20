@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Building, Building2, ArrowRight } from 'lucide-react';
 import { Employee, Attendance, AppConfig } from '../../types';
@@ -40,7 +39,9 @@ export const DashboardHeader: React.FC<Props> = ({ user, activeShift, appConfig,
               <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-white animate-ping opacity-75"></div>
             </div>
             <div className="text-left">
-              <p className="text-[9px] font-semibold text-rose-100 uppercase tracking-widest leading-none mb-1">{activeShift.dutyType === 'FACTORY' ? (appConfig?.dutyLabel2 || 'Factory') : (appConfig?.dutyLabel1 || 'Office')} Session Active</p>
+              <p className="text-[9px] font-semibold text-rose-100 uppercase tracking-widest leading-none mb-1">
+                Session {activeShift.dutyType === 'FACTORY' ? (appConfig?.dutyLabel2 || 'Mission') : (appConfig?.dutyLabel1 || 'Bureau')}
+              </p>
               <p className="text-xs font-semibold text-white uppercase">Check Out</p>
             </div>
             <ArrowRight size={16} className="text-rose-200 group-hover:text-white transition-colors ml-2" />
@@ -52,14 +53,14 @@ export const DashboardHeader: React.FC<Props> = ({ user, activeShift, appConfig,
               className="flex items-center justify-center gap-2 px-4 py-3 md:px-5 md:py-4 bg-primary text-white rounded-2xl md:rounded-[1.5rem] shadow-lg shadow-primary-light hover:bg-primary-hover active:scale-95 transition-all"
             >
               <Building size={16} />
-              <span className="text-[10px] font-semibold uppercase tracking-widest">{appConfig?.dutyLabel1 || 'Office'}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest">{appConfig?.dutyLabel1 || 'Bureau'}</span>
             </button>
             <button
               onClick={() => onNavigate('attendance-quick-factory')}
               className="flex items-center justify-center gap-2 px-4 py-3 md:px-5 md:py-4 bg-primary text-white rounded-2xl md:rounded-[1.5rem] shadow-lg shadow-primary-light hover:bg-primary-hover active:scale-95 transition-all opacity-80"
             >
               <Building2 size={16} />
-              <span className="text-[10px] font-semibold uppercase tracking-widest">{appConfig?.dutyLabel2 || 'Factory'}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest">{appConfig?.dutyLabel2 || 'Mission'}</span>
             </button>
           </div>
         )}

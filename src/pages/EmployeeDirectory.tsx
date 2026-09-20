@@ -554,12 +554,12 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-3xl font-semibold text-slate-900 tracking-tight">
-              {isAdmin ? 'Organization Directory' : (isManager ? 'My Team & Reports' : 'My Teammates')}
+              {isAdmin ? 'Annuaire de l’organisation' : (isManager ? 'Mon équipe et mes collaborateurs' : 'Mes collègues d’équipe')}
             </h1>
             <HelpButton helpPointId="employees.directory" />
           </div>
           <p className="text-sm text-slate-500 font-medium tracking-tight">
-            {isAdmin ? `Managing ${employees.length} personnel accounts.` : `Viewing ${employees.length} members within your scope.`}
+            {isAdmin ? `Gestion de ${employees.length} comptes de personnel.` : `Visualisation de ${employees.length} membres dans votre périmètre.`}
           </p>
         </div>
         {isAdmin && (
@@ -598,8 +598,8 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
               }`}
             >
               <UserPlus size={16} />
-              <span className="hidden sm:inline">Provision New User</span>
-              <span className="sm:hidden">New User</span>
+              <span className="hidden sm:inline">Provisionner un nouvel utilisateur</span>
+              <span className="sm:hidden">Nouvel utilisateur</span>
             </button>
           </div>
         )}
@@ -609,11 +609,11 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 animate-in slide-in-from-top-2 duration-300">
           <div className="flex items-center justify-between mb-3 px-1">
             <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest">
-              Export Departments ({selectedExportDepts.length}/{depts.length})
+              Départements Export ({selectedExportDepts.length}/{depts.length})
             </p>
             <div className="flex gap-4">
-              <button onClick={() => setSelectedExportDepts([...depts])} className="text-[9px] font-semibold uppercase text-indigo-600 hover:underline">Select All</button>
-              <button onClick={() => setSelectedExportDepts([])} className="text-[9px] font-semibold uppercase text-rose-500 hover:underline">Clear All</button>
+              <button onClick={() => setSelectedExportDepts([...depts])} className="text-[9px] font-semibold uppercase text-indigo-600 hover:underline">Tout sélectionner</button>
+              <button onClick={() => setSelectedExportDepts([])} className="text-[9px] font-semibold uppercase text-rose-500 hover:underline">Tout effacer</button>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 p-1">
@@ -633,7 +633,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
           </div>
           {selectedExportDepts.length > 0 && (
             <p className="text-[10px] text-slate-400 mt-3 px-1">
-              {exportData.length} employee{exportData.length !== 1 ? 's' : ''} will be exported
+              {exportData.length} employé{exportData.length !== 1 ? 's' : ''} seront exportés
             </p>
           )}
         </div>
@@ -644,7 +644,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input 
             type="text" 
-            placeholder="Search by name, ID, or designation..."
+            placeholder="Rechercher par nom, ID ou poste..."
             className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold outline-none focus:ring-4 focus:ring-primary-light transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -684,13 +684,13 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                   </p>
                   <div className="flex items-center gap-2 mt-1.5">
                     {!emp.verified && (
-                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700">Unverified</span>
+                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700">Non vérifié</span>
                     )}
                     {emp.status === 'INACTIVE' && (
-                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-rose-100 text-rose-700">Inactive</span>
+                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-rose-100 text-rose-700">Inactif</span>
                     )}
                     {emp.status === 'ON_LEAVE' && (
-                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">On Leave</span>
+                      <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">En congé</span>
                     )}
                   </div>
                 </div>
@@ -715,11 +715,11 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
             {/* Details Grid */}
             <div className="mt-6 grid grid-cols-2 gap-3 flex-1">
               <div className="bg-slate-50/50 p-3 rounded-2xl border border-slate-100/50">
-                <p className="text-[8px] text-slate-400 uppercase font-semibold tracking-widest mb-1">Team</p>
+                <p className="text-[8px] text-slate-400 uppercase font-semibold tracking-widest mb-1">Equipe</p>
                 <p className="text-[9px] font-semibold text-slate-700 truncate">{getTeamName(emp.teamId)}</p>
               </div>
               <div className="bg-slate-50/50 p-3 rounded-2xl border border-slate-100/50">
-                <p className="text-[8px] text-slate-400 uppercase font-semibold tracking-widest mb-1">Department</p>
+                <p className="text-[8px] text-slate-400 uppercase font-semibold tracking-widest mb-1">Département</p>
                 <p className="text-[9px] font-semibold text-slate-700 uppercase truncate">{emp.department || 'N/A'}</p>
               </div>
             </div>
@@ -739,7 +739,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
         {!isLoading && filtered.length === 0 && (
           <div className="col-span-full py-20 text-center space-y-4">
              <AlertCircle size={48} className="mx-auto text-slate-200" />
-             <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">No matching personnel found.</p>
+             <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Aucun membre du personnel correspondant n'a été trouvé.</p>
           </div>
         )}
       </div>
@@ -749,7 +749,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-xl shadow-xl overflow-hidden animate-in zoom-in duration-300">
             <div className="bg-primary p-8 flex justify-between items-center text-white">
-              <h3 className="text-xl font-semibold uppercase tracking-tight">Personnel Profile</h3>
+              <h3 className="text-xl font-semibold uppercase tracking-tight">Profil du personnel</h3>
               <button onClick={() => setShowViewModal(null)} className="hover:bg-white/10 p-2 rounded-xl transition-all"><X size={28} /></button>
             </div>
             <div className="p-10 space-y-10 max-h-[80vh] overflow-y-auto no-scrollbar">
@@ -768,26 +768,26 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100 space-y-1">
-                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Hash size={12} className="text-primary" /> Employee ID</p>
+                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Hash size={12} className="text-primary" /> ID Employé</p>
                    <p className="font-semibold text-slate-700">{showViewModal.employeeId}</p>
                 </div>
                 <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100 space-y-1">
-                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Building2 size={12} className="text-primary" /> Department</p>
+                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Building2 size={12} className="text-primary" /> Département</p>
                    <p className="font-semibold text-slate-700">{showViewModal.department}</p>
                 </div>
                 <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100 space-y-1">
-                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Mail size={12} className="text-primary" /> Work Email</p>
+                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Mail size={12} className="text-primary" /> Email professionnel</p>
                    <p className="font-semibold text-slate-700 truncate">{showViewModal.email}</p>
                 </div>
                 <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100 space-y-1">
-                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Users size={12} className="text-primary" /> Team Name</p>
+                   <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Users size={12} className="text-primary" /> Nom de l'équipe</p>
                    <p className="font-semibold text-slate-700">{getTeamName(showViewModal.teamId)}</p>
                 </div>
                 {shifts.length > 0 && (
                   <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100 space-y-1 md:col-span-2">
                      <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                       Assigned Shift
+                       Shift Assigné
                      </p>
                      <p className="font-semibold text-slate-700">{getShiftName(showViewModal.shiftId)}</p>
                   </div>
@@ -798,7 +798,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                 onClick={() => setShowViewModal(null)}
                 className="w-full py-5 bg-slate-900 text-white rounded-xl font-semibold uppercase text-[11px] tracking-widest shadow-xl"
               >
-                Close Profile
+                Fermer le profil
               </button>
             </div>
           </div>
@@ -812,7 +812,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
             <div className="bg-primary p-8 flex justify-between items-center text-white">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-white/10 rounded-2xl"><UserPlus size={24}/></div>
-                <h3 className="text-xl font-semibold uppercase tracking-tight">{editingId ? 'Modify Account' : 'Provision Account'}</h3>
+                <h3 className="text-xl font-semibold uppercase tracking-tight">{editingId ? 'Modifier le compte' : 'Provisionner le compte'}</h3>
               </div>
               <button onClick={() => setShowModal(false)} className="hover:bg-white/10 p-2 rounded-xl"><X size={28} /></button>
             </div>
@@ -839,22 +839,22 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                 
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                   <div className="md:col-span-2 space-y-1.5">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Full Name</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Nom complet</label>
                     <input type="text" required className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light" value={formState.name} onChange={e => setFormState({...formState,name:e.target.value})} />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-1"><Hash size={10} /> Official Employee ID</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-1"><Hash size={10} /> ID Employé</label>
                     <input type="text" placeholder="e.g. EMP-2024-001" required className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light border-indigo-100" value={formState.employeeId} onChange={e => setFormState({...formState, employeeId: e.target.value})} />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Access Level</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Niveau d'accès</label>
                     <select className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light" value={formState.role} onChange={e => setFormState({...formState, role: e.target.value as any})}>
-                      <option value="EMPLOYEE">Employee</option>
+                      <option value="EMPLOYEE">Employé</option>
                       <option value="MANAGER">Manager</option>
-                      <option value="TEAM_LEAD">Team Leader</option>
-                      <option value="MANAGEMENT">Management</option>
-                      <option value="HR">HR Specialist</option>
-                      <option value="ADMIN">Administrator</option>
+                      <option value="TEAM_LEAD">Chef d'équipe</option>
+                      <option value="MANAGEMENT">Direction</option>
+                      <option value="HR">Spécialiste RH</option>
+                      <option value="ADMIN">Administrateur</option>
                     </select>
                   </div>
                 </div>
@@ -862,19 +862,19 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Work Email</label>
+                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Email professionnel</label>
                   <input type="email" required disabled={!!editingId} className="w-full px-5 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-bold text-sm outline-none disabled:opacity-50" value={formState.email} onChange={e => setFormState({...formState, email: e.target.value})} />
                 </div>
                 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-1">
-                    <Key size={10} /> {editingId ? 'Reset Password' : 'Initial Password'}
+                    <Key size={10} /> {editingId ? 'Réinitialiser le mot de passe' : 'Mot de passe initial'}
                   </label>
                   <div className="relative">
                     <input 
                       type={showPassword ? "text" : "password"} 
                       required={!editingId} // Required only on creation
-                      placeholder={editingId ? "Leave blank to keep current" : "Set login password"}
+                      placeholder={editingId ? "Laisser vide pour conserver le mot de passe actuel" : "Définir le mot de passe de connexion"}
                       className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light" 
                       value={formState.password} 
                       onChange={e => setFormState({...formState, password: e.target.value})} 
@@ -886,7 +886,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Assigned Team</label>
+                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Équipe assignée</label>
                   <select
                     className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light"
                     value={formState.teamId}
@@ -898,13 +898,13 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                       setFormState({...formState, teamId: selectedTeamId, lineManagerId: leaderId});
                     }}
                   >
-                    <option value="">No Team Assigned</option>
+                    <option value="">Aucune équipe assignée</option>
                     {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                   </select>
                 </div>
                 {shifts.length > 0 && (
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Assigned Shift</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Shift assigné</label>
                     <select
                       className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light"
                       value={formState.shiftId}
@@ -913,13 +913,13 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                         setFormState({...formState, shiftId: e.target.value});
                       }}
                     >
-                      <option value="">No Shift Assigned</option>
+                      <option value="">Aucun shift assigné</option>
                       {shifts.map(s => <option key={s.id} value={s.id}>{s.name} ({s.startTime}-{s.endTime}){s.isDefault ? ' *' : ''}</option>)}
                     </select>
                   </div>
                 )}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Department</label>
+                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Département</label>
                   <select className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light" value={formState.department} onChange={e => setFormState({...formState, department: e.target.value})}>
                     {depts.map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
@@ -933,10 +933,10 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
               </div>
 
               <div className="pt-8 border-t border-slate-50 flex flex-col sm:flex-row gap-4">
-                <button type="button" disabled={isSubmitting} onClick={() => setShowModal(false)} className="flex-1 py-5 bg-slate-100 text-slate-600 rounded-xl font-semibold uppercase text-[11px] tracking-widest">Cancel</button>
+                <button type="button" disabled={isSubmitting} onClick={() => setShowModal(false)} className="flex-1 py-5 bg-slate-100 text-slate-600 rounded-xl font-semibold uppercase text-[11px] tracking-widest">Annuler</button>
                 <button type="submit" disabled={isSubmitting} className="flex-1 py-5 bg-primary text-white rounded-xl font-semibold uppercase text-[11px] tracking-widest shadow-xl flex items-center justify-center gap-3 hover:bg-primary-hover">
                    {isSubmitting ? <RefreshCw className="animate-spin" size={18} /> : <Save size={18} />}
-                   {editingId ? 'Update Profile' : 'Provision User'}
+                   {editingId ? 'Mettre à jour le profil' : 'Provisionner l\'utilisateur'}
                 </button>
               </div>
             </form>
@@ -972,20 +972,20 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
               {confirmAction.type === 'delete' && (
                 <div className="space-y-4">
                   <p className="text-sm text-slate-700 leading-relaxed">
-                    Are you sure you want to permanently delete <strong className="text-slate-900">{confirmAction.employee.name}</strong>?
+                    Êtes-vous sûr de vouloir supprimer définitivement <strong className="text-slate-900">{confirmAction.employee.name}</strong>?
                   </p>
                   <div className="bg-rose-50 border border-rose-100 rounded-2xl p-5 space-y-3">
                     <p className="text-xs font-bold text-rose-700 uppercase tracking-widest">⚠ This action will permanently remove:</p>
                     <ul className="text-xs text-rose-600 space-y-1.5 list-disc pl-4">
-                      <li>The employee's login account and email from the system</li>
-                      <li>All profile data, avatar, and settings</li>
-                      <li>Attendance records tied to this employee</li>
-                      <li>Leave requests and balances</li>
-                      <li>Performance reviews and ratings</li>
-                      <li>Notifications assigned to this user</li>
+                      <li>Le compte de connexion et l'adresse e-mail de l'employé dans le système</li>
+                      <li>Toutes les données de profil, l'avatar et les paramètres</li>
+                      <li>Les relevés de présence associés à cet employé</li>
+                      <li>Les demandes et soldes de congés</li>
+                      <li>Les évaluations de performance et les notations</li>
+                      <li>Les notifications attribuées à cet utilisateur</li>
                     </ul>
                     <p className="text-xs font-semibold text-rose-700 pt-2 border-t border-rose-200">
-                      This is irreversible. No data can be recovered after deletion.
+                      Cette action est irréversible. Aucune donnée ne pourra être récupérée après la suppression.
                     </p>
                   </div>
                 </div>
@@ -993,21 +993,21 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
 
               {confirmAction.type === 'offboard' && (
                 <div className="space-y-4">
-                  <p className="text-sm text-slate-700 leading-relaxed">
-                    Offboard <strong className="text-slate-900">{confirmAction.employee.name}</strong>? Their login access will be revoked immediately.
+                 <p className="text-sm text-slate-700 leading-relaxed">
+                    Procéder au départ de <strong className="text-slate-900">{confirmAction.employee.name}</strong> ? Leur accès sera immédiatement révoqué.
                   </p>
                   <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5 space-y-3">
-                    <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">What offboarding does:</p>
+                    <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">Conséquences du départ :</p>
                     <ul className="text-xs text-amber-600 space-y-1.5 list-disc pl-4">
-                      <li><strong>Revokes login access</strong> — the employee cannot sign in</li>
-                      <li>Sets their account status to Inactive</li>
+                      <li><strong>Révocation de l'accès</strong> — l'employé ne pourra plus se connecter</li>
+                      <li>Statut du compte défini sur « Inactif »</li>
                     </ul>
-                    <p className="text-xs font-bold text-amber-700 uppercase tracking-widest mt-3">What is preserved:</p>
+                    <p className="text-xs font-bold text-amber-700 uppercase tracking-widest mt-3">Éléments conservés :</p>
                     <ul className="text-xs text-amber-600 space-y-1.5 list-disc pl-4">
-                      <li>All attendance records remain intact</li>
-                      <li>All leave history is kept</li>
-                      <li>Performance reviews are preserved</li>
-                      <li>You can reactivate their account at any time</li>
+                      <li>Tous les relevés de présence restent intacts</li>
+                      <li>L'historique des congés est conservé</li>
+                      <li>Les évaluations de performance sont préservées</li>
+                      <li>Vous pouvez réactiver le compte à tout moment</li>
                     </ul>
                   </div>
                 </div>
@@ -1016,11 +1016,11 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
               {confirmAction.type === 'reactivate' && (
                 <div className="space-y-4">
                   <p className="text-sm text-slate-700 leading-relaxed">
-                    Reactivate <strong className="text-slate-900">{confirmAction.employee.name}</strong>'s account? They will be able to log in again.
+                    Réactiver le compte de <strong className="text-slate-900">{confirmAction.employee.name}</strong> ? Ils pourront se connecter à nouveau.
                   </p>
                   <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5">
                     <p className="text-xs text-emerald-700 leading-relaxed">
-                      This restores the employee's login access. Their account status will be set back to <strong>Active</strong>. All historical data (attendance, leaves, reviews) is already preserved and will remain available.
+                      Cela restaure l'accès de connexion de l'employé. Leur statut de compte sera remis à <strong>Actif</strong>. Toutes les données historiques (présence, congés, évaluations) sont déjà préservées et resteront disponibles.
                     </p>
                   </div>
                 </div>
@@ -1033,7 +1033,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                   onClick={handleCancelAction}
                   className="flex-1 py-4 bg-slate-100 text-slate-600 rounded-xl font-semibold uppercase text-[11px] tracking-widest hover:bg-slate-200 transition-all"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="button"
@@ -1052,9 +1052,9 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                     confirmAction.type === 'offboard' ? <UserX size={18} /> :
                     <UserCheck size={18} />
                   )}
-                  {confirmAction.type === 'delete' ? 'Delete Permanently' :
-                   confirmAction.type === 'offboard' ? 'Confirm Offboard' :
-                   'Confirm Reactivation'}
+                 {confirmAction.type === 'delete' ? 'Supprimer définitivement' :
+                   confirmAction.type === 'offboard' ? 'Confirmer le départ' :
+                   'Confirmer la réactivation'}
                 </button>
               </div>
             </div>

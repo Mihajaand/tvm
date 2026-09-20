@@ -25,8 +25,8 @@ interface SetupCheckData {
 const STEPS_CONFIG = [
   {
     id: 1,
-    title: 'Set Company Info',
-    description: 'Add your company name, logo, country, and address',
+    title: 'Définir les informations de l\'entreprise',
+    description: 'Ajoutez le nom de votre entreprise, votre logo, votre pays et votre adresse.',
     navigateTo: 'organization',
     navigateTab: 'SYSTEM',
     tutorialSlug: 'setting-up-organization',
@@ -34,8 +34,8 @@ const STEPS_CONFIG = [
   },
   {
     id: 2,
-    title: 'Add Departments',
-    description: 'Create departments like Engineering, HR, Finance, etc.',
+    title: 'Ajouter des départements',
+    description: 'Créez des départements comme Ingénierie, RH, Finance, etc.',
     navigateTo: 'organization',
     navigateTab: 'STRUCTURE',
     tutorialSlug: 'setting-up-organization',
@@ -43,8 +43,8 @@ const STEPS_CONFIG = [
   },
   {
     id: 3,
-    title: 'Configure Shifts',
-    description: 'Set up work shifts with start/end times and grace periods',
+    title: 'Configurer les équipes',
+    description: 'Configurez les équipes avec des leaders d\'équipe',
     navigateTo: 'organization',
     navigateTab: 'SHIFTS',
     tutorialSlug: 'setting-up-organization',
@@ -52,8 +52,8 @@ const STEPS_CONFIG = [
   },
   {
     id: 4,
-    title: 'Add Office Locations',
-    description: 'Add GPS coordinates for your offices for attendance verification',
+    title: 'Ajouter la localisation des bureaux',
+    description: 'Ajoutez les coordonnées GPS de vos bureaux pour la vérification de la présence',
     navigateTo: 'organization',
     navigateTab: 'PLACEMENT',
     tutorialSlug: 'setting-up-organization',
@@ -61,8 +61,8 @@ const STEPS_CONFIG = [
   },
   {
     id: 5,
-    title: 'Create Teams',
-    description: 'Organize employees into teams with team leaders',
+    title: 'Créer des équipes',
+    description: 'Organisez les employés en équipes avec des leaders d\'équipe',
     navigateTo: 'organization',
     navigateTab: 'TEAMS',
     tutorialSlug: 'setting-up-organization',
@@ -70,8 +70,8 @@ const STEPS_CONFIG = [
   },
   {
     id: 6,
-    title: 'Set Leave Policy',
-    description: 'Configure default leave allocations (Annual, Casual, Sick)',
+    title: 'Définir la politique de congés',
+    description: 'Configurez les allocations de congés par défaut (Annuel, Exceptionnel, Maladie)',
     navigateTo: 'organization',
     navigateTab: 'LEAVES',
     tutorialSlug: 'understanding-leave-policies',
@@ -82,8 +82,8 @@ const STEPS_CONFIG = [
   },
   {
     id: 7,
-    title: 'Add Holidays',
-    description: 'Set up your organization\'s holiday calendar',
+    title: 'Ajouter des jours fériés',
+    description: 'Configurez le calendrier des jours fériés de votre organisation',
     navigateTo: 'organization',
     navigateTab: 'HOLIDAYS',
     tutorialSlug: 'setting-up-organization',
@@ -91,8 +91,8 @@ const STEPS_CONFIG = [
   },
   {
     id: 8,
-    title: 'Add Employees',
-    description: 'Invite your team members to start using OpenHRApp',
+    title: 'Ajouter des employés',
+    description: 'Invitez les membres de votre équipe à commencer à utiliser l\'application',
     navigateTo: 'employees',
     tutorialSlug: 'managing-employees',
     check: (d: SetupCheckData) => d.employeeCount > 1,

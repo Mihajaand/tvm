@@ -42,7 +42,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
   useEffect(() => {
     updatePageMeta(
       'Blog | OpenHRApp',
-      'Latest news, updates, and insights about HR management, employee engagement, and OpenHRApp product updates.',
+      'Dernières actualités, mises à jour et conseils sur la gestion des ressources humaines, l’engagement des employés et les nouveautés d’OpenHRApp.',
       'https://openhrapp.com/blog'
     );
     setJsonLd({
@@ -50,8 +50,8 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
       '@graph': [
         {
           '@type': 'CollectionPage',
-          name: 'OpenHRApp Blog',
-          description: 'Latest news, updates, and insights about HR management, employee engagement, and OpenHRApp product updates.',
+          name: 'Blog OpenHRApp',
+          description: 'Dernières actualités, mises à jour et conseils sur la gestion des ressources humaines, l’engagement des employés et les nouveautés d’OpenHRApp.',
           url: 'https://openhrapp.com/blog',
           isPartOf: {
             '@type': 'WebSite',
@@ -62,7 +62,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
         {
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://openhrapp.com/' },
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://openhrapp.com/' },
             { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://openhrapp.com/blog' },
           ],
         },
@@ -91,14 +91,14 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
         '@graph': [
           {
             '@type': 'CollectionPage',
-            name: 'OpenHRApp Blog',
-            description: 'Latest news, updates, and insights about HR management, employee engagement, and OpenHRApp product updates.',
+            name: 'Blog OpenHRApp',
+            description: 'Dernières actualités, mises à jour et conseils sur la gestion des ressources humaines, l’engagement des employés et les nouveautés d’OpenHRApp.',
             url: 'https://openhrapp.com/blog',
             isPartOf: { '@type': 'WebSite', name: 'OpenHRApp', url: 'https://openhrapp.com' },
           },
           {
             '@type': 'ItemList',
-            name: 'OpenHRApp Blog Posts',
+            name: 'Articles du blog OpenHRApp',
             url: 'https://openhrapp.com/blog',
             numberOfItems: data.posts.length,
             itemListElement: data.posts.map((post, i) => ({
@@ -111,7 +111,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
           {
             '@type': 'BreadcrumbList',
             itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://openhrapp.com/' },
+              { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://openhrapp.com/' },
               { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://openhrapp.com/blog' },
             ],
           },
@@ -153,31 +153,31 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
 
   return (
     <div className="min-h-screen bg-dl-ground flex flex-col">
-      {/* Navbar */}
+      {/* Barre de navigation */}
       <BlogNavbar onBack={onBack} onRegisterClick={onRegisterClick} />
 
-      {/* Header */}
+      {/* En-tête */}
       <div className="bg-dl-surface border-b border-dl-hair-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
           <h1 className="text-4xl font-semibold text-dl-ink tracking-tight">Blog</h1>
-          <p className="text-dl-muted mt-3 text-lg">Latest news, updates, and insights</p>
+          <p className="text-dl-muted mt-3 text-lg">Dernières actualités, mises à jour et conseils</p>
         </div>
       </div>
 
-      {/* Ad - Blog Header */}
+      {/* Publicité - En-tête du blog */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex justify-center">
         <PublicAdBanner slot="blog-header" />
       </div>
 
-      {/* Active Filter Banner */}
+      {/* Bannière de filtre actif */}
       {(selectedArchive || selectedCategory) && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <div className="bg-dl-teal/5 border border-dl-teal/15 rounded-dl-md px-4 py-3 flex items-center justify-between">
             <p className="text-sm text-dl-teal font-semibold">
-              Filtering by:{' '}
+              Filtré par :{' '}
               {selectedArchive && (
                 <span className="inline-flex items-center gap-1 bg-dl-teal/10 px-2 py-0.5 rounded-full text-xs mr-2">
-                  {new Date(selectedArchive.year, selectedArchive.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  {new Date(selectedArchive.year, selectedArchive.month).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
                 </span>
               )}
               {selectedCategory && (
@@ -190,17 +190,17 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
               onClick={() => { setSelectedArchive(null); setSelectedCategory(null); }}
               className="text-xs font-bold text-dl-teal hover:text-dl-teal-deep transition-colors"
             >
-              Clear all
+              Tout effacer
             </button>
           </div>
         </div>
       )}
 
-      {/* Content with Sidebar */}
+      {/* Contenu avec barre latérale */}
       <div className="flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Main Content */}
+            {/* Contenu principal */}
             <div className="flex-1 min-w-0">
               {isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -213,15 +213,15 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
                 <div className="text-center py-20">
                   <p className="text-dl-muted text-lg">
                     {selectedArchive || selectedCategory
-                      ? 'No posts found for this filter. Try a different selection.'
-                      : 'No posts published yet. Check back soon!'}
+                      ? 'Aucun article trouvé pour ce filtre. Essayez une autre sélection.'
+                      : 'Aucun article publié pour le moment. Revenez bientôt !'}
                   </p>
                   {(selectedArchive || selectedCategory) && (
                     <button
                       onClick={() => { setSelectedArchive(null); setSelectedCategory(null); }}
                       className="mt-4 px-5 py-2.5 bg-dl-teal text-dl-surface rounded-dl-md font-bold text-sm hover:bg-dl-teal-deep transition-all"
                     >
-                      Clear Filters
+                      Effacer les filtres
                     </button>
                   )}
                 </div>
@@ -262,11 +262,11 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
                             <span className="flex items-center gap-1">
                               <Calendar size={12} />
                               {post.publishedAt
-                                ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                                : new Date(post.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                ? new Date(post.publishedAt).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })
+                                : new Date(post.created).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}
                             </span>
                             <span className="flex items-center gap-1">
-                              <Clock size={12} /> {post.readingTime ? `${post.readingTime} min read` : getReadingTime(post.content)}
+                              <Clock size={12} /> {post.readingTime ? `${post.readingTime} min de lecture` : `${getReadingTime(post.content)} min de lecture`}
                             </span>
                           </div>
                         </div>
@@ -274,7 +274,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
                     ))}
                   </div>
 
-                  {/* Ad - Blog Feed */}
+                  {/* Publicité - Flux du blog */}
                   <div className="mt-10 flex justify-center">
                     <PublicAdBanner slot="blog-feed" />
                   </div>
@@ -287,17 +287,17 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
                         disabled={page === 1}
                         className="px-5 py-2.5 bg-dl-surface border border-dl-hair rounded-dl-md font-bold text-sm text-dl-muted hover:bg-dl-ground disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                       >
-                        Previous
+                        Précédent
                       </button>
                       <span className="text-sm text-dl-muted">
-                        Page {page} of {totalPages}
+                        Page {page} sur {totalPages}
                       </span>
                       <button
                         onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                         disabled={page === totalPages}
                         className="px-5 py-2.5 bg-dl-surface border border-dl-hair rounded-dl-md font-bold text-sm text-dl-muted hover:bg-dl-ground disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                       >
-                        Next
+                        Suivant
                       </button>
                     </div>
                   )}
@@ -305,7 +305,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
               )}
             </div>
 
-            {/* Right Sidebar */}
+            {/* Barre latérale droite */}
             <div className="lg:w-80 flex-shrink-0">
               <div className="lg:sticky lg:top-24">
                 <BlogSidebar
@@ -320,7 +320,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ onBack, onRegisterClick }) => {
         </div>
       </div>
 
-      {/* Footer */}
+      {/* Pied de page */}
       <BlogFooter />
     </div>
   );

@@ -1,13 +1,16 @@
 import React from 'react';
+
 import { RefreshCw, X } from 'lucide-react';
+
 import { useServiceWorker } from '../hooks/useServiceWorker';
 
 export const PWAUpdateBanner: React.FC = () => {
-  const { needRefresh, offlineReady, applyUpdate, isUpdating, close } = useServiceWorker();
 
-  if (!needRefresh && !offlineReady) return null;
+const { needRefresh, offlineReady, applyUpdate, isUpdating, close } = useServiceWorker();
 
-  return (
+if (!needRefresh && !offlineReady) return null;
+
+return (
     <div className="fixed bottom-20 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-96 z-[100] animate-in slide-in-from-bottom-4">
       <div className="bg-white border border-slate-200 rounded-2xl shadow-xl p-4 flex items-center gap-4">
         <div className="p-2.5 bg-primary/10 rounded-xl flex-shrink-0">
@@ -15,14 +18,14 @@ export const PWAUpdateBanner: React.FC = () => {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs font-bold text-slate-800 tracking-tight">
-            {isUpdating ? 'Updating…' : needRefresh ? 'App Update Available' : 'Ready for Offline Use'}
+            {isUpdating ? 'Mise à jour en cours…' : needRefresh ? 'Mise à jour disponible' : 'Prêt pour une utilisation hors ligne'}
           </p>
           <p className="text-[10px] text-slate-500 mt-0.5">
             {isUpdating
-              ? 'Installing update, page will reload shortly.'
+              ? 'Installation de la mise à jour, la page va bientôt se recharger.'
               : needRefresh
-              ? 'A new version is ready. Update to get the latest features.'
-              : 'App has been cached and works offline.'}
+              ? 'Une nouvelle version est prête. Mettez à jour pour profiter des dernières fonctionnalités.'
+              : "L'application est en cache et fonctionne hors ligne."}
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -31,14 +34,14 @@ export const PWAUpdateBanner: React.FC = () => {
               onClick={applyUpdate}
               className="px-3 py-1.5 bg-primary text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-primary-hover transition-colors"
             >
-              Update
+              Mettre à jour
             </button>
           )}
           {!isUpdating && (
             <button
               onClick={close}
               className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
-              title="Dismiss"
+              title="Fermer"
             >
               <X size={14} />
             </button>

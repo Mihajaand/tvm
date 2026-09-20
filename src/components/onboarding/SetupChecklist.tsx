@@ -56,14 +56,14 @@ const StepItem: React.FC<{
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
             {status === 'completed' && (
-              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Done</span>
+              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Fait</span>
             )}
             {status === 'current' && (
               <button
                 onClick={onGo}
                 className="flex items-center gap-1 px-2.5 py-1 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-hover transition-all active:scale-95"
               >
-                Go <ArrowRight size={12} />
+                Configurer <ArrowRight size={12} />
               </button>
             )}
             <button
@@ -101,8 +101,8 @@ const SetupChecklist: React.FC<Props> = ({ user, onNavigate }) => {
           <BookOpen size={16} className="text-primary" />
         </div>
         <div className="text-left flex-1">
-          <p className="text-sm font-semibold text-slate-600 group-hover:text-primary transition-colors">Show Setup Guide</p>
-          <p className="text-[10px] text-slate-400">Reopen the step-by-step organization setup checklist</p>
+          <p className="text-sm font-semibold text-slate-600 group-hover:text-primary transition-colors">Afficher le guide </p>
+          <p className="text-[10px] text-slate-400">Rouvrir la liste de contrôle étape par étape pour la configuration de l'organisation</p>
         </div>
         <RotateCcw size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
       </button>
@@ -143,10 +143,10 @@ const SetupChecklist: React.FC<Props> = ({ user, onNavigate }) => {
           </div>
           <div>
             <h3 className="text-sm font-bold text-slate-900">
-              {allComplete ? 'Setup Complete!' : 'Set Up Your Organization'}
+              {allComplete ? 'Configuration terminée !' : 'Configurez votre organisation'}
             </h3>
             <p className="text-xs text-slate-500">
-              {allComplete ? 'Your organization is fully configured.' : 'Complete these steps to get your team started'}
+              {allComplete ? 'C\'est entièrement configurée.' : 'Suivez ces étapes pour lancer votre équipe.'}
             </p>
           </div>
         </div>
@@ -171,13 +171,13 @@ const SetupChecklist: React.FC<Props> = ({ user, onNavigate }) => {
           {allComplete ? (
             <div className="text-center py-4">
               <p className="text-sm text-emerald-700 font-medium mb-3">
-                All {totalCount} steps completed. Your organization is ready to go!
+                Toutes les {totalCount} étapes sont terminées. Votre organisation est prête à démarrer !
               </p>
               <button
                 onClick={dismiss}
                 className="text-xs text-slate-400 hover:text-slate-600 underline transition-colors"
               >
-                Hide this checklist
+                Masquer la liste de contrôle
               </button>
             </div>
           ) : (
@@ -193,13 +193,13 @@ const SetupChecklist: React.FC<Props> = ({ user, onNavigate }) => {
               ))}
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  {completedCount} of {totalCount} complete
+                 {completedCount} sur {totalCount} terminés
                 </p>
                 <button
                   onClick={dismiss}
                   className="text-[10px] text-slate-400 hover:text-slate-600 underline transition-colors"
                 >
-                  Don't show this again
+                  Ne plus afficher ceci
                 </button>
               </div>
             </>
@@ -224,7 +224,7 @@ export const ReEnableSetupGuide: React.FC<{ userRole: string }> = ({ userRole })
       className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition-all"
     >
       <RotateCcw size={14} />
-      Re-enable Setup Guide
+     Réactiver le guide de configuration
     </button>
   );
 };

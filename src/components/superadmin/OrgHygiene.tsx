@@ -140,10 +140,10 @@ const OrgHygienePanel: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <ShieldAlert size={20} className="text-primary" />
-            <h3 className="text-xl font-semibold text-slate-900">Organization Review</h3>
+            <h3 className="text-xl font-semibold text-slate-900">Revue des Organisations</h3>
           </div>
           <p className="text-xs font-bold text-slate-400 mt-1">
-            Signals that separate real customers from signup-form residue. Nothing is deleted automatically.
+            Des signaux qui distinguent les véritables clients des résidus de formulaires d'inscription. Rien n'est supprimé automatiquement.
           </p>
         </div>
         <button
@@ -179,7 +179,7 @@ const OrgHygienePanel: React.FC = () => {
           <Search size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
           <input
             type="text"
-            placeholder="Search by organization, admin email or country"
+            placeholder="Rechercher par organisation, e-mail de l'administrateur ou pays"
             className="w-full pl-12 pr-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -192,18 +192,18 @@ const OrgHygienePanel: React.FC = () => {
             value={riskFilter}
             onChange={e => setRiskFilter(e.target.value as RiskLevel | '')}
           >
-            <option value="">All risk levels</option>
-            <option value="HIGH">High risk</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="LOW">Low</option>
-            <option value="HEALTHY">Healthy</option>
+            <option value="">Tous les niveaux de risque</option>
+            <option value="HIGH">Risque élevé</option>
+            <option value="MEDIUM">Moyen</option>
+            <option value="LOW">Faible</option>
+            <option value="HEALTHY">Sain</option>
           </select>
 
           <button
             onClick={selectAllHighRisk}
             className="px-4 py-3 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs hover:bg-slate-200 transition-colors"
           >
-            Select high-risk with no data
+            Sélectionner les risques élevés sans données
           </button>
 
           {selected.size > 0 && (
@@ -212,13 +212,13 @@ const OrgHygienePanel: React.FC = () => {
                 onClick={() => setSelected(new Set())}
                 className="px-4 py-3 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs hover:bg-slate-200 transition-colors"
               >
-                Clear ({selected.size})
+                Effacer ({selected.size})
               </button>
               <button
                 onClick={() => setConfirmOpen(true)}
                 className="px-5 py-3 bg-rose-600 text-white rounded-2xl font-bold text-xs hover:bg-rose-700 transition-colors flex items-center gap-2"
               >
-                <Trash2 size={14} /> Delete {selected.size} permanently
+                <Trash2 size={14} /> Supprimer définitivement {selected.size}
               </button>
             </>
           )}
@@ -233,7 +233,7 @@ const OrgHygienePanel: React.FC = () => {
       )}
 
       {isLoading && (
-        <p className="text-center py-12 text-xs font-bold text-slate-400 uppercase tracking-widest">Reviewing…</p>
+        <p className="text-center py-12 text-xs font-bold text-slate-400 uppercase tracking-widest">Examen en cours…</p>
       )}
 
       {/* Rows */}
@@ -268,23 +268,23 @@ const OrgHygienePanel: React.FC = () => {
                       </span>
                       {r.isDemo && (
                         <span className="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700 text-[9px] font-bold uppercase tracking-wide">
-                          Demo — protected
+                         Démo — protégée
                         </span>
                       )}
                       {r.hasRealData && !r.isDemo && (
                         <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[9px] font-bold uppercase tracking-wide">
-                          Has real data
+                          A des données réelles
                         </span>
                       )}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mt-1 text-[10px] font-bold text-slate-400">
                       <span>{r.userCount} user{r.userCount === 1 ? '' : 's'}</span>
                       <span className="text-slate-300">|</span>
-                      <span>{r.attendanceCount} attendance</span>
+                      <span>{r.attendanceCount} présence</span>
                       <span className="text-slate-300">|</span>
-                      <span>{r.leaveCount} leave</span>
+                      <span>{r.leaveCount} Congé</span>
                       <span className="text-slate-300">|</span>
-                      <span>joined {fmtDate(r.created)}</span>
+                      <span>rejoint {fmtDate(r.created)}</span>
                       {r.adminEmail && (
                         <>
                           <span className="text-slate-300">|</span>
@@ -306,7 +306,7 @@ const OrgHygienePanel: React.FC = () => {
                     {r.flags.length === 0 ? (
                       <div className="flex items-center gap-2 text-emerald-700">
                         <CheckCircle2 size={14} />
-                        <p className="text-xs font-bold">No warnings — this looks like a real, active organization.</p>
+                        <p className="text-xs font-bold">Aucun avertissement — cela semble être une organisation réelle et active.</p>
                       </div>
                     ) : (
                       <ul className="space-y-2">
@@ -322,10 +322,10 @@ const OrgHygienePanel: React.FC = () => {
                       </ul>
                     )}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      <div><p className="text-slate-700 text-sm normal-case tracking-normal">{r.country || '—'}</p>Country</div>
-                      <div><p className="text-slate-700 text-sm normal-case tracking-normal">{r.subscription || '—'}</p>Plan</div>
-                      <div><p className="text-slate-700 text-sm normal-case tracking-normal">{fmtDate(r.lastActivity)}</p>Last activity</div>
-                      <div><p className="text-slate-700 text-sm normal-case tracking-normal">{r.settingsCount}</p>Settings saved</div>
+                     <div><p className="text-slate-700 text-sm normal-case tracking-normal">{r.country || '—'}</p>Pays</div>
+                      <div><p className="text-slate-700 text-sm normal-case tracking-normal">{r.subscription || '—'}</p>Formule</div>
+                      <div><p className="text-slate-700 text-sm normal-case tracking-normal">{fmtDate(r.lastActivity)}</p>Dernière activité</div>
+                      <div><p className="text-slate-700 text-sm normal-case tracking-normal">{r.settingsCount}</p>Paramètres enregistrés</div>
                     </div>
                   </div>
                 )}
@@ -334,7 +334,7 @@ const OrgHygienePanel: React.FC = () => {
           })}
 
           {filtered.length === 0 && (
-            <p className="text-center py-12 text-xs font-bold text-slate-400">No organizations match these filters.</p>
+            <p className="text-center py-12 text-xs font-bold text-slate-400">Aucune organisation ne correspond à ces filtres.</p>
           )}
         </div>
       )}
@@ -346,7 +346,7 @@ const OrgHygienePanel: React.FC = () => {
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-2">
                 <Trash2 size={18} className="text-rose-600" />
-                <h4 className="text-lg font-semibold text-slate-900">Delete permanently</h4>
+                <h4 className="text-lg font-semibold text-slate-900">Supprimer définitivement</h4>
               </div>
               {!isDeleting && (
                 <button onClick={() => { setConfirmOpen(false); setConfirmText(''); }} aria-label="Cancel">
@@ -356,9 +356,9 @@ const OrgHygienePanel: React.FC = () => {
             </div>
 
             <p className="text-xs font-bold text-slate-500">
-              This removes {selectedRows.length} organization{selectedRows.length === 1 ? '' : 's'} and
-              everything belonging to them — employees, attendance, leave records and login accounts.
-              It cannot be undone. Each deletion is written to the audit trail first.
+              Cela supprime {selectedRows.length} organisation{selectedRows.length === 1 ? '' : 's'} ainsi que
+              tout ce qui s'y rattache : employés, données de présence, dossiers de congés et comptes de connexion.
+              Cette action est irréversible. Chaque suppression est d'abord consignée dans la piste d'audit.
             </p>
 
             {selectedWithData.length > 0 && (
@@ -366,16 +366,16 @@ const OrgHygienePanel: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <AlertTriangle size={14} className="text-rose-600" />
                   <p className="text-xs font-bold text-rose-700">
-                    {selectedWithData.length} of these hold real data
+                    {selectedWithData.length} d'entre eux contiennent des données réelles
                   </p>
                 </div>
                 <ul className="text-[11px] font-bold text-rose-600 space-y-0.5">
                   {selectedWithData.slice(0, 6).map(o => (
                     <li key={o.id}>
-                      {o.name} — {o.userCount} users, {o.attendanceCount} attendance, {o.leaveCount} leave
+                      {o.name} — {o.userCount} utilisateurs, {o.attendanceCount} présences, {o.leaveCount} absences
                     </li>
                   ))}
-                  {selectedWithData.length > 6 && <li>…and {selectedWithData.length - 6} more</li>}
+                  {selectedWithData.length > 6 && <li>…et {selectedWithData.length - 6} autres</li>}
                 </ul>
               </div>
             )}
@@ -388,7 +388,7 @@ const OrgHygienePanel: React.FC = () => {
 
             <div className="space-y-2">
               <label htmlFor="confirm-delete" className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                Type <span className="text-rose-600">{confirmPhrase}</span> to confirm
+                Tapez <span className="text-rose-600">{confirmPhrase}</span> pour confirmer
               </label>
               <input
                 id="confirm-delete"
@@ -403,7 +403,7 @@ const OrgHygienePanel: React.FC = () => {
 
             {progress && (
               <p className="text-xs font-bold text-slate-500 tabular-nums">
-                Deleting {progress.done} of {progress.total}…
+                Suppression de {progress.done} sur {progress.total}…
               </p>
             )}
 
@@ -413,7 +413,7 @@ const OrgHygienePanel: React.FC = () => {
                 disabled={isDeleting}
                 className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-colors disabled:opacity-50"
               >
-                Cancel
+                Annuler
               </button>
               <button
                 onClick={runDelete}

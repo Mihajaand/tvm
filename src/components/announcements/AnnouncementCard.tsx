@@ -97,7 +97,7 @@ export const AnnouncementCard: React.FC<Props> = ({
               onClick={() => setExpanded(!expanded)}
               className="mt-1 text-xs font-medium text-primary hover:text-primary-hover flex items-center gap-0.5"
             >
-              {expanded ? <>Show less <ChevronUp size={12} /></> : <>Read more <ChevronDown size={12} /></>}
+              {expanded ? <>Afficher moins <ChevronUp size={12} /></> : <>Voir plus <ChevronDown size={12} /></>}
             </button>
           )}
         </div>

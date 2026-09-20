@@ -111,8 +111,8 @@ const Turnstile: React.FC<Props> = ({ onVerify, resetSignal = 0, className = '' 
 
   if (loadError) {
     return (
-      <p className={`text-[11px] font-bold text-rose-500 ${className}`}>
-        Could not load the anti-spam check. Please disable any content blocker and reload.
+     <p className={`text-[11px] font-bold text-rose-500 ${className}`}>
+        Impossible de charger la vérification anti-spam. Veuillez désactiver tout bloqueur de contenu et recharger la page.
       </p>
     );
   }

@@ -40,7 +40,7 @@ export const AdminDashboard: React.FC<Props> = ({ data, isLoading, onNavigate })
       <div className="space-y-2">
         {/* Row 1 — Management */}
         <div>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Management</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Gestion et maintenance</p>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 p-1 bg-slate-100 rounded-xl">
             <button
               onClick={() => onNavigate('attendance-audit')}
@@ -52,13 +52,13 @@ export const AdminDashboard: React.FC<Props> = ({ data, isLoading, onNavigate })
               onClick={() => onNavigate('leave')}
               className="py-3 px-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 hover:bg-white"
             >
-              <CalendarDays size={16} /> <span className="truncate">Leave</span>
+              <CalendarDays size={16} /> <span className="truncate">Congé</span>
             </button>
             <button
               onClick={() => onNavigate('employees')}
               className="py-3 px-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 hover:bg-white"
             >
-              <Users size={16} /> <span className="truncate">Directory</span>
+              <Users size={16} /> <span className="truncate">Annuaire</span>
             </button>
             <button
               onClick={() => onNavigate('organization')}
@@ -70,31 +70,31 @@ export const AdminDashboard: React.FC<Props> = ({ data, isLoading, onNavigate })
               onClick={() => onNavigate('reports')}
               className="py-3 px-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 hover:bg-white"
             >
-              <BarChart3 size={16} /> <span className="truncate">Reports</span>
+              <BarChart3 size={16} /> <span className="truncate">Rapports</span>
             </button>
           </div>
         </div>
         {/* Row 2 — Personal */}
         <div>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Personal</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">informations personnelles</p>
           <div className="grid grid-cols-3 gap-2 p-1 bg-slate-100 rounded-xl">
             <button
               onClick={() => onNavigate('attendance-logs')}
               className="py-3 px-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 hover:bg-white"
             >
-              <History size={16} /> <span className="truncate">Attendance</span>
+              <History size={16} /> <span className="truncate">Présence</span>
             </button>
             <button
               onClick={() => onNavigate('profile')}
               className="py-3 px-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 hover:bg-white"
             >
-              <UserCircle size={16} /> <span className="truncate">Profile</span>
+              <UserCircle size={16} /> <span className="truncate">Profil</span>
             </button>
             <button
               onClick={() => onNavigate('settings')}
               className="py-3 px-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-700 hover:bg-white"
             >
-              <Settings size={16} /> <span className="truncate">Settings</span>
+              <Settings size={16} /> <span className="truncate">Paramètres</span>
             </button>
           </div>
         </div>
@@ -105,7 +105,7 @@ export const AdminDashboard: React.FC<Props> = ({ data, isLoading, onNavigate })
           {/* Leave Allocation Card - Identical to Manager for now, but separated for future extensibility */}
           <div className="bg-white rounded-xl border border-slate-100 shadow-xl overflow-hidden animate-in slide-in-from-bottom-4">
             <div className="bg-primary p-8 pb-12 relative overflow-hidden flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-white tracking-tight mt-4">Leave Allocation</h2>
+              <h2 className="text-2xl font-semibold text-white tracking-tight mt-4">Congé indemnisé</h2>
               <ShieldCheck className="text-white/20 absolute -right-4 -bottom-4 w-32 h-32" />
             </div>
             
@@ -121,14 +121,14 @@ export const AdminDashboard: React.FC<Props> = ({ data, isLoading, onNavigate })
                 </div>
 
                 <p className="text-center text-sm text-slate-500 font-medium">
-                  You have <span className="font-semibold text-slate-900">{totalRemaining} total days</span> remaining for the current fiscal year.
+                  Il vous reste <span className="font-semibold text-slate-900">{totalRemaining} jours au total</span> pour l'année en cours.
                 </p>
 
                 <button 
                   onClick={() => onNavigate('leave', { autoOpen: true })}
                   className="w-full py-5 bg-primary text-white rounded-2xl font-semibold uppercase tracking-widest text-xs flex items-center justify-center gap-3 shadow-xl shadow-primary-light hover:bg-primary-hover transition-all active:scale-95"
                 >
-                  <Plus size={18} /> Apply for Leave
+                  <Plus size={18} /> Demander un congé
                 </button>
               </div>
             </div>
@@ -145,15 +145,15 @@ export const AdminDashboard: React.FC<Props> = ({ data, isLoading, onNavigate })
                 <Users size={24} />
               </div>
               <div>
-                <h4 className="font-semibold text-slate-900 leading-none">Global Directory</h4>
+                <h4 className="font-semibold text-slate-900 leading-none">Annuaire global</h4>
                 <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
-                  Organization-wide
+                  Organisation
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-xs font-semibold text-emerald-600">{data.activeTeamMembers} Active</p>
-              <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">Out of {data.teamMembersCount}</p>
+              <p className="text-xs font-semibold text-emerald-600">{data.activeTeamMembers} Actif</p>
+              <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">Sur {data.teamMembersCount}</p>
             </div>
           </div>
 
