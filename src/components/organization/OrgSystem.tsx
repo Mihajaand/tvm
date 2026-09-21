@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Globe, Moon, MapPin, Building2, Tag, Sparkles } from 'lucide-react';
 import { AppConfig } from '../../types';
@@ -19,16 +18,16 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
   const { showToast } = useToast();
   const { user } = useAuth();
   /**
-   * The Organization page is reachable by ADMIN and HR (Sidebar.tsx). Agreeing to publish the
-   * company's name and trademark is not an HR-clerk decision, so the showcase block below is
-   * gated more narrowly than the tab around it. The database trigger enforces the same rule.
+   * La page Organisation est accessible aux rôles ADMIN et RH (Sidebar.tsx). Accepter de publier le
+   * nom et la marque de l'entreprise n'est pas une décision relevant d'un employé RH, donc le bloc de vitrine ci-dessous
+   * est restreint de manière plus stricte que l'onglet qui l'entoure. Le déclencheur (trigger) de la base de données applique la même règle.
    */
   const isOrgAdmin = user?.role === 'ADMIN';
   const [orgData, setOrgData] = useState({ name: '', country: 'BD', address: '', logo: '', showOnLanding: false });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  /** False when the schema predates migration 0024 — hide the control rather than offer a save that fails. */
+  /** Faux si le schéma est antérieur à la migration 0024 — masque le contrôle plutôt que de proposer un enregistrement voué à l'échec. */
   const [consentSupported, setConsentSupported] = useState(true);
 
   useEffect(() => {
@@ -36,11 +35,11 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
       const orgId = apiClient.getOrganizationId();
       if (!orgId) return;
       /**
-       * `show_on_landing` arrives in migration 0024. A deployment that has not run it yet —
-       * a self-hosted install on an older schema, or this branch before `supabase db push` —
-       * would otherwise get a 42703 on the whole select and render an empty form, losing the
-       * name, country, address and logo along with the column it was actually missing. Fall
-       * back to the pre-0024 column list and treat consent as not given.
+       * `show_on_landing` apparaît avec la migration 0024. Un déploiement qui ne l'a pas encore exécutée —
+       * une installation auto-hébergée sur un schéma plus ancien, ou cette branche avant `supabase db push` —
+       * renverrait sinon une erreur 42703 sur l'ensemble du select et afficherait un formulaire vide, perdant le
+       * nom, le pays, l'adresse et le logo en plus de la colonne manquante. Repli sur la liste des colonnes
+       * pré-0024 et considération du consentement comme non donné.
        */
       let { data: org, error } = await supabase
         .from('organizations')
@@ -81,11 +80,11 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        showToast("Logo file size must be less than 2MB.", 'error');
+        showToast("La taille du fichier du logo doit être inférieure à 2 Mo.", 'error');
         return;
       }
       if (!file.type.startsWith('image/')) {
-        showToast("Logo must be an image file.", 'error');
+        showToast("Le logo doit être un fichier image.", 'error');
         return;
       }
       setLogoFile(file);
@@ -119,15 +118,15 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
           country: orgData.country,
           address: orgData.address,
           logo: logoPath,
-          // Only an ADMIN may send this. HR sees no control, and the trigger rejects it anyway.
+          // Seul un ADMIN peut envoyer ceci. Les RH ne voient aucun contrôle, et le déclencheur le rejette de toute façon.
           ...(isOrgAdmin && consentSupported ? { show_on_landing: orgData.showOnLanding } : {}),
         })
         .eq('id', orgId);
       if (error) throw error;
-      showToast('Organization details updated successfully!', 'success');
+      showToast('Détails de l’organisation mis à jour avec succès !', 'success');
     } catch (err) {
-      console.error('Failed to update organization:', err);
-      showToast('Failed to update organization details.', 'error');
+      console.error('Échec de la mise à jour de l’organisation :', err);
+      showToast('Échec de la mise à jour des détails de l’organisation.', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -135,33 +134,33 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
 
   return (
     <div className="space-y-8">
-      {/* Organization Identity Section */}
+      {/* Section Identité de l'organisation */}
       <div className="bg-white p-10 rounded-xl border border-slate-100 shadow-sm space-y-8 animate-in slide-in-from-bottom-8 duration-500">
          <div className="flex items-center justify-between">
-           <h3 className="text-xl font-semibold text-slate-900 flex items-center gap-3"><Building2 size={24} className="text-primary" /> Organization Identity</h3>
+           <h3 className="text-xl font-semibold text-slate-900 flex items-center gap-3"><Building2 size={24} className="text-primary" /> Identité de l'organisation</h3>
            <button
              onClick={handleOrgDataSave}
              disabled={isSaving}
              className="px-6 py-2 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary-hover transition-all disabled:opacity-50"
            >
-             {isSaving ? 'Saving...' : 'Save Organization'}
+             {isSaving ? 'Enregistrement...' : 'Enregistrer l\'organisation'}
            </button>
          </div>
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
-               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Organization Name</label>
+               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Nom de l'organisation</label>
                <input
                  type="text"
                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold focus:ring-4 focus:ring-blue-50 transition-all outline-none"
-                 placeholder="Enter organization name"
+                 placeholder="Entrez le nom de l'organisation"
                  value={orgData.name}
                  onChange={e => setOrgData({ ...orgData, name: e.target.value })}
                />
             </div>
 
             <div className="space-y-1">
-               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Country</label>
+               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Pays</label>
                <select
                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-50 transition-all appearance-none"
                  value={orgData.country}
@@ -176,7 +175,7 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
             </div>
 
             <div className="space-y-1">
-               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Organization Logo</label>
+               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Logo de l'organisation</label>
                <div className="flex gap-4 items-center">
                  <input
                    type="file"
@@ -191,13 +190,9 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
             </div>
 
             {/*
-              Showcase consent — Addendum 4 §5b. Sits directly under the logo field because this
-              is the one screen where an admin is already looking at both assets being licensed:
-              the organization name above and the logo immediately preceding.
-
-              It names what is being agreed to rather than just offering a switch, and withdrawal
-              is in the same place as the grant — a consent you cannot easily take back is not
-              really a consent. ADMIN only; see isOrgAdmin above.
+              Consentement de mise en avant — Addendum 4 §5b. Situé directement sous le champ du logo car il s'agit
+              de l'écran unique où un administrateur consulte déjà les deux actifs sous licence :
+              le nom de l'organisation ci-dessus et le logo immédiatement précédent.
             */}
             {isOrgAdmin && consentSupported && (
               <div className="md:col-span-2">
@@ -215,16 +210,16 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
                   <span className="min-w-0">
                     <span className="flex items-center gap-2 text-sm font-bold text-slate-900">
                       <Sparkles size={15} className="text-primary shrink-0" />
-                      Feature us on the OpenHRApp website
+                      Mettez-nous en avant sur le site Web OpenHRApp
                     </span>
                     <span className="block mt-1.5 text-xs font-medium text-slate-500 leading-relaxed">
-                      Show your organization&rsquo;s name and logo in the showcase on our homepage.
-                      We will not use them anywhere else, and you can turn this off at any time —
-                      it takes effect immediately. Off by default.
+                      Affichez le nom et le logo de votre organisation dans la vitrine de notre page d'accueil.
+                      Nous ne les utiliserons nulle part ailleurs, et vous pouvez désactiver cette option à tout moment —
+                      l'effet est immédiat. Désactivé par défaut.
                     </span>
                     {orgData.showOnLanding && !logoPreview && (
                       <span className="block mt-2 text-xs font-semibold text-amber-600">
-                        No logo uploaded yet — your organization will appear as a monogram until you add one.
+                        Aucun logo téléchargé pour le moment — votre organisation apparaîtra sous forme de monogramme jusqu'à ce que vous en ajoutiez un.
                       </span>
                     )}
                   </span>
@@ -233,13 +228,13 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
             )}
 
             <div className="space-y-1 md:col-span-2">
-               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Address</label>
+               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Adresse</label>
                <div className="relative">
                  <MapPin className="absolute left-5 top-5 text-slate-300" size={18} />
                  <textarea
                    className="w-full pl-14 pr-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-blue-50 transition-all resize-none"
                    rows={2}
-                   placeholder="Organization address"
+                   placeholder="Adresse de l'organisation"
                    value={orgData.address}
                    onChange={e => setOrgData({ ...orgData, address: e.target.value })}
                  />
@@ -248,12 +243,12 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
          </div>
       </div>
 
-      {/* System Configuration Section */}
+      {/* Section Configuration du système */}
       <div className="bg-white p-10 rounded-xl border border-slate-100 shadow-sm space-y-8 animate-in slide-in-from-bottom-8 duration-500">
-         <h3 className="text-xl font-semibold text-slate-900 flex items-center gap-3"><Globe size={24} className="text-primary" /> System Configuration</h3>
+         <h3 className="text-xl font-semibold text-slate-900 flex items-center gap-3"><Globe size={24} className="text-primary" /> Configuration du système</h3>
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
-               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Timezone</label>
+               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Fuseau horaire</label>
                <select className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold outline-none focus:ring-4 focus:ring-blue-50 transition-all" value={config.timezone} onChange={e => handleChange('timezone', e.target.value)}>
                   {TIMEZONE_OPTIONS.map(group => (
                     <optgroup key={group.group} label={group.group}>
@@ -265,7 +260,7 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
                </select>
             </div>
             <div className="space-y-1">
-               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Currency</label>
+               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Devise</label>
                <input type="text" className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold focus:ring-4 focus:ring-blue-50 transition-all outline-none" value={config.currency} onChange={e => handleChange('currency', e.target.value)} />
             </div>
          </div>
@@ -273,33 +268,33 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
          <div className="pt-8 border-t border-slate-50">
              <div className="grid grid-cols-1 gap-6">
                <div className="space-y-4 p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
-                   <h4 className="font-semibold text-slate-900 text-sm flex items-center gap-2"><Moon size={16} className="text-indigo-500"/> Auto-Absent Automation</h4>
+                   <h4 className="font-semibold text-slate-900 text-sm flex items-center gap-2"><Moon size={16} className="text-indigo-500"/> Automatisation des absences automatiques</h4>
                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-500">Enable Feature</span>
+                      <span className="text-[10px] font-bold text-slate-500">Activer la fonctionnalité</span>
                       <input type="checkbox" className="w-5 h-5 accent-indigo-600 rounded-lg" checked={config.autoAbsentEnabled || false} onChange={e => handleChange('autoAbsentEnabled', e.target.checked)} />
                    </div>
                    <div className="space-y-1">
-                      <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Cutoff Time (End of Day)</label>
+                      <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest">Heure limite (Fin de journée)</label>
                       <input type="time" className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl font-bold text-sm outline-none" value={config.autoAbsentTime || '23:55'} onChange={e => handleChange('autoAbsentTime', e.target.value)} />
-                      <p className="text-[9px] text-slate-400 mt-1">If no punch found by this time, mark as ABSENT.</p>
+                      <p className="text-[9px] text-slate-400 mt-1">Si aucun pointage n'est enregistré d'ici cette heure, marquer comme ABSENT.</p>
                    </div>
                </div>
              </div>
          </div>
       </div>
 
-      {/* Duty Type Labels Section */}
+      {/* Section Libellés des types de service / présence */}
       <div className="bg-white p-10 rounded-xl border border-slate-100 shadow-sm space-y-8 animate-in slide-in-from-bottom-8 duration-500">
-         <h3 className="text-xl font-semibold text-slate-900 flex items-center gap-3"><Tag size={24} className="text-primary" /> Duty Type Labels</h3>
-         <p className="text-xs text-slate-400 -mt-4">Customize the display names for your two duty types. Internal values remain unchanged.</p>
+         <h3 className="text-xl font-semibold text-slate-900 flex items-center gap-3"><Tag size={24} className="text-primary" /> Libellés des types de service</h3>
+         <p className="text-xs text-slate-400 -mt-4">Personnalisez les noms d'affichage de vos deux types de présence. Les valeurs internes restent inchangées.</p>
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
-               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Duty Type 1 (e.g. Office, HQ, Remote)</label>
-               <input type="text" className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold focus:ring-4 focus:ring-blue-50 transition-all outline-none" value={config.dutyLabel1 || 'Office'} onChange={e => handleChange('dutyLabel1', e.target.value)} placeholder="Office" />
+               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Type de service 1 (ex. Bureau, Siège, Télétravail)</label>
+               <input type="text" className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold focus:ring-4 focus:ring-blue-50 transition-all outline-none" value={config.dutyLabel1 || 'Office'} onChange={e => handleChange('dutyLabel1', e.target.value)} placeholder="Bureau" />
             </div>
             <div className="space-y-1">
-               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Duty Type 2 (e.g. Factory, Field, On-site)</label>
-               <input type="text" className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold focus:ring-4 focus:ring-blue-50 transition-all outline-none" value={config.dutyLabel2 || 'Factory'} onChange={e => handleChange('dutyLabel2', e.target.value)} placeholder="Factory" />
+               <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Type de service 2 (ex. Usine, Terrain, Sur site)</label>
+               <input type="text" className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold focus:ring-4 focus:ring-blue-50 transition-all outline-none" value={config.dutyLabel2 || 'Factory'} onChange={e => handleChange('dutyLabel2', e.target.value)} placeholder="Usine" />
             </div>
          </div>
       </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, Plus, Clock, Trash2 } from 'lucide-react';
 import { Holiday } from '../../types';
@@ -14,7 +13,7 @@ export const OrgHolidays: React.FC<Props> = ({ holidays, onAdd, onEdit, onDelete
   return (
     <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden animate-in zoom-in duration-500">
        <div className="p-6 bg-primary text-white flex justify-between items-center">
-          <div className="flex items-center gap-3"><Calendar size={20} /><h3 className="text-sm font-semibold uppercase tracking-wider">Holiday Calendar</h3></div>
+          <div className="flex items-center gap-3"><Calendar size={20} /><h3 className="text-sm font-semibold uppercase tracking-wider">Calendrier des jours fériés</h3></div>
           <button onClick={onAdd} className="p-2 bg-white/10 rounded-lg hover:bg-white/20"><Plus size={18} /></button>
        </div>
        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -31,7 +30,7 @@ export const OrgHolidays: React.FC<Props> = ({ holidays, onAdd, onEdit, onDelete
                 </div>
              </div>
           ))}
-          {holidays.length === 0 && <p className="col-span-full text-center text-slate-400 py-10 font-bold uppercase text-xs">No holidays configured.</p>}
+          {holidays.length === 0 && <p className="col-span-full text-center text-slate-400 py-10 font-bold uppercase text-xs">Aucun jour férié configuré.</p>}
        </div>
     </div>
   );

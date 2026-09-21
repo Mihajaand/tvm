@@ -1,76 +1,76 @@
 import { AppConfig, CustomCompetency, CustomLeaveType, OrgReviewConfig, OrgNotificationConfig, UserNotificationPreferences } from './types';
 
 export const DEPARTMENTS = [
-  "Engineering",
-  "Human Resources",
+  "Ingénierie",
+  "Ressources humaines",
   "Finance",
-  "Operations",
+  "Opérations",
   "Marketing",
-  "Sales",
-  "Product",
-  "Factory"
+  "Ventes",
+  "Produit",
+  "Usine"
 ];
 
 export const DESIGNATIONS = [
-  "Senior Developer",
-  "Junior Developer",
-  "HR Manager",
-  "Operations Lead",
-  "Finance Associate",
-  "Marketing Specialist",
-  "UX Designer",
-  "Factory Supervisor",
-  "Field Technician"
+  "Développeur senior",
+  "Développeur junior",
+  "Responsable RH",
+  "Responsable des opérations",
+  "Associé financier",
+  "Spécialiste marketing",
+  "Concepteur UX",
+  "Superviseur d'usine",
+  "Technicien de terrain"
 ];
 
 export const OFFICE_LOCATIONS = [
-  { name: "Dhaka HQ (Gulshan)", lat: 23.7925, lng: 90.4078, radius: 500 },
-  { name: "Chittagong Branch", lat: 22.3569, lng: 91.7832, radius: 500 },
-  { name: "Sylhet Tech Hub", lat: 24.8949, lng: 91.8687, radius: 500 },
-  { name: "Factory Zone", lat: 23.9999, lng: 90.5000, radius: 2000 },
-  { name: "Remote Office", lat: 0, lng: 0, radius: 9999999 }
+  { name: "Siège de Dhaka (Gulshan)", lat: 23.7925, lng: 90.4078, radius: 500 },
+  { name: "Agence de Chittagong", lat: 22.3569, lng: 91.7832, radius: 500 },
+  { name: "Centre technologique de Sylhet", lat: 24.8949, lng: 91.8687, radius: 500 },
+  { name: "Zone industrielle", lat: 23.9999, lng: 90.5000, radius: 2000 },
+  { name: "Bureau distant", lat: 0, lng: 0, radius: 9999999 }
 ];
 
 export const DEFAULT_COMPETENCIES: CustomCompetency[] = [
   {
     id: 'AGILITY',
-    name: 'Agility',
-    description: 'Adapts quickly to changing priorities and drives transparent change management.',
-    behaviors: ['Transparency in change', 'Involving others in decisions', 'Building flexible teams', 'Making timely decisions'],
+    name: 'Agilité',
+    description: "S'adapte rapidement aux priorités changeantes et pilote une gestion transparente du changement.",
+    behaviors: ['Transparence dans le changement', 'Implication des autres dans les décisions', "Création d'équipes flexibles", 'Prise de décision rapide'],
   },
   {
     id: 'COLLABORATION',
     name: 'Collaboration',
-    description: 'Works effectively across teams, shares knowledge, and builds trust.',
-    behaviors: ['Knowledge sharing', 'Strengthening networks', 'Welcoming diversity of opinion', 'Building trust'],
+    description: 'Travaille efficacement au sein des équipes, partage les connaissances et instaure la confiance.',
+    behaviors: ['Partage des connaissances', 'Renforcement des réseaux', "Accueil de la diversité d'opinions", 'Instauration de la confiance'],
   },
   {
     id: 'CUSTOMER_FOCUS',
-    name: 'Customer Focus',
-    description: 'Understands and anticipates customer needs to deliver exceptional value.',
-    behaviors: ['Understanding customer needs', 'Building relationships', 'Engaging in digital dialog', 'Confirming satisfaction'],
+    name: 'Orientation client',
+    description: 'Comprend et anticipe les besoins des clients pour offrir une valeur exceptionnelle.',
+    behaviors: ['Compréhension des besoins des clients', 'Établissement de relations', 'Participation au dialogue numérique', 'Confirmation de la satisfaction'],
   },
   {
     id: 'DEVELOPING_OTHERS',
-    name: 'Developing Others',
-    description: 'Invests in the growth of team members through coaching, feedback, and development opportunities.',
-    behaviors: ['Motivating the team', 'Setting development priorities', 'Providing constructive feedback', 'Assessing capabilities'],
+    name: 'Développement des autres',
+    description: "Investit dans la croissance des membres de l'équipe par le coaching, le feedback et des opportunités de développement.",
+    behaviors: ["Motivation de l'équipe", 'Définition des priorités de développement', 'Fourniture de retours constructifs', 'Évaluation des capacités'],
   },
   {
     id: 'GLOBAL_MINDSET',
-    name: 'Global Mindset',
-    description: 'Thinks broadly about enterprise impact and adapts across cultural contexts.',
-    behaviors: ['Enterprise-wide understanding', 'Awareness of implications', 'Cultural adaptation', 'Cross-functional thinking'],
+    name: 'Esprit mondial',
+    description: "Réfléchit globalement à l'impact sur l'entreprise et s'adapte à divers contextes culturels.",
+    behaviors: ["Compréhension à l'échelle de l'entreprise", 'Sensibilisation aux répercussions', 'Adaptation culturelle', 'Pensée transversale'],
   },
   {
     id: 'INNOVATION_MINDSET',
-    name: 'Innovation Mindset',
-    description: 'Encourages experimentation, embraces new ideas, and drives creative solutions.',
-    behaviors: ['Rapid prototyping', 'Sharing ideas openly', 'Encouraging experimentation', 'Creative expression'],
+    name: "Esprit d'innovation",
+    description: "Encourage l'expérimentation, accueille de nouvelles idées et pilote des solutions créatives.",
+    behaviors: ['Prototypage rapide', 'Partage ouvert des idées', "Encouragement de l'expérimentation", 'Expression créative'],
   },
 ];
 
-// Keep old name as alias for backward compat during transition
+// Conserver l'ancien nom comme alias pour la rétrocompatibilité pendant la transition
 export const PERFORMANCE_COMPETENCIES = DEFAULT_COMPETENCIES;
 
 export const DEFAULT_RATING_SCALE: {
@@ -78,11 +78,11 @@ export const DEFAULT_RATING_SCALE: {
   label: string;
   color: string;
 }[] = [
-  { value: 1, label: 'Needs Significant Improvement', color: 'bg-red-500' },
-  { value: 2, label: 'Below Expectations', color: 'bg-orange-500' },
-  { value: 3, label: 'Meets Expectations', color: 'bg-yellow-500' },
-  { value: 4, label: 'Exceeds Expectations', color: 'bg-blue-500' },
-  { value: 5, label: 'Outstanding', color: 'bg-green-500' },
+  { value: 1, label: 'Nécessite une amélioration significative', color: 'bg-red-500' },
+  { value: 2, label: 'En deçà des attentes', color: 'bg-orange-500' },
+  { value: 3, label: 'Répond aux attentes', color: 'bg-yellow-500' },
+  { value: 4, label: 'Dépasse les attentes', color: 'bg-blue-500' },
+  { value: 5, label: 'Exceptionnel', color: 'bg-green-500' },
 ];
 
 export const RATING_SCALE = DEFAULT_RATING_SCALE;
@@ -93,10 +93,10 @@ export const DEFAULT_OVERALL_RATINGS: {
   color: string;
 }[] = [
   { value: 'EXCELLENT', label: 'Excellent', color: 'bg-green-500' },
-  { value: 'VERY_GOOD', label: 'Very Good', color: 'bg-blue-500' },
-  { value: 'GOOD', label: 'Good', color: 'bg-yellow-500' },
-  { value: 'NEEDS_IMPROVEMENT', label: 'Needs Improvement', color: 'bg-orange-500' },
-  { value: 'UNSATISFACTORY', label: 'Unsatisfactory', color: 'bg-red-500' },
+  { value: 'VERY_GOOD', label: 'Très bon', color: 'bg-blue-500' },
+  { value: 'GOOD', label: 'Bon', color: 'bg-yellow-500' },
+  { value: 'NEEDS_IMPROVEMENT', label: 'À améliorer', color: 'bg-orange-500' },
+  { value: 'UNSATISFACTORY', label: 'Insatisfaisant', color: 'bg-red-500' },
 ];
 
 export const HR_OVERALL_RATINGS = DEFAULT_OVERALL_RATINGS;
@@ -212,6 +212,6 @@ export const DEFAULT_CONFIG: AppConfig = {
   lateGracePeriod: 5,
   earlyOutGracePeriod: 15,
   defaultReportRecipient: "",
-  dutyLabel1: "Office",
-  dutyLabel2: "Factory"
+  dutyLabel1: "Bureau",
+  dutyLabel2: "Usine"
 };

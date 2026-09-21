@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus, Send, RefreshCw, X, AlertCircle, Info, Download } from 'lucide-react';
 import { employeeService } from '../../services/employeeService';
@@ -25,7 +24,7 @@ interface Props {
   history: LeaveRequest[];
   onRefresh: () => void;
   initialOpen?: boolean;
-  /** When provided, scrolls to the leave request card with this ID */
+  /** Fourni pour faire défiler jusqu'à la carte de demande de congé avec cet ID */
   openLeaveId?: string;
   readOnly?: boolean;
 }
@@ -74,15 +73,15 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
     loadMeta();
   }, [initialOpen]);
 
-  // Deep link: scroll to a specific leave request when openLeaveId is provided
+  // Lien direct : fait défiler jusqu'à une demande de congé spécifique lorsque openLeaveId est fourni
   useEffect(() => {
     if (openLeaveId && history.length > 0) {
-      // Small delay to allow the list to render
+      // Petit délai pour permettre au rendu de la liste de se terminer
       const timer = setTimeout(() => {
         const el = document.getElementById(`leave-req-${openLeaveId}`);
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Highlight briefly
+          // Surlignage rapide
           el.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
           setTimeout(() => {
             el.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
@@ -113,7 +112,7 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
     const cur = new Date(startStr);
     const stop = new Date(endStr);
 
-    if (cur > stop) return { days: 0, details: 'Invalid Date Range' };
+    if (cur > stop) return { days: 0, details: 'Plage de dates invalide' };
 
     const iterator = new Date(cur);
     while (iterator <= stop) {
@@ -129,8 +128,8 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
     }
 
     let detailStr = '';
-    if (weekendsFound > 0) detailStr += `${weekendsFound} Weekend(s) excluded. `;
-    if (holidaysFound > 0) detailStr += `${holidaysFound} Holiday(s) excluded.`;
+    if (weekendsFound > 0) detailStr += `${weekendsFound} week-end(s) exclu(s). `;
+    if (holidaysFound > 0) detailStr += `${holidaysFound} jour(s) férié(s) exclu(s).`;
     return { days: count, details: detailStr.trim() };
   };
 
@@ -142,16 +141,16 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
   const generateLeavePdf = async (req: LeaveRequest) => {
     setGeneratingPdfId(req.id);
     try {
-      // Fetch org info
+      // Récupérer les informations de l'organisation
       let orgName = '', orgAddress = '', logoDataUrl: string | null = null;
       try {
         const branding = await organizationService.getOrgBranding();
         orgName = branding.name;
         orgAddress = branding.address;
         logoDataUrl = branding.logoDataUrl;
-      } catch { /* proceed without org info */ }
+      } catch { /* continuer sans les infos de l'organisation */ }
 
-      // Fetch manager name
+      // Récupérer le nom du manager
       let managerName = 'N/A';
       try {
         if (req.lineManagerId) {
@@ -159,7 +158,7 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
           const mgr = employees.find(e => e.id === req.lineManagerId);
           managerName = mgr?.name || 'N/A';
         }
-      } catch { /* proceed with N/A */ }
+      } catch { /* continuer avec N/A */ }
 
       const jsPDFModule = await import('jspdf');
       const autoTableModule = await import('jspdf-autotable');
@@ -170,7 +169,7 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
       const pageWidth = doc.internal.pageSize.getWidth();
       let y = 15;
 
-      // Header: logo + org name + address
+      // En-tête : logo + nom de l'organisation + adresse
       const logoSize = 18;
       let textStartX = 14;
       if (logoDataUrl) {
@@ -178,7 +177,7 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
           const logoDims = await getScaledLogoDims(logoDataUrl, logoSize);
           doc.addImage(logoDataUrl, 'PNG', 14, y - 4, logoDims.w, logoDims.h);
           textStartX = 14 + logoDims.w + 5;
-        } catch { /* skip logo */ }
+        } catch { /* ignorer le logo */ }
       }
       if (orgName) {
         doc.setFontSize(16);
@@ -192,19 +191,19 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
       }
       y += 20;
 
-      // HR line
+      // Ligne de séparation RH
       doc.setDrawColor(200);
       doc.setLineWidth(0.5);
       doc.line(14, y, pageWidth - 14, y);
       y += 12;
 
-      // Title
+      // Titre
       doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
-      doc.text('Leave Application', pageWidth / 2, y, { align: 'center' });
+      doc.text('Demande de congé', pageWidth / 2, y, { align: 'center' });
       y += 14;
 
-      // Helper for sections
+      // Fonction d'aide pour les sections
       const drawSection = (title: string, rows: [string, string][]) => {
         doc.setFontSize(11);
         doc.setFont('helvetica', 'bold');
@@ -219,7 +218,7 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
         doc.setTextColor(0, 0, 0);
         rows.forEach(([label, value]) => {
           doc.setFont('helvetica', 'bold');
-          doc.text(label + ':', 18, y);
+          doc.text(label + ' :', 18, y);
           doc.setFont('helvetica', 'normal');
           const lines = doc.splitTextToSize(value || 'N/A', pageWidth - 70);
           doc.text(lines, 65, y);
@@ -228,54 +227,54 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
         y += 4;
       };
 
-      // Applicant Info
-      drawSection('Applicant Information', [
-        ['Name', user.name || ''],
-        ['Employee ID', user.employeeId || ''],
-        ['Department', user.department || ''],
-        ['Designation', user.designation || ''],
+      // Informations du demandeur
+      drawSection('Informations du demandeur', [
+        ['Nom', user.name || ''],
+        ['ID employé', user.employeeId || ''],
+        ['Département', user.department || ''],
+        ['Poste', user.designation || ''],
       ]);
 
-      // Leave Details
-      drawSection('Leave Details', [
+      // Détails du congé
+      drawSection('Détails du congé', [
         ['Type', req.type],
-        ['Start Date', req.startDate],
-        ['End Date', req.endDate],
-        ['Total Days', String(req.totalDays)],
-        ['Reason', req.reason || ''],
+        ['Date de début', req.startDate],
+        ['Date de fin', req.endDate],
+        ['Total des jours', String(req.totalDays)],
+        ['Motif', req.reason || ''],
       ]);
 
-      // Approval Status
+      // Statut d'approbation
       const statusLabel = req.status.replace('_', ' ');
-      drawSection('Approval Status', [
-        ['Status', statusLabel],
+      drawSection("Statut d'approbation", [
+        ['Statut', statusLabel],
         ['Manager', managerName],
-        ['Manager Remarks', req.managerRemarks || 'N/A'],
-        ['Approver Remarks', req.approverRemarks || 'N/A'],
-        ['Applied Date', req.appliedDate || ''],
+        ['Remarques du manager', req.managerRemarks || 'N/A'],
+        ['Remarques de l\'approbateur', req.approverRemarks || 'N/A'],
+        ['Date de demande', req.appliedDate || ''],
       ]);
 
-      // Signature lines at bottom
+      // Lignes de signature en bas
       const sigY = Math.max(y + 20, 250);
       doc.setDrawColor(0);
       doc.setLineWidth(0.3);
-      // Employee signature
+      // Signature de l'employé
       doc.line(25, sigY, 90, sigY);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.text('Employee Signature', 35, sigY + 5);
+      doc.text("Signature de l'employé", 35, sigY + 5);
       doc.setFont('helvetica', 'bold');
       doc.text(user.name || '', 40, sigY + 10);
-      // Manager signature
+      // Signature du manager
       doc.line(pageWidth - 90, sigY, pageWidth - 25, sigY);
       doc.setFont('helvetica', 'normal');
-      doc.text('Manager/Approver Signature', pageWidth - 85, sigY + 5);
+      doc.text("Signature du manager / de l'approbateur", pageWidth - 85, sigY + 5);
       doc.setFont('helvetica', 'bold');
       doc.text(managerName, pageWidth - 70, sigY + 10);
 
-      doc.save(`Leave_Application_${req.type}_${req.startDate}.pdf`);
+      doc.save(`Demande_Conge_${req.type}_${req.startDate}.pdf`);
     } catch (err) {
-      console.error('Failed to generate leave PDF', err);
+      console.error('Échec de la génération du PDF de congé', err);
     } finally {
       setGeneratingPdfId(null);
     }
@@ -289,13 +288,13 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
     setError(null);
     
     if (calculatedDays <= 0) {
-      setError("Net leave duration is 0 days.");
+      setError("La durée nette du congé est de 0 jour.");
       setIsProcessing(false);
       return;
     }
     const currentAvailable = getAvailableBalance(formData.type);
     if (calculatedDays > currentAvailable) {
-      setError(`Insufficient Balance. Available: ${currentAvailable} days.`);
+      setError(`Solde insuffisant. Disponible : ${currentAvailable} jour(s).`);
       setIsProcessing(false);
       return;
     }
@@ -312,7 +311,7 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
       setFormData({ type: leaveTypes[0]?.id || 'ANNUAL', start: '', end: '', reason: '' });
       onRefresh();
     } catch (err: any) {
-      setError(err.message || "Submission failed");
+      setError(err.message || "Échec de la soumission");
     } finally {
       setIsProcessing(false);
     }
@@ -321,7 +320,7 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold text-slate-900">Personal Leave Dashboard</h3>
+        <h3 className="text-xl font-semibold text-slate-900">Tableau de bord des congés personnels</h3>
         <button
           onClick={() => setShowForm(true)}
           disabled={readOnly}
@@ -331,7 +330,7 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
               : 'bg-primary text-white hover:bg-primary-hover'
           }`}
         >
-          <Plus size={18} /> Apply Leave
+          <Plus size={18} /> Demander un congé
         </button>
       </div>
 
@@ -340,20 +339,20 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
           <div key={lt.id} className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center gap-2">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">{lt.name.replace(' Leave', '')}</p>
             <p className="text-4xl font-semibold text-primary">{getAvailableBalance(lt.id)}</p>
-            <p className="text-[9px] font-bold text-slate-300 uppercase">Days Remaining</p>
+            <p className="text-[9px] font-bold text-slate-300 uppercase">Jours restants</p>
           </div>
         ))}
       </div>
 
       <div className="bg-white rounded-xl border border-slate-100 p-8">
-        <h4 className="font-semibold text-slate-900 mb-6 uppercase tracking-widest text-xs text-slate-400">My Application History</h4>
+        <h4 className="font-semibold text-slate-900 mb-6 uppercase tracking-widest text-xs text-slate-400">Mon historique de demandes</h4>
         <div className="space-y-3">
           {history.map(req => (
             <div key={req.id} id={`leave-req-${req.id}`} className="p-5 rounded-3xl bg-slate-50 border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white hover:shadow-md transition-all group">
               <div className="flex items-center gap-4">
                  <div className={`w-2 h-12 rounded-full flex-shrink-0 ${req.status === 'APPROVED' ? 'bg-emerald-500' : req.status === 'REJECTED' ? 'bg-rose-500' : 'bg-amber-500'}`}></div>
                  <div>
-                    <h4 className="font-semibold text-slate-800 text-sm uppercase leading-tight">{req.type} Leave</h4>
+                    <h4 className="font-semibold text-slate-800 text-sm uppercase leading-tight">Congé {req.type}</h4>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">{req.startDate} — {req.endDate}</p>
                  </div>
               </div>
@@ -362,20 +361,20 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
                   <span className={`px-3 py-1 rounded-lg text-[9px] font-semibold uppercase whitespace-nowrap ${req.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' : req.status === 'REJECTED' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>
                     {req.status.replace('_', ' ')}
                   </span>
-                  <p className="text-[10px] font-bold text-slate-400">{req.totalDays} Day{req.totalDays !== 1 ? 's' : ''}</p>
+                  <p className="text-[10px] font-bold text-slate-400">{req.totalDays} jour{req.totalDays !== 1 ? 's' : ''}</p>
                 </div>
                 <button
                   onClick={(e) => { e.stopPropagation(); generateLeavePdf(req); }}
                   disabled={generatingPdfId === req.id}
                   className="p-2 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/10 transition-all disabled:opacity-50"
-                  title="Download PDF"
+                  title="Télécharger le PDF"
                 >
                   {generatingPdfId === req.id ? <RefreshCw size={14} className="animate-spin" /> : <Download size={14} />}
                 </button>
               </div>
             </div>
           ))}
-          {history.length === 0 && <p className="text-center text-slate-400 text-xs font-semibold uppercase tracking-widest py-8">No applications found.</p>}
+          {history.length === 0 && <p className="text-center text-slate-400 text-xs font-semibold uppercase tracking-widest py-8">Aucune demande trouvée.</p>}
         </div>
       </div>
 
@@ -383,14 +382,14 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden animate-in zoom-in">
             <div className="p-8 bg-primary text-white flex justify-between items-center">
-              <h3 className="text-lg font-semibold uppercase tracking-tight">New Leave Request</h3>
+              <h3 className="text-lg font-semibold uppercase tracking-tight">Nouvelle demande de congé</h3>
               <button onClick={() => setShowForm(false)}><X size={24} /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-8 space-y-6">
               {error && <div className="p-4 bg-rose-50 text-rose-700 text-xs font-bold rounded-2xl flex gap-2"><AlertCircle size={16}/>{error}</div>}
               
               <div className="space-y-1">
-                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Leave Type</label>
+                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Type de congé</label>
                  <select className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-semibold text-sm outline-none" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
                     {leaveTypes.filter(t => t.hasBalance).map(t => (
                       <option key={t.id} value={t.id}>{t.name}</option>
@@ -400,11 +399,11 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1 min-w-0">
-                   <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Start Date</label>
+                   <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Date de début</label>
                    <input type="date" required className="w-full min-w-0 px-3 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none" value={formData.start} onChange={e => setFormData({...formData, start: e.target.value})} />
                 </div>
                 <div className="space-y-1 min-w-0">
-                   <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">End Date</label>
+                   <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Date de fin</label>
                    <input type="date" required className="w-full min-w-0 px-3 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none" value={formData.end} onChange={e => setFormData({...formData, end: e.target.value})} />
                 </div>
               </div>
@@ -413,19 +412,19 @@ const EmployeeLeaveModule: React.FC<Props> = ({ user, balance, history, onRefres
                  <div className={`p-4 border rounded-2xl flex items-center gap-3 ${calculatedDays > getAvailableBalance(formData.type) ? 'bg-rose-50 border-rose-100' : 'bg-primary-light border-primary-light'}`}>
                     <Info size={18} className={calculatedDays > getAvailableBalance(formData.type) ? 'text-rose-500' : 'text-primary'} />
                     <div>
-                       <p className={`font-semibold text-xs ${calculatedDays > getAvailableBalance(formData.type) ? 'text-rose-900' : 'text-primary'}`}>Net Days: {calculatedDays}</p>
+                       <p className={`font-semibold text-xs ${calculatedDays > getAvailableBalance(formData.type) ? 'text-rose-900' : 'text-primary'}`}>Jours nets : {calculatedDays}</p>
                        <p className="text-[9px] font-bold text-slate-500">{calculationDetails}</p>
                     </div>
                  </div>
               )}
 
               <div className="space-y-1">
-                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Reason</label>
-                 <textarea required placeholder="Explain reason..." className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm min-h-[100px] outline-none" value={formData.reason} onChange={e => setFormData({...formData, reason: e.target.value})} />
+                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Motif</label>
+                 <textarea required placeholder="Expliquez le motif..." className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm min-h-[100px] outline-none" value={formData.reason} onChange={e => setFormData({...formData, reason: e.target.value})} />
               </div>
 
               <button type="submit" disabled={isProcessing || calculatedDays > getAvailableBalance(formData.type)} className="w-full py-5 bg-primary text-white rounded-xl font-semibold uppercase tracking-widest text-[10px] shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:bg-primary-hover transition-all">
-                 {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Send size={16} />} Submit Application
+                 {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Send size={16} />} Soumettre la demande
               </button>
             </form>
           </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, RefreshCw, X, ArrowRight, FileCheck, Ban, Plus, List, Clock } from 'lucide-react';
 import { hrService } from '../../services/hrService';
@@ -24,7 +23,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('pending');
 
-  // Admin CRUD state
+  // État CRUD Admin
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editTarget, setEditTarget] = useState<LeaveRequest | null>(null);
   const [employees, setEmployees] = useState<{ id: string; name: string; department: string }[]>([]);
@@ -34,7 +33,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
       try {
         const emps = await hrService.getEmployees();
         setEmployees(emps.map(e => ({ id: e.id, name: e.name, department: e.department })));
-      } catch { /* ignore */ }
+      } catch { /* ignorer */ }
     };
     loadEmployees();
   }, []);
@@ -50,7 +49,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
       onRefresh();
       setShowVerify(null);
       setRemarks('');
-    } catch (e) { showToast('Verification failed', 'error'); }
+    } catch (e) { showToast('Échec de la vérification', 'error'); }
     finally { setIsProcessing(false); }
   };
 
@@ -62,11 +61,11 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* En-tête */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <div className="flex items-center gap-2"><h3 className="text-xl font-semibold text-slate-900">HR Administration</h3><HelpButton helpPointId="leave.hr" size={16} /></div>
-          <p className="text-xs font-bold text-slate-400 mt-1">Manage, verify, and administrate all leave records</p>
+          <div className="flex items-center gap-2"><h3 className="text-xl font-semibold text-slate-900">Administration RH</h3><HelpButton helpPointId="leave.hr" size={16} /></div>
+          <p className="text-xs font-bold text-slate-400 mt-1">Gérer, vérifier et administrer tous les dossiers de congés</p>
         </div>
         <div className="flex items-center gap-3">
           {!readOnly && (
@@ -74,7 +73,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
               onClick={() => setShowCreateModal(true)}
               className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-semibold uppercase tracking-widest text-[10px] shadow-xl hover:bg-primary-hover transition-all"
             >
-              <Plus size={16} /> Create Leave
+              <Plus size={16} /> Créer un congé
             </button>
           )}
           <button onClick={onRefresh} className="p-3 bg-white border border-slate-100 rounded-2xl shadow-sm text-slate-400 hover:text-primary transition-colors">
@@ -83,7 +82,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Onglets */}
       <div className="flex gap-2">
         <button
           onClick={() => setActiveTab('pending')}
@@ -93,7 +92,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
               : 'bg-white border border-slate-100 text-slate-400 hover:text-slate-600'
           }`}
         >
-          <Clock size={14} /> Pending Approval
+          <Clock size={14} /> En attente d'approbation
           {pendingCount > 0 && (
             <span className={`ml-1 px-2 py-0.5 rounded-full text-[9px] font-semibold ${
               activeTab === 'pending' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-700'
@@ -108,14 +107,14 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
               : 'bg-white border border-slate-100 text-slate-400 hover:text-slate-600'
           }`}
         >
-          <List size={14} /> All Leaves
+          <List size={14} /> Tous les congés
           <span className={`ml-1 px-2 py-0.5 rounded-full text-[9px] font-semibold ${
             activeTab === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
           }`}>{requests.length}</span>
         </button>
       </div>
 
-      {/* Pending HR Tab (original verification flow) */}
+      {/* Onglet En attente RH (flux de vérification d'origine) */}
       {activeTab === 'pending' && (
         <div className="bg-white rounded-xl border border-slate-100 p-8 shadow-sm">
           <div className="space-y-4">
@@ -128,7 +127,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                   <div>
                     <h4 className="font-semibold text-slate-900 uppercase tracking-tighter text-lg">{req.employeeName}</h4>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md text-[9px] font-semibold uppercase tracking-widest flex items-center gap-1"><ShieldCheck size={10} /> Manager Approved</span>
+                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md text-[9px] font-semibold uppercase tracking-widest flex items-center gap-1"><ShieldCheck size={10} /> Approuvé par le manager</span>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{req.type}</span>
                     </div>
                   </div>
@@ -142,12 +141,12 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                       : 'bg-emerald-600 text-white hover:bg-emerald-700'
                   }`}
                 >
-                  Verify <ArrowRight size={14}/>
+                  Vérifier <ArrowRight size={14}/>
                 </button>
               </div>
             ))}
 
-            {/* Pending Manager leaves — admin can also review these */}
+            {/* Congés en attente du manager — l'admin peut aussi les examiner */}
             {requests.filter(r => r.status === 'PENDING_MANAGER').map(req => (
               <div key={req.id} className="p-6 rounded-xl bg-orange-50/50 border border-orange-100 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white hover:shadow-lg transition-all">
                 <div className="flex items-center gap-5">
@@ -157,7 +156,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                   <div>
                     <h4 className="font-semibold text-slate-900 uppercase tracking-tighter text-lg">{req.employeeName}</h4>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-md text-[9px] font-semibold uppercase tracking-widest flex items-center gap-1"><Clock size={10} /> Awaiting Manager</span>
+                      <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-md text-[9px] font-semibold uppercase tracking-widest flex items-center gap-1"><Clock size={10} /> En attente du manager</span>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{req.type}</span>
                     </div>
                   </div>
@@ -171,7 +170,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                       : 'bg-orange-500 text-white hover:bg-orange-600'
                   }`}
                 >
-                  Review <ArrowRight size={14}/>
+                  Examiner <ArrowRight size={14}/>
                 </button>
               </div>
             ))}
@@ -179,15 +178,15 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
             {pendingCount === 0 && (
               <div className="text-center py-16">
                 <FileCheck size={48} className="text-slate-200 mx-auto mb-4" />
-                <p className="text-slate-400 font-semibold uppercase text-xs tracking-widest">All Clear</p>
-                <p className="text-slate-300 text-[10px] font-bold mt-1">No requests waiting for approval.</p>
+                <p className="text-slate-400 font-semibold uppercase text-xs tracking-widest">Tout est en ordre</p>
+                <p className="text-slate-300 text-[10px] font-bold mt-1">Aucune demande en attente d'approbation.</p>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* All Leaves Tab */}
+      {/* Onglet Tous les congés */}
       {activeTab === 'all' && (
         <div className="bg-white rounded-xl border border-slate-100 p-8 shadow-sm">
           <AdminAllLeaves
@@ -199,18 +198,18 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
         </div>
       )}
 
-      {/* Original HR Verification Modal */}
+      {/* Modale de vérification RH d'origine */}
       {showVerify && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in">
             <div className={`p-8 ${showVerify.status === 'PENDING_MANAGER' ? 'bg-orange-500' : 'bg-emerald-600'} text-white flex justify-between items-center`}>
-              <div className="flex items-center gap-3"><ShieldCheck size={20}/><h3 className="text-lg font-semibold uppercase tracking-tight">{showVerify.status === 'PENDING_MANAGER' ? 'Admin Override' : 'Final Verification'}</h3></div>
+              <div className="flex items-center gap-3"><ShieldCheck size={20}/><h3 className="text-lg font-semibold uppercase tracking-tight">{showVerify.status === 'PENDING_MANAGER' ? "Dérogation de l'administrateur" : 'Vérification finale'}</h3></div>
               <button onClick={() => setShowVerify(null)} className="hover:bg-white/10 p-2 rounded-lg transition-colors"><X size={24} /></button>
             </div>
             <div className="p-8 space-y-6">
               <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 space-y-3">
                 <div>
-                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Employee</p>
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Employé</p>
                   <p className="text-sm font-semibold text-slate-800">{showVerify.employeeName}</p>
                 </div>
                 <div className="w-full h-px bg-slate-200"></div>
@@ -220,8 +219,8 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                     <p className="text-xs font-bold text-slate-700">{showVerify.type}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Duration</p>
-                    <p className="text-xs font-bold text-slate-700">{showVerify.totalDays} Day(s)</p>
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Durée</p>
+                    <p className="text-xs font-bold text-slate-700">{showVerify.totalDays} jour(s)</p>
                   </div>
                 </div>
                 <div className="w-full h-px bg-slate-200"></div>
@@ -231,15 +230,15 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                 </div>
                 <div className="w-full h-px bg-slate-200"></div>
                 <div>
-                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">User Reason</p>
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Motif de l'employé</p>
                   <p className="text-xs font-bold text-slate-700">"{showVerify.reason}"</p>
                 </div>
                 {showVerify.status === 'PENDING_HR' && (
                   <>
                     <div className="w-full h-px bg-slate-200"></div>
                     <div>
-                      <p className="text-[10px] font-semibold text-emerald-500 uppercase tracking-widest">Manager's Evaluation</p>
-                      <p className="text-xs font-bold text-slate-700">"{showVerify.managerRemarks || "Approved without remarks"}"</p>
+                      <p className="text-[10px] font-semibold text-emerald-500 uppercase tracking-widest">Évaluation du manager</p>
+                      <p className="text-xs font-bold text-slate-700">"{showVerify.managerRemarks || "Approuvé sans remarques"}"</p>
                     </div>
                   </>
                 )}
@@ -247,24 +246,24 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                   <>
                     <div className="w-full h-px bg-slate-200"></div>
                     <div className="p-3 bg-orange-50 rounded-xl border border-orange-100">
-                      <p className="text-[10px] font-semibold text-orange-600 uppercase tracking-widest">Skipping Manager Workflow</p>
-                      <p className="text-[10px] font-bold text-orange-500 mt-0.5">This leave will be directly approved/rejected by admin.</p>
+                      <p className="text-[10px] font-semibold text-orange-600 uppercase tracking-widest">Contournement du flux manager</p>
+                      <p className="text-[10px] font-bold text-orange-500 mt-0.5">Ce congé sera directement approuvé ou rejeté par l'administrateur.</p>
                     </div>
                   </>
                 )}
               </div>
 
               <div className="space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Admin Remarks (Optional)</p>
-                <textarea placeholder="Document any adjustments or compliance notes..." className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold min-h-[100px] outline-none focus:ring-4 focus:ring-emerald-50 transition-all" value={remarks} onChange={e => setRemarks(e.target.value)} />
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Remarques de l'administrateur (Optionnel)</p>
+                <textarea placeholder="Documenter d'éventuels ajustements ou notes de conformité..." className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold min-h-[100px] outline-none focus:ring-4 focus:ring-emerald-50 transition-all" value={remarks} onChange={e => setRemarks(e.target.value)} />
               </div>
 
               <div className="flex gap-4 pt-2">
                 <button disabled={isProcessing} onClick={() => handleVerify('REJECTED')} className="flex-1 py-4 bg-rose-50 text-rose-600 rounded-xl font-semibold uppercase text-[10px] flex items-center justify-center gap-2 hover:bg-rose-100 transition-colors">
-                  <Ban size={16}/> Decline
+                  <Ban size={16}/> Refuser
                 </button>
                 <button disabled={isProcessing} onClick={() => handleVerify('APPROVED')} className="flex-[1.5] py-4 bg-primary text-white rounded-xl font-semibold uppercase text-[10px] shadow-xl flex items-center justify-center gap-2 hover:bg-primary-hover transition-colors">
-                  {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <FileCheck size={16} />} Approve
+                  {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <FileCheck size={16} />} Approuver
                 </button>
               </div>
             </div>
@@ -272,7 +271,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
         </div>
       )}
 
-      {/* Create Modal */}
+      {/* Modale de création */}
       {showCreateModal && (
         <AdminLeaveFormModal
           mode="create"
@@ -282,7 +281,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
         />
       )}
 
-      {/* Edit Modal */}
+      {/* Modale de modification */}
       {editTarget && (
         <AdminLeaveFormModal
           mode="edit"

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Send, RefreshCw, AlertCircle, Bell } from 'lucide-react';
 import { hrService } from '../../services/hrService';
@@ -20,11 +19,11 @@ interface Props {
 type RecipientMode = 'ALL' | 'BY_ROLE' | 'SPECIFIC';
 
 const NOTIFICATION_TYPES: { value: NotificationType; label: string }[] = [
-  { value: 'SYSTEM', label: 'System' },
-  { value: 'ANNOUNCEMENT', label: 'Announcement' },
-  { value: 'LEAVE', label: 'Leave' },
-  { value: 'ATTENDANCE', label: 'Attendance' },
-  { value: 'REVIEW', label: 'Review' },
+  { value: 'SYSTEM', label: 'Système' },
+  { value: 'ANNOUNCEMENT', label: 'Annonce' },
+  { value: 'LEAVE', label: 'Congé' },
+  { value: 'ATTENDANCE', label: 'Présence' },
+  { value: 'REVIEW', label: 'Évaluation' },
 ];
 
 const ROLES = ['EMPLOYEE', 'MANAGER', 'TEAM_LEAD', 'HR', 'ADMIN', 'MANAGEMENT', 'SUPER_ADMIN'];
@@ -63,10 +62,10 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
     e.preventDefault();
     setError(null);
 
-    if (!title.trim()) { setError('Title is required.'); return; }
+    if (!title.trim()) { setError('Le titre est requis.'); return; }
 
     const targetIds = getTargetUserIds();
-    if (targetIds.length === 0) { setError('No recipients selected.'); return; }
+    if (targetIds.length === 0) { setError('Aucun destinataire sélectionné.'); return; }
 
     setIsProcessing(true);
     try {
@@ -80,7 +79,7 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
       await hrService.createBulkNotifications(notifications);
       onSent();
     } catch (err: any) {
-      setError(err.message || 'Failed to send notifications');
+      setError(err.message || "Échec de l'envoi des notifications");
     } finally {
       setIsProcessing(false);
     }
@@ -92,7 +91,7 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
         <div className="p-8 bg-primary text-white flex justify-between items-center flex-shrink-0">
           <div className="flex items-center gap-3">
             <Bell size={20} />
-            <h3 className="text-lg font-semibold uppercase tracking-tight">Send Notification</h3>
+            <h3 className="text-lg font-semibold uppercase tracking-tight">Envoyer une notification</h3>
           </div>
           <button onClick={onClose} className="hover:bg-white/10 p-2 rounded-lg transition-colors"><X size={24} /></button>
         </div>
@@ -104,11 +103,11 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
             </div>
           )}
 
-          {/* Recipient Mode */}
+          {/* Mode de destinataires */}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Recipients</label>
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Destinataires</label>
             <div className="flex gap-2">
-              {([['ALL', 'All Users'], ['BY_ROLE', 'By Role'], ['SPECIFIC', 'Specific Users']] as [RecipientMode, string][]).map(([value, label]) => (
+              {([['ALL', 'Tous les utilisateurs'], ['BY_ROLE', 'Par rôle'], ['SPECIFIC', 'Utilisateurs spécifiques']] as [RecipientMode, string][]).map(([value, label]) => (
                 <button
                   key={value}
                   type="button"
@@ -121,10 +120,10 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
             </div>
           </div>
 
-          {/* Role selector */}
+          {/* Sélecteur de rôles */}
           {recipientMode === 'BY_ROLE' && (
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Select Roles</label>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Sélectionner les rôles</label>
               <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
                 {ROLES.map(role => (
                   <button
@@ -138,15 +137,15 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
                 ))}
               </div>
               <p className="text-[10px] text-slate-400 px-1">
-                {employees.filter(e => selectedRoles.includes(e.role || 'EMPLOYEE')).length} user(s) matched
+                {employees.filter(e => selectedRoles.includes(e.role || 'EMPLOYEE')).length} utilisateur(s) correspondant(s)
               </p>
             </div>
           )}
 
-          {/* User selector */}
+          {/* Sélecteur d'utilisateurs */}
           {recipientMode === 'SPECIFIC' && (
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Select Users ({selectedUserIds.length})</label>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Sélectionner les utilisateurs ({selectedUserIds.length})</label>
               <div className="h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 grid grid-cols-2 gap-2 bg-slate-50/50">
                 {employees.map(e => (
                   <div
@@ -161,7 +160,7 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
             </div>
           )}
 
-          {/* Notification Type */}
+          {/* Type de notification */}
           <div className="space-y-1">
             <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Type</label>
             <select
@@ -175,13 +174,13 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
             </select>
           </div>
 
-          {/* Title */}
+          {/* Titre */}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Title</label>
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Titre</label>
             <input
               required
               className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-semibold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all"
-              placeholder="Notification title..."
+              placeholder="Titre de la notification..."
               value={title}
               onChange={e => setTitle(e.target.value)}
             />
@@ -192,15 +191,15 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
             <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Message</label>
             <textarea
               className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-semibold text-sm min-h-[80px] outline-none focus:ring-4 focus:ring-primary-light transition-all"
-              placeholder="Optional message body..."
+              placeholder="Corps du message facultatif..."
               value={message}
               onChange={e => setMessage(e.target.value)}
             />
           </div>
 
-          {/* Priority */}
+          {/* Priorité */}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Priority</label>
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Priorité</label>
             <div className="flex gap-3">
               {(['NORMAL', 'URGENT'] as NotificationPriority[]).map(p => (
                 <button
@@ -212,19 +211,19 @@ const AdminNotificationFormModal: React.FC<Props> = ({ employees, onClose, onSen
                     : 'bg-slate-50 text-slate-600 border-slate-100 hover:border-slate-200'
                   }`}
                 >
-                  {p}
+                  {p === 'URGENT' ? 'Urgent' : 'Normal'}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Submit */}
+          {/* Soumission */}
           <button
             type="submit"
             disabled={isProcessing}
             className="w-full py-5 bg-primary text-white rounded-xl font-semibold uppercase tracking-widest text-[10px] shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:opacity-90 transition-all"
           >
-            {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Send size={16} />} Send Notification
+            {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Send size={16} />} Envoyer la notification
           </button>
         </form>
       </div>

@@ -44,12 +44,12 @@ export const AdminVerificationPanel: React.FC = () => {
       setMessage('');
       setFeatureAvailable(true);
     } else {
-      // If unauthorized/forbidden, the feature is not available (hooks not deployed)
+      // Si non autorisé/interdit, la fonctionnalité n'est pas disponible (hooks non déployés)
       if (result.error?.includes('Unauthorized') || result.error?.includes('Forbidden') || result.error?.includes('404')) {
         setFeatureAvailable(false);
         setMessage('');
       } else {
-        setMessage(`Error: ${result.error}`);
+        setMessage(`Erreur : ${result.error}`);
       }
       setUsers([]);
     }
@@ -59,23 +59,23 @@ export const AdminVerificationPanel: React.FC = () => {
 
   const handleVerifyUser = async (userId: string, email: string) => {
     setVerifyingId(userId);
-    setMessage('Verifying user...');
+    setMessage("Vérification de l'utilisateur...");
 
     const result = await verificationService.manuallyVerifyUser(userId);
     
     if (result.success) {
-      setMessage(`✅ ${email} verified successfully`);
-      // Refresh list
+      setMessage(`✅ ${email} vérifié avec succès`);
+      // Actualiser la liste
       await loadUnverifiedUsers();
     } else {
-      setMessage(`❌ Error: ${result.message}`);
+      setMessage(`❌ Erreur : ${result.message}`);
     }
     
     setVerifyingId(null);
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -84,7 +84,7 @@ export const AdminVerificationPanel: React.FC = () => {
     });
   };
 
-  // Don't render if feature is not available
+  // Ne rien afficher si la fonctionnalité n'est pas disponible
   if (!featureAvailable && !loading) {
     return null;
   }
@@ -92,8 +92,8 @@ export const AdminVerificationPanel: React.FC = () => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h2>👤 Pending User Verification</h2>
-        <p>Manually verify users who haven't clicked their email link</p>
+        <h2>👤 Vérification des utilisateurs en attente</h2>
+        <p>Vérifiez manuellement les utilisateurs n'ayant pas cliqué sur leur lien par e-mail</p>
       </div>
 
       {message && (
@@ -116,28 +116,28 @@ export const AdminVerificationPanel: React.FC = () => {
             opacity: loading ? 0.6 : 1
           }}
         >
-          🔄 Refresh
+          🔄 Actualiser
         </button>
         <span style={styles.count}>
-          {loading ? 'Loading...' : `${users.length} users pending verification`}
+          {loading ? 'Chargement...' : `${users.length} utilisateur(s) en attente de vérification`}
         </span>
       </div>
 
       {loading ? (
-        <div style={styles.loading}>Loading unverified users...</div>
+        <div style={styles.loading}>Chargement des utilisateurs non vérifiés...</div>
       ) : users.length === 0 ? (
         <div style={styles.empty}>
-          <p>✅ All users have verified their emails!</p>
+          <p>✅ Tous les utilisateurs ont vérifié leurs e-mails !</p>
         </div>
       ) : (
         <div style={styles.tableWrapper}>
           <table style={styles.table}>
             <thead>
               <tr style={styles.headerRow}>
-                <th style={styles.th}>Email</th>
-                <th style={styles.th}>Name</th>
-                <th style={styles.th}>Role</th>
-                <th style={styles.th}>Registered</th>
+                <th style={styles.th}>E-mail</th>
+                <th style={styles.th}>Nom</th>
+                <th style={styles.th}>Rôle</th>
+                <th style={styles.th}>Inscription</th>
                 <th style={styles.th}>Action</th>
               </tr>
             </thead>
@@ -170,7 +170,7 @@ export const AdminVerificationPanel: React.FC = () => {
                         opacity: verifyingId === user.id ? 0.6 : 1
                       }}
                     >
-                      {verifyingId === user.id ? '⏳' : '✓'} Verify
+                      {verifyingId === user.id ? '⏳' : '✓'} Vérifier
                     </button>
                   </td>
                 </tr>
@@ -181,13 +181,13 @@ export const AdminVerificationPanel: React.FC = () => {
       )}
 
       <div style={styles.infoBox}>
-        <h4>ℹ️ About Manual Verification</h4>
+        <h4>ℹ️ À propos de la vérification manuelle</h4>
         <ul style={styles.infoList}>
-          <li>Use this when user hasn't received or clicked verification email</li>
-          <li>Verification email will be auto-sent to user when verified</li>
-          <li>User can then log in immediately</li>
-          <li>Email verification is preferred - use manual as fallback only</li>
-          <li>Check PocketBase Settings → Mail if most users need manual verification</li>
+          <li>À utiliser lorsqu'un utilisateur n'a pas reçu ou cliqué sur l'e-mail de vérification</li>
+          <li>Un e-mail de confirmation sera automatiquement envoyé à l'utilisateur lors de sa vérification</li>
+          <li>L'utilisateur pourra alors se connecter immédiatement</li>
+          <li>La vérification par e-mail reste prioritaire — utilisez la méthode manuelle en dernier recours</li>
+          <li>Vérifiez les paramètres de messagerie de PocketBase (Paramètres → Mail) si la plupart des utilisateurs ont besoin d'une vérification manuelle</li>
         </ul>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   User, ArrowLeft, Save, RefreshCw, Mail, UserCheck, Hash, Lock, Key, Eye, EyeOff,
@@ -48,13 +47,13 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
   const [profile, setProfile] = useState<Partial<Employee> & { managerName?: string } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   
-  // Password Change State
+  // État du changement de mot de passe
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // Contact Form State
+  // État du formulaire de contact
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
   const [contactResult, setContactResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -62,7 +61,7 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
 
   const isAdmin = user.role === 'ADMIN';
   const [myShift, setMyShift] = useState<Shift | null>(null);
-  const [myTeamName, setMyTeamName] = useState<string>('No Team');
+  const [myTeamName, setMyTeamName] = useState<string>('Aucune équipe');
 
   useEffect(() => {
     const load = async () => {
@@ -79,19 +78,19 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
           setProfile({
             ...myData,
             email: myData.email || user.email,
-            managerName: manager ? manager.name : 'No Direct Manager'
+            managerName: manager ? manager.name : 'Aucun responsable direct'
           });
 
-          // Resolve shift
+          // Résolution du shift
           if (myData.shiftId) {
             const shift = shifts.find(s => s.id === myData.shiftId);
             setMyShift(shift || null);
           }
 
-          // Resolve team
+          // Résolution de l'équipe
           if (myData.teamId) {
             const team = teams.find(t => t.id === myData.teamId);
-            setMyTeamName(team ? team.name : 'No Team');
+            setMyTeamName(team ? team.name : 'Aucune équipe');
           }
         } else {
           setProfile({
@@ -101,17 +100,17 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
             department: user.department,
             designation: user.designation,
             employeeId: user.employeeId,
-            managerName: 'No Direct Manager'
+            managerName: 'Aucun responsable direct'
           } as any);
         }
       } catch (err) {
-        console.error("Settings load failed:", err);
+        console.error("Échec du chargement des paramètres :", err);
       }
     };
     load();
   }, [user.id, user.name, user.email, user.role, user.department, user.designation, user.employeeId]);
 
-  // Pre-fill contact form with user info
+  // Pré-remplissage du formulaire de contact avec les informations de l'utilisateur
   useEffect(() => {
     if (!contactInitialized && user.name && user.email) {
       setContactForm(prev => ({ ...prev, name: user.name || '', email: user.email || '' }));
@@ -124,7 +123,7 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
     setContactResult(null);
 
     if (!contactForm.message.trim()) {
-      setContactResult({ type: 'error', message: 'Please enter a message.' });
+      setContactResult({ type: 'error', message: 'Veuillez saisir un message.' });
       return;
     }
 
@@ -138,7 +137,7 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
         setContactResult({ type: 'error', message: response.message });
       }
     } catch {
-      setContactResult({ type: 'error', message: 'Something went wrong. Please try again later.' });
+      setContactResult({ type: 'error', message: 'Une erreur est survenue. Veuillez réessayer plus tard.' });
     } finally {
       setIsContactSubmitting(false);
     }
@@ -155,17 +154,17 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
 
         if (newPassword) {
           if (!currentPassword) {
-            showToast("Please enter your current password to change your password.", 'warning');
+            showToast("Veuillez saisir votre mot de passe actuel pour modifier votre mot de passe.", 'warning');
             setIsSaving(false);
             return;
           }
           if (newPassword.length < 8) {
-            showToast("Password must be at least 8 characters long.", 'warning');
+            showToast("Le mot de passe doit contenir au moins 8 caractères.", 'warning');
             setIsSaving(false);
             return;
           }
           if (newPassword !== confirmPassword) {
-            showToast("Passwords do not match.", 'warning');
+            showToast("Les mots de passe ne correspondent pas.", 'warning');
             setIsSaving(false);
             return;
           }
@@ -177,11 +176,11 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
-        showToast('Profile updated successfully.', 'success');
+        showToast('Profil mis à jour avec succès.', 'success');
         window.location.reload();
       }
     } catch (e: any) {
-      showToast(`Operation failed: ${e.message}`, 'error');
+      showToast(`Échec de l'opération : ${e.message}`, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -193,13 +192,13 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
         <div className="flex items-center gap-4">
           {onBack && <button onClick={onBack} className="p-2 hover:bg-slate-100 rounded-xl transition-all"><ArrowLeft size={20} /></button>}
           <div>
-            <div className="flex items-center gap-2"><h1 className="text-3xl font-bold text-slate-900 tracking-tight">System & Profile</h1><HelpButton helpPointId="settings.profile" /></div>
-            <p className="text-slate-500 font-medium">Manage preferences, appearance, and personal data</p>
+            <div className="flex items-center gap-2"><h1 className="text-3xl font-bold text-slate-900 tracking-tight">Système et profil</h1><HelpButton helpPointId="settings.profile" /></div>
+            <p className="text-slate-500 font-medium">Gérez vos préférences, l'apparence et vos données personnelles</p>
           </div>
         </div>
       </header>
 
-      {/* Theme Selector Module */}
+      {/* Module de sélection du thème */}
       <div className="max-w-3xl">
         <ThemeSelector />
       </div>
@@ -221,42 +220,42 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Official Employee ID</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Identifiant d'employé officiel</label>
                 <div className="relative">
                   <Hash className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                  <input type="text" readOnly className="w-full pl-12 pr-4 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-semibold text-sm text-slate-500 cursor-not-allowed" value={profile.employeeId || 'Not Assigned'} />
+                  <input type="text" readOnly className="w-full pl-12 pr-4 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-semibold text-sm text-slate-500 cursor-not-allowed" value={profile.employeeId || 'Non assigné'} />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Reporting To</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Rattaché(e) à</label>
                 <div className="relative">
                   <UserCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                  <input type="text" readOnly className="w-full pl-12 pr-4 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-semibold text-sm text-slate-500 cursor-not-allowed" value={profile.managerName || 'No Direct Manager'} />
+                  <input type="text" readOnly className="w-full pl-12 pr-4 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-semibold text-sm text-slate-500 cursor-not-allowed" value={profile.managerName || 'Aucun responsable direct'} />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Team</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Équipe</label>
                 <div className="relative">
                   <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <input type="text" readOnly className="w-full pl-12 pr-4 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-semibold text-sm text-slate-500 cursor-not-allowed" value={myTeamName} />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Assigned Shift</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Shift assigné</label>
                 <div className="relative">
                   <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                  <input type="text" readOnly className="w-full pl-12 pr-4 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-semibold text-sm text-slate-500 cursor-not-allowed" value={myShift ? `${myShift.name} (${myShift.startTime} - ${myShift.endTime})` : 'No Shift Assigned'} />
+                  <input type="text" readOnly className="w-full pl-12 pr-4 py-4 bg-slate-100 border border-slate-200 rounded-2xl font-semibold text-sm text-slate-500 cursor-not-allowed" value={myShift ? `${myShift.name} (${myShift.startTime} - ${myShift.endTime})` : 'Aucun shift assigné'} />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Full Name</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Nom complet</label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <input type="text" className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light" value={profile.name || ''} onChange={e => setProfile({...profile, name: e.target.value})} />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Work Email</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">E-mail professionnel</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <input type="email" className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light" value={profile.email || user.email || ''} onChange={e => setProfile({...profile, email: e.target.value})} />
@@ -264,18 +263,18 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
               </div>
             </div>
 
-            {/* Password Section */}
+            {/* Section mot de passe */}
             <div className="pt-6 border-t border-slate-50">
                <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-tight flex items-center gap-2 mb-4">
-                  <Lock size={16} className="text-primary"/> Security Settings
+                  <Lock size={16} className="text-primary"/> Paramètres de sécurité
                </h4>
                <div className="space-y-1.5 mb-6">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Current Password</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Mot de passe actuel</label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                       <input
                         type={showPassword ? "text" : "password"}
-                        placeholder="Enter current password"
+                        placeholder="Entrez le mot de passe actuel"
                         className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light"
                         value={currentPassword}
                         onChange={e => setCurrentPassword(e.target.value)}
@@ -284,12 +283,12 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">New Password</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Nouveau mot de passe</label>
                     <div className="relative">
                       <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                       <input 
                         type={showPassword ? "text" : "password"} 
-                        placeholder="Leave blank to keep current"
+                        placeholder="Laisser vide pour conserver l'actuel"
                         className="w-full pl-12 pr-12 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light" 
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
@@ -300,12 +299,12 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Confirm New Password</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Confirmer le nouveau mot de passe</label>
                     <div className="relative">
                       <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                       <input 
                         type={showPassword ? "text" : "password"} 
-                        placeholder="Confirm changes"
+                        placeholder="Confirmer les modifications"
                         className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light" 
                         value={confirmPassword}
                         onChange={e => setConfirmPassword(e.target.value)}
@@ -318,37 +317,37 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
             <div className="flex justify-end pt-4">
               <button onClick={handleSave} disabled={isSaving} className="px-12 py-5 bg-primary text-white rounded-xl font-semibold uppercase text-xs tracking-widest shadow-xl transition-all flex items-center gap-3 hover:bg-primary-hover">
                 {isSaving ? <RefreshCw className="animate-spin" size={18} /> : <Save size={18} />} 
-                Update My Info
+                Mettre à jour mes informations
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Admin Verification Panel */}
+      {/* Panneau de vérification administrateur */}
       {isAdmin && (
         <div className="max-w-3xl animate-in slide-in-from-bottom-8">
           <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-6 flex items-center gap-2">
-            <UserCheck size={24} className="text-emerald-500" /> Admin Tools
+            <UserCheck size={24} className="text-emerald-500" /> Outils d'administration
           </h3>
           <AdminVerificationPanel />
         </div>
       )}
 
-      {/* Re-enable Setup Guide (only shown if dismissed) */}
+      {/* Réactiver le guide de configuration (affiché uniquement s'il a été masqué) */}
       <ReEnableSetupGuide userRole={user.role} />
 
-      {/* Contact Support */}
+      {/* Contacter le support */}
       <div className="max-w-3xl animate-in slide-in-from-bottom-8">
         <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-6 flex items-center gap-2">
-          <MessageSquare size={24} className="text-primary" /> Contact Support
+          <MessageSquare size={24} className="text-primary" /> Contacter le support
         </h3>
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-10 space-y-6">
-          <p className="text-sm text-slate-500">Have a question, feedback, or need help? Send us a message and we'll get back to you.</p>
+          <p className="text-sm text-slate-500">Vous avez une question, une remarque ou besoin d'aide ? Envoyez-nous un message et nous vous répondrons dans les plus brefs délais.</p>
           <form onSubmit={handleContactSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Name</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Nom</label>
                 <div className="relative">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <input
@@ -360,7 +359,7 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Email</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">E-mail</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <input
@@ -374,12 +373,12 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Subject</label>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Sujet</label>
               <input
                 type="text"
                 value={contactForm.subject}
                 onChange={e => setContactForm(prev => ({ ...prev, subject: e.target.value }))}
-                placeholder="What is this about?"
+                placeholder="Quel est l'objet de votre demande ?"
                 className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light"
               />
             </div>
@@ -391,7 +390,7 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
               <textarea
                 value={contactForm.message}
                 onChange={e => setContactForm(prev => ({ ...prev, message: e.target.value }))}
-                placeholder="Tell us what's on your mind..."
+                placeholder="Dites-nous ce qui vous préoccupe..."
                 rows={4}
                 className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light resize-none"
               />
@@ -415,9 +414,9 @@ const Settings: React.FC<SettingsProps> = ({ user, onBack }) => {
                 className="px-10 py-4 bg-primary text-white rounded-xl font-semibold uppercase text-xs tracking-widest shadow-xl transition-all flex items-center gap-3 hover:bg-primary-hover disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isContactSubmitting ? (
-                  <><Loader2 size={18} className="animate-spin" /> Sending...</>
+                  <><Loader2 size={18} className="animate-spin" /> Envoi en cours...</>
                 ) : (
-                  <><Send size={18} /> Send Message</>
+                  <><Send size={18} /> Envoyer le message</>
                 )}
               </button>
             </div>

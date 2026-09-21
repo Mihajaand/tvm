@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, Megaphone, CalendarDays, Clock, ClipboardCheck, Info, CheckCheck, Settings, ArrowLeft, Building2, ArrowUpCircle } from 'lucide-react';
 import { useNotifications } from '../../hooks/notifications/useNotifications';
@@ -19,20 +18,20 @@ const typeIcons: Record<NotificationType, React.ReactNode> = {
 };
 
 const TYPE_LABELS: Record<NotificationType, string> = {
-  ANNOUNCEMENT: 'Announcements',
-  LEAVE: 'Leave',
-  ATTENDANCE: 'Attendance',
-  REVIEW: 'Reviews',
-  SYSTEM: 'System',
-  NEW_REGISTRATION: 'New Registration',
-  UPGRADE_REQUEST: 'Upgrade Request',
+  ANNOUNCEMENT: 'Annonces',
+  LEAVE: 'Congés',
+  ATTENDANCE: 'Présences',
+  REVIEW: 'Évaluations',
+  SYSTEM: 'Système',
+  NEW_REGISTRATION: 'Nouvelle inscription',
+  UPGRADE_REQUEST: "Demande de mise à niveau",
 };
 
 const DIGEST_OPTIONS: { value: EmailDigestFrequency; label: string }[] = [
-  { value: 'IMMEDIATE', label: 'Immediate' },
-  { value: 'DAILY', label: 'Daily' },
-  { value: 'WEEKLY', label: 'Weekly' },
-  { value: 'OFF', label: 'Off' },
+  { value: 'IMMEDIATE', label: 'Immédiat' },
+  { value: 'DAILY', label: 'Quotidien' },
+  { value: 'WEEKLY', label: 'Hebdomadaire' },
+  { value: 'OFF', label: 'Désactivé' },
 ];
 
 function timeAgo(dateStr: string): string {
@@ -40,13 +39,13 @@ function timeAgo(dateStr: string): string {
   const date = new Date(dateStr);
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (seconds < 60) return 'just now';
+  if (seconds < 60) return "à l'instant";
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return `il y a ${minutes}m`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `il y a ${hours}h`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return `il y a ${days}j`;
   return date.toLocaleDateString();
 }
 
@@ -56,7 +55,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
   const [showPrefs, setShowPrefs] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
+  // Fermer au clic en dehors
   useEffect(() => {
     if (!isOpen) return;
     const handleClick = (e: MouseEvent) => {
@@ -69,7 +68,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [isOpen]);
 
-  // Close on Escape
+  // Fermer avec la touche Échap
   useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e: KeyboardEvent) => {
@@ -106,7 +105,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Bell Button */}
+      {/* Bouton de la cloche */}
       <button
         onClick={() => { setIsOpen(!isOpen); if (isOpen) setShowPrefs(false); }}
         className="p-2.5 rounded-xl text-slate-500 hover:text-primary hover:bg-slate-100 transition-all relative"
@@ -120,24 +119,24 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
         )}
       </button>
 
-      {/* Dropdown */}
+      {/* Menu déroulant */}
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden">
           {showPrefs ? (
             <>
-              {/* Preferences Header */}
+              {/* En-tête des préférences */}
               <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100">
                 <button onClick={() => setShowPrefs(false)} className="p-1 rounded-lg hover:bg-slate-100 transition-colors">
                   <ArrowLeft size={16} className="text-slate-500" />
                 </button>
-                <h3 className="font-semibold text-sm text-slate-800">Notification Preferences</h3>
+                <h3 className="font-semibold text-sm text-slate-800">Préférences de notification</h3>
               </div>
 
-              {/* Preferences Content */}
+              {/* Contenu des préférences */}
               <div className="max-h-80 overflow-y-auto p-4 space-y-4">
-                {/* Mute Toggles */}
+                {/* Bascules de sourdine */}
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Notification Types</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Types de notification</p>
                   <div className="space-y-1.5">
                     {(Object.keys(TYPE_LABELS) as NotificationType[]).map(type => {
                       const isMuted = userPreferences.mutedTypes.includes(type);
@@ -159,9 +158,9 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Email Digest */}
+                {/* Synthèse par e-mail */}
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Email Digest</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Synthèse par e-mail</p>
                   <div className="grid grid-cols-2 gap-1.5">
                     {DIGEST_OPTIONS.map(opt => (
                       <button
@@ -178,7 +177,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
             </>
           ) : (
             <>
-              {/* Notification Header */}
+              {/* En-tête des notifications */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
                 <h3 className="font-semibold text-sm text-slate-800">Notifications</h3>
                 <div className="flex items-center gap-2">
@@ -188,24 +187,24 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
                       className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
                     >
                       <CheckCheck size={14} />
-                      Mark all read
+                      Tout marquer comme lu
                     </button>
                   )}
                   <button
                     onClick={() => setShowPrefs(true)}
                     className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-slate-100 transition-all"
-                    title="Notification Preferences"
+                    title="Préférences de notification"
                   >
                     <Settings size={14} />
                   </button>
                 </div>
               </div>
 
-              {/* Notification List */}
+              {/* Liste des notifications */}
               <div className="max-h-80 overflow-y-auto">
                 {displayNotifications.length === 0 ? (
                   <div className="py-8 text-center text-sm text-slate-400">
-                    No notifications
+                    Aucune notification
                   </div>
                 ) : (
                   displayNotifications.map(notification => (
@@ -216,12 +215,12 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
                         notification.priority === 'URGENT' ? 'bg-rose-50/50' : ''
                       }`}
                     >
-                      {/* Type Icon */}
+                      {/* Icône du type */}
                       <div className="mt-0.5 shrink-0">
                         {typeIcons[notification.type]}
                       </div>
 
-                      {/* Content */}
+                      {/* Contenu */}
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm leading-snug truncate ${!notification.isRead ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
                           {notification.title}
@@ -232,7 +231,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
                         <p className="text-[10px] text-slate-400 mt-1">{timeAgo(notification.created)}</p>
                       </div>
 
-                      {/* Unread dot */}
+                      {/* Point de non-lu */}
                       {!notification.isRead && (
                         <div className="mt-1.5 shrink-0">
                           <div className="w-2 h-2 rounded-full bg-blue-500" />
@@ -243,13 +242,13 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNavigate }) => {
                 )}
               </div>
 
-              {/* Footer */}
+              {/* Pied de page */}
               <div className="border-t border-slate-100 px-4 py-2.5">
                 <button
                   onClick={() => { onNavigate('announcements'); setIsOpen(false); }}
                   className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
                 >
-                  View All Announcements
+                  Voir toutes les annonces
                 </button>
               </div>
             </>

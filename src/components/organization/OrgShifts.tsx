@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Clock, Plus, Trash2, Edit, Star, CalendarClock, Users } from 'lucide-react';
 import { Shift, ShiftOverride, Employee } from '../../types';
@@ -19,18 +18,18 @@ export const OrgShifts: React.FC<Props> = ({
   onAddShift, onEditShift, onDeleteShift,
   onAddOverride, onDeleteOverride
 }) => {
-  const getEmployeeName = (id: string) => employees.find(e => e.id === id)?.name || 'Unknown';
-  const getShiftName = (id: string) => shifts.find(s => s.id === id)?.name || 'Unknown Shift';
+  const getEmployeeName = (id: string) => employees.find(e => e.id === id)?.name || 'Inconnu';
+  const getShiftName = (id: string) => shifts.find(s => s.id === id)?.name || 'Horaire inconnu';
   const getAssignedCount = (shiftId: string) => employees.filter(e => e.shiftId === shiftId).length;
 
   return (
     <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-      {/* Shifts Section */}
+      {/* Section des horaires */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-6 bg-primary text-white flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Clock size={20} />
-            <h3 className="text-sm font-semibold uppercase tracking-wider">Shift Definitions</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider">Définitions des horaires</h3>
           </div>
           <button onClick={onAddShift} className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all">
             <Plus size={18} />
@@ -42,7 +41,7 @@ export const OrgShifts: React.FC<Props> = ({
               {shift.isDefault && (
                 <div className="absolute top-4 right-4">
                   <span className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-600 rounded-full text-[8px] font-semibold uppercase tracking-widest">
-                    <Star size={10} /> Default
+                    <Star size={10} /> Par défaut
                   </span>
                 </div>
               )}
@@ -55,11 +54,11 @@ export const OrgShifts: React.FC<Props> = ({
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="bg-white p-2.5 rounded-xl border border-slate-100/50">
-                  <p className="text-[8px] font-semibold text-slate-400 uppercase tracking-widest">Late Grace</p>
+                  <p className="text-[8px] font-semibold text-slate-400 uppercase tracking-widest">Tolérance de retard</p>
                   <p className="text-xs font-semibold text-slate-700">{shift.lateGracePeriod} min</p>
                 </div>
                 <div className="bg-white p-2.5 rounded-xl border border-slate-100/50">
-                  <p className="text-[8px] font-semibold text-slate-400 uppercase tracking-widest">Early Out</p>
+                  <p className="text-[8px] font-semibold text-slate-400 uppercase tracking-widest">Départ anticipé</p>
                   <p className="text-xs font-semibold text-slate-700">{shift.earlyOutGracePeriod} min</p>
                 </div>
               </div>
@@ -68,9 +67,10 @@ export const OrgShifts: React.FC<Props> = ({
                 {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
                   const fullDay = { Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday', Sun:'Sunday' }[day]!;
                   const isActive = shift.workingDays.includes(fullDay);
+                  const dayLabel = day === 'Mon' ? 'Lun' : day === 'Tue' ? 'Mar' : day === 'Wed' ? 'Mer' : day === 'Thu' ? 'Jeu' : day === 'Fri' ? 'Ven' : day === 'Sat' ? 'Sam' : 'Dim';
                   return (
                     <span key={day} className={`text-[8px] font-semibold px-2 py-1 rounded-lg ${isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-300'}`}>
-                      {day}
+                      {dayLabel}
                     </span>
                   );
                 })}
@@ -79,7 +79,7 @@ export const OrgShifts: React.FC<Props> = ({
               <div className="flex items-center justify-between pt-2 border-t border-slate-100/50">
                 <div className="flex items-center gap-1 text-slate-400">
                   <Users size={12} />
-                  <span className="text-[9px] font-bold">{getAssignedCount(shift.id)} assigned</span>
+                  <span className="text-[9px] font-bold">{getAssignedCount(shift.id)} assigné(s)</span>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button onClick={() => onEditShift(i)} className="p-1.5 text-slate-400 hover:text-primary"><Edit size={14}/></button>
@@ -90,18 +90,18 @@ export const OrgShifts: React.FC<Props> = ({
           ))}
           {shifts.length === 0 && (
             <p className="col-span-full text-center text-slate-400 py-10 font-bold uppercase text-xs">
-              No shifts configured. Click + to create your first shift.
+              Aucun horaire configuré. Cliquez sur + pour créer votre premier horaire.
             </p>
           )}
         </div>
       </div>
 
-      {/* Overrides Section */}
+      {/* Section des dérogations (overrides) */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-6 bg-slate-800 text-white flex justify-between items-center">
           <div className="flex items-center gap-3">
             <CalendarClock size={20} />
-            <h3 className="text-sm font-semibold uppercase tracking-wider">Temporary Shift Overrides</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider">Dérogations d'horaires temporaires</h3>
           </div>
           <button onClick={onAddOverride} className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition-all">
             <Plus size={18} />
@@ -114,7 +114,7 @@ export const OrgShifts: React.FC<Props> = ({
                 <h4 className="font-semibold text-slate-900 text-sm">{getEmployeeName(ov.employeeId)}</h4>
                 <p className="text-[10px] font-bold text-primary">{getShiftName(ov.shiftId)}</p>
                 <p className="text-[10px] font-bold text-slate-400">
-                  {ov.startDate} to {ov.endDate}
+                  Du {ov.startDate} au {ov.endDate}
                   {ov.reason && <span className="ml-2 text-slate-300">— {ov.reason}</span>}
                 </p>
               </div>
@@ -125,7 +125,7 @@ export const OrgShifts: React.FC<Props> = ({
           ))}
           {overrides.length === 0 && (
             <p className="text-center text-slate-400 py-10 font-bold uppercase text-xs">
-              No temporary overrides active.
+              Aucune dérogation temporaire active.
             </p>
           )}
         </div>

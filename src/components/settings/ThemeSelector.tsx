@@ -1,12 +1,11 @@
-
 import React from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme, DarkModePreference } from '../../context/ThemeContext';
 
 const MODE_OPTIONS: { id: DarkModePreference; label: string; icon: React.FC<{ size?: number; className?: string }> }[] = [
-  { id: 'light', label: 'Light', icon: Sun },
-  { id: 'dark', label: 'Dark', icon: Moon },
-  { id: 'system', label: 'System', icon: Monitor },
+  { id: 'light', label: 'Clair', icon: Sun },
+  { id: 'dark', label: 'Sombre', icon: Moon },
+  { id: 'system', label: 'Système', icon: Monitor },
 ];
 
 export const ThemeSelector: React.FC = () => {
@@ -19,8 +18,8 @@ export const ThemeSelector: React.FC = () => {
           {darkModePreference === 'dark' ? <Moon size={20} /> : darkModePreference === 'light' ? <Sun size={20} /> : <Monitor size={20} />}
         </div>
         <div>
-          <h3 className="text-lg sm:text-xl font-semibold text-slate-900">Appearance</h3>
-          <p className="text-[10px] sm:text-xs font-bold text-slate-400">Choose your preferred display mode</p>
+          <h3 className="text-lg sm:text-xl font-semibold text-slate-900">Apparence</h3>
+          <p className="text-[10px] sm:text-xs font-bold text-slate-400">Choisissez votre mode d'affichage préféré</p>
         </div>
       </div>
 

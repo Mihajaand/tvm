@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BookOpen, CheckCircle2, ShieldAlert, User, Briefcase, Building } from 'lucide-react';
 import { Role } from '../../types';
@@ -12,59 +11,59 @@ export const LeaveGuidelines: React.FC<Props> = ({ role }) => {
     switch (role) {
       case 'EMPLOYEE':
         return {
-          title: 'Employee Guidelines',
+          title: 'Directives pour les employés',
           icon: User,
           color: 'bg-primary-light text-primary',
           rules: [
-            "Ensure you have sufficient leave balance before applying.",
-            "Casual leave must be applied 2 days in advance if possible.",
-            "Sick leave requires a medical certificate if exceeding 3 days.",
-            "Your Team Leader or Line Manager must approve before HR validation."
+            "Assurez-vous d'avoir un solde de congés suffisant avant de faire une demande.",
+            "Les congés de circonstance ou exceptionnels doivent si possible être demandés 2 jours à l'avance.",
+            "Un certificat médical est requis pour un congé de maladie supérieur à 3 jours.",
+            "Votre chef d'équipe ou responsable hiérarchique direct doit approuver la demande avant la validation par les RH."
           ]
         };
       case 'TEAM_LEAD':
       case 'MANAGER':
         return {
-          title: 'Managerial Guidelines',
+          title: 'Directives managériales',
           icon: Briefcase,
           color: 'bg-primary-light text-primary',
           rules: [
-            "Review your direct report's leave request within 24 hours.",
-            "Ensure team coverage is adequate before approving dates.",
-            "Approvals automatically forward the request to HR for documentation.",
-            "Rejections are final and notify the employee immediately."
+            "Examinez la demande de congé de votre subordonné direct dans les 24 heures.",
+            "Assurez-vous que l'effectif de l'équipe est suffisant avant d'approuver les dates.",
+            "Les approbations transmettent automatiquement la demande aux RH pour documentation.",
+            "Les refus sont définitifs et notifient immédiatement l'employé."
           ]
         };
       case 'MANAGEMENT':
         return {
-          title: 'Management Guidelines',
+          title: 'Directives de la direction',
           icon: ShieldAlert,
           color: 'bg-primary-light text-primary',
           rules: [
-            "Oversee leave patterns for Managers and Team Leads.",
-            "Approval authority overrides lower-level decisions if necessary.",
-            "Ensure department-wide availability during critical project phases."
+            "Supervisez les tendances de congés des managers et chefs d'équipe.",
+            "L'autorité d'approbation prime sur les décisions des niveaux inférieurs si nécessaire.",
+            "Garantissez la disponibilité de l'ensemble du département pendant les phases critiques des projets."
           ]
         };
       case 'HR':
       case 'ADMIN':
         return {
-          title: 'HR Policy & Compliance',
+          title: 'Politique RH et conformité',
           icon: Building,
           color: 'bg-emerald-50 text-emerald-600',
           rules: [
-            "Verify leave balances against the annual quota.",
-            "Check for supporting documents (e.g., Medical Certificates).",
-            "This is the final step; 'Approved' leaves are deducted from balance.",
-            "You may override Manager approvals in case of policy violations."
+            "Vérifiez les soldes de congés par rapport au quota annuel.",
+            "Vérifiez la présence des pièces justificatives (ex. : certificats médicaux).",
+            "C'est la dernière étape ; les congés 'Approuvés' sont déduits du solde.",
+            "Vous pouvez passer outre l'approbation d'un manager en cas de violation de la politique."
           ]
         };
       default:
         return {
-          title: 'General Policy',
+          title: 'Politique générale',
           icon: BookOpen,
           color: 'bg-slate-50 text-slate-600',
-          rules: ["Adhere to company policy at all times."]
+          rules: ["Veuillez respecter la politique de l'entreprise à tout moment."]
         };
     }
   };
@@ -80,7 +79,7 @@ export const LeaveGuidelines: React.FC<Props> = ({ role }) => {
         </div>
         <div>
           <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-tight">{guide.title}</h3>
-          <p className="text-xs font-bold text-slate-400 dark:text-slate-500">Please review before proceeding</p>
+          <p className="text-xs font-bold text-slate-400 dark:text-slate-500">Veuillez consulter ceci avant de continuer</p>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

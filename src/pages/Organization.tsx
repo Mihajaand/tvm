@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Loader2, Save, X, RefreshCw, MapPin, AlertTriangle, Search
@@ -9,7 +8,7 @@ import { Holiday, Team, OfficeLocation, LeaveWorkflow, Shift, ShiftOverride, Cus
 import { useSubscription } from '../context/SubscriptionContext';
 import { useToast } from '../context/ToastContext';
 
-// Import sub-components
+// Importation des sous-composants
 import { OrgStructure } from '../components/organization/OrgStructure';
 import { OrgTeams } from '../components/organization/OrgTeams';
 import { OrgPlacement } from '../components/organization/OrgPlacement';
@@ -35,7 +34,7 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
       updateLeavePolicy, saveConfig, updateWorkflows, updateShiftOverrides, saveNotificationConfig
   } = useOrganization();
 
-  // Shifts managed locally with dedicated collection CRUD
+  // Équipes gérées localement avec un CRUD de collection dédié
   const [shifts, setShifts] = useState<Shift[]>([]);
 
   useEffect(() => {
@@ -45,11 +44,11 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
     };
     loadShifts();
     hrService.getLeaveTypes().then(setLeaveTypes).catch((err) => {
-      console.error('Failed to load leave types:', err);
+      console.error('Échec du chargement des types de congés :', err);
     });
   }, []);
 
-  // Subscription check
+  // Vérification de l'abonnement
   const { canPerformAction, subscription } = useSubscription();
   const canWrite = canPerformAction('write');
   const { showToast } = useToast();
@@ -60,12 +59,12 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
     if (initialTab) setActiveTab(initialTab as OrgTab);
   }, [initialTab]);
 
-  // Modals Local State
+  // État local des fenêtres modales
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'DEPT' | 'DESIG' | 'HOLIDAY' | 'TEAM' | 'LOCATION' | 'OVERRIDE' | 'SHIFT' | 'SHIFT_OVERRIDE'>('DEPT');
   const [editIndex, setEditIndex] = useState<number | null>(null);
   
-  // Forms Local State
+  // État local des formulaires
   const [modalValue, setModalValue] = useState('');
   const [holidayForm, setHolidayForm] = useState<Partial<Holiday>>({ name: '', date: '', type: 'FESTIVAL', isGovernment: true });
   const [teamForm, setTeamForm] = useState<Partial<Team>>({ name: '', leaderId: '', department: '' });
@@ -77,7 +76,7 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
   const [shiftOverrideForm, setShiftOverrideForm] = useState({ employeeId: '', shiftId: '', startDate: '', endDate: '', reason: '' });
   const [memberSearch, setMemberSearch] = useState('');
 
-  // --- Handlers ---
+  // --- Gestionnaires ---
 
   const openModal = (type: typeof modalType, index: number | null = null) => {
     setModalType(type);
@@ -116,7 +115,7 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
   const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canWrite) {
-      showToast('Your subscription does not allow modifications. Please upgrade to continue.', 'warning');
+      showToast('Votre abonnement ne permet pas les modifications. Veuillez effectuer une mise à niveau pour continuer.', 'warning');
       return;
     }
     try {
@@ -167,11 +166,11 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
         await updateShiftOverrides(next);
       }
       setShowModal(false);
-    } catch (err) { showToast('Operation failed.', 'error'); }
+    } catch (err) { showToast('L\'opération a échoué.', 'error'); }
   };
 
   const handleDelete = async (type: typeof modalType, index: number) => {
-    if (!confirm(`Confirm deletion?`)) return;
+    if (!confirm(`Confirmer la suppression ?`)) return;
     try {
       if (type === 'DEPT') {
         const next = departments.filter((_, idx) => idx !== index);
@@ -196,11 +195,11 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
         const next = shiftOverrides.filter((_, idx) => idx !== index);
         await updateShiftOverrides(next);
       }
-    } catch (err) { showToast('Delete failed.', 'error'); }
+    } catch (err) { showToast('Échec de la suppression.', 'error'); }
   };
 
   const deleteOverride = async (empId: string) => {
-    if (!confirm('Remove this custom policy?')) return;
+    if (!confirm('Supprimer cette politique personnalisée ?')) return;
     const next = { ...leavePolicy };
     delete next.overrides[empId];
     await updateLeavePolicy(next);
@@ -217,40 +216,40 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
     await updateWorkflows(next);
   };
 
-  if (isLoading) return <div className="flex flex-col items-center justify-center h-64 text-slate-400"><Loader2 className="w-8 h-8 text-primary animate-spin mb-4" /><p className="text-xs font-semibold uppercase tracking-widest">Initialising Organization Data...</p></div>;
+  if (isLoading) return <div className="flex flex-col items-center justify-center h-64 text-slate-400"><Loader2 className="w-8 h-8 text-primary animate-spin mb-4" /><p className="text-xs font-semibold uppercase tracking-widest">Initialisation des données de l'organisation...</p></div>;
 
   return (
     <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500 overflow-x-hidden">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Organization & Setup</h1>
-            <p className="text-sm text-slate-500 font-medium">Core structural and policy configurations</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Organisation et Paramétrage</h1>
+            <p className="text-sm text-slate-500 font-medium">Configurations structurelles et de politiques de base</p>
           </div>
           <HelpButton helpPointId={`org.${activeTab.toLowerCase()}`} />
         </div>
       </header>
 
       <div className="space-y-2">
-        {/* Row 1 — Structure & Teams */}
+        {/* Ligne 1 — Structure et Équipes */}
         <div>
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Structure</p>
           <div className="flex gap-2 p-1 bg-slate-100 rounded-xl overflow-x-auto no-scrollbar">
             {(['STRUCTURE', 'TEAMS', 'PLACEMENT', 'SHIFTS'] as OrgTab[]).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 md:flex-1 min-w-[90px] py-3 px-2 rounded-lg text-[10px] md:text-xs font-semibold uppercase tracking-widest transition-all whitespace-nowrap flex items-center justify-center gap-1 ${activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-                {tab.replace('_', ' ')}
+                {tab === 'STRUCTURE' ? 'Structure' : tab === 'TEAMS' ? 'Équipes' : tab === 'PLACEMENT' ? 'Emplacements' : 'Horaires'}
                 {activeTab === tab && <HelpButton helpPointId={`org.${tab.toLowerCase()}`} size={12} variant="inline" />}
               </button>
             ))}
           </div>
         </div>
-        {/* Row 2 — Policies & Config */}
+        {/* Ligne 2 — Politiques et Configuration */}
         <div>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Policies</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Politiques</p>
           <div className="flex gap-2 p-1 bg-slate-100 rounded-xl overflow-x-auto no-scrollbar">
             {(['WORKFLOW', 'LEAVES', 'HOLIDAYS', 'NOTIFICATIONS', 'SYSTEM'] as OrgTab[]).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 md:flex-1 min-w-[100px] py-3 px-2 rounded-lg text-[10px] md:text-xs font-semibold uppercase tracking-widest transition-all whitespace-nowrap flex items-center justify-center gap-1 ${activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-                {tab.replace('_', ' ')}
+                {tab === 'WORKFLOW' ? 'Flux' : tab === 'LEAVES' ? 'Congés' : tab === 'HOLIDAYS' ? 'Jours fériés' : tab === 'NOTIFICATIONS' ? 'Notifications' : 'Système'}
                 {activeTab === tab && <HelpButton helpPointId={`org.${tab.toLowerCase()}`} size={12} variant="inline" />}
               </button>
             ))}
@@ -258,14 +257,14 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
         </div>
       </div>
 
-      {/* Subscription Warning */}
+      {/* Avertissement d'abonnement */}
       {!canWrite && (
         <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
           <AlertTriangle className="w-5 h-5 flex-shrink-0" />
           <span className="text-sm">
             {subscription?.status === 'EXPIRED'
-              ? 'Your trial has expired. Organization settings are read-only. Please upgrade to make changes.'
-              : 'Your account is suspended. Please contact support.'}
+              ? 'Votre période d\'essai a expiré. Les paramètres de l\'organisation sont en lecture seule. Veuillez effectuer une mise à niveau pour apporter des modifications.'
+              : 'Votre compte est suspendu. Veuillez contacter le support.'}
           </span>
         </div>
       )}
@@ -343,48 +342,48 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
         )}
       </div>
 
-      {/* Shared Modal Logic */}
+      {/* Logique de fenêtre modale partagée */}
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
           <div className={`bg-white rounded-xl w-full shadow-2xl overflow-hidden animate-in zoom-in ${modalType === 'TEAM' || modalType === 'LOCATION' || modalType === 'OVERRIDE' || modalType === 'SHIFT' || modalType === 'SHIFT_OVERRIDE' ? 'max-w-xl' : 'max-w-md'}`}>
             <div className="bg-primary p-6 flex justify-between items-center text-white">
-               <h3 className="text-sm font-semibold uppercase tracking-widest">{modalType} Configuration</h3>
+               <h3 className="text-sm font-semibold uppercase tracking-widest">Configuration de {modalType}</h3>
                <button onClick={() => setShowModal(false)}><X size={24} /></button>
             </div>
             <form onSubmit={handleModalSubmit} className="p-6 md:p-8 space-y-6 max-h-[85vh] overflow-y-auto no-scrollbar">
               
               {(modalType === 'DEPT' || modalType === 'DESIG') && (
-                <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Entry Name</label><input autoFocus required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:ring-4 focus:ring-primary-light transition-all" value={modalValue} onChange={e => setModalValue(e.target.value)} /></div>
+                <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Nom de l'entrée</label><input autoFocus required className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl font-bold outline-none focus:ring-4 focus:ring-primary-light transition-all" value={modalValue} onChange={e => setModalValue(e.target.value)} /></div>
               )}
 
               {modalType === 'HOLIDAY' && (
                  <div className="space-y-4">
-                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Holiday Name</label><input required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-4 focus:ring-primary-light transition-all" value={holidayForm.name} onChange={e => setHolidayForm({...holidayForm, name: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Nom du jour férié</label><input required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-4 focus:ring-primary-light transition-all" value={holidayForm.name} onChange={e => setHolidayForm({...holidayForm, name: e.target.value})} /></div>
                     <div className="grid grid-cols-2 gap-4">
                        <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Date</label><input type="date" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={holidayForm.date} onChange={e => setHolidayForm({...holidayForm, date: e.target.value})} /></div>
-                       <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Type</label><select className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={holidayForm.type} onChange={e => setHolidayForm({...holidayForm, type: e.target.value as any})}><option value="NATIONAL">National</option><option value="FESTIVAL">Festival</option><option value="ISLAMIC">Islamic</option></select></div>
+                       <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Type</label><select className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={holidayForm.type} onChange={e => setHolidayForm({...holidayForm, type: e.target.value as any})}><option value="NATIONAL">National</option><option value="FESTIVAL">Festival</option><option value="ISLAMIC">Islamique</option></select></div>
                     </div>
                  </div>
               )}
 
               {modalType === 'LOCATION' && (
                  <div className="space-y-4">
-                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Office Name</label><input required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.name} onChange={e => setLocationForm({...locationForm, name: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Nom du bureau</label><input required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.name} onChange={e => setLocationForm({...locationForm, name: e.target.value})} /></div>
                     <div className="grid grid-cols-2 gap-4">
                        <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Latitude</label><input type="number" step="any" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.lat} onChange={e => setLocationForm({...locationForm, lat: parseFloat(e.target.value)})} /></div>
                        <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Longitude</label><input type="number" step="any" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.lng} onChange={e => setLocationForm({...locationForm, lng: parseFloat(e.target.value)})} /></div>
                     </div>
-                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Radius (Meters)</label><input type="number" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.radius} onChange={e => setLocationForm({...locationForm, radius: parseInt(e.target.value)})} /></div>
-                    <a href="https://www.google.com/maps" target="_blank" rel="noreferrer" className="text-[10px] text-primary font-bold hover:underline flex items-center gap-1 justify-end"><MapPin size={10}/> Open Google Maps to find Lat/Lng</a>
+                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Rayon (Mètres)</label><input type="number" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.radius} onChange={e => setLocationForm({...locationForm, radius: parseInt(e.target.value)})} /></div>
+                    <a href="https://www.google.com/maps" target="_blank" rel="noreferrer" className="text-[10px] text-primary font-bold hover:underline flex items-center gap-1 justify-end"><MapPin size={10}/> Ouvrir Google Maps pour trouver la Latitude/Longitude</a>
                  </div>
               )}
 
               {modalType === 'OVERRIDE' && (
                  <div className="space-y-4">
                     <div className="space-y-1">
-                       <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Select Employee</label>
+                       <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Sélectionner un employé</label>
                        <select required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm" value={overrideForm.employeeId} onChange={e => setOverrideForm({...overrideForm, employeeId: e.target.value})}>
-                          <option value="">-- Choose Staff --</option>
+                          <option value="">— Choisir un employé —</option>
                           {employees.map(e => <option key={e.id} value={e.id}>{e.name} ({e.employeeId})</option>)}
                        </select>
                     </div>
@@ -401,16 +400,16 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
 
               {modalType === 'TEAM' && (
                  <div className="space-y-4">
-                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Team Name</label><input required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-4 focus:ring-primary-light transition-all" value={teamForm.name} onChange={e => setTeamForm({...teamForm, name: e.target.value})} /></div>
-                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Department</label><select className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={teamForm.department} onChange={e => setTeamForm({...teamForm, department: e.target.value})}>{departments.map(d => <option key={d} value={d}>{d}</option>)}</select></div>
-                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Team Lead</label><select className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={teamForm.leaderId} onChange={e => setTeamForm({...teamForm, leaderId: e.target.value})}><option value="">-- Assign Lead --</option>{employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}</select></div>
+                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Nom de l'équipe</label><input required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-4 focus:ring-primary-light transition-all" value={teamForm.name} onChange={e => setTeamForm({...teamForm, name: e.target.value})} /></div>
+                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Département</label><select className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={teamForm.department} onChange={e => setTeamForm({...teamForm, department: e.target.value})}>{departments.map(d => <option key={d} value={d}>{d}</option>)}</select></div>
+                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Responsable d'équipe</label><select className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={teamForm.leaderId} onChange={e => setTeamForm({...teamForm, leaderId: e.target.value})}><option value="">— Assigner un responsable —</option>{employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}</select></div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Members ({selectedEmployeeIds.size})</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Membres ({selectedEmployeeIds.size})</label>
                       <div className="relative mb-2">
                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                           type="text"
-                          placeholder="Search employees..."
+                          placeholder="Rechercher des employés..."
                           value={memberSearch}
                           onChange={e => setMemberSearch(e.target.value)}
                           className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:ring-4 focus:ring-primary-light transition-all"
@@ -430,41 +429,41 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
               {modalType === 'SHIFT' && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Shift Name</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Nom de l'horaire / poste</label>
                     <input required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-4 focus:ring-primary-light transition-all" value={shiftForm.name} onChange={e => setShiftForm({...shiftForm, name: e.target.value})} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Start Time</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Heure de début</label>
                       <input type="time" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={shiftForm.startTime} onChange={e => setShiftForm({...shiftForm, startTime: e.target.value})} />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">End Time</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Heure de fin</label>
                       <input type="time" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={shiftForm.endTime} onChange={e => setShiftForm({...shiftForm, endTime: e.target.value})} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Late Grace (min)</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Tolérance de retard (min)</label>
                       <input type="number" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={shiftForm.lateGracePeriod} onChange={e => setShiftForm({...shiftForm, lateGracePeriod: parseInt(e.target.value) || 0})} />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Early Out Grace (min)</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Tolérance de départ anticipé (min)</label>
                       <input type="number" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={shiftForm.earlyOutGracePeriod} onChange={e => setShiftForm({...shiftForm, earlyOutGracePeriod: parseInt(e.target.value) || 0})} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Earliest Check-In</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Pointage d'entrée le plus tôt</label>
                       <input type="time" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={shiftForm.earliestCheckIn} onChange={e => setShiftForm({...shiftForm, earliestCheckIn: e.target.value})} />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Auto Session Close</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Fermeture auto. de session</label>
                       <input type="time" className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={shiftForm.autoSessionCloseTime} onChange={e => setShiftForm({...shiftForm, autoSessionCloseTime: e.target.value})} />
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Working Days</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Jours travaillés</label>
                     <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
                       {['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day => (
                         <button
@@ -479,14 +478,14 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
                           }}
                           className={`px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all ${(shiftForm.workingDays || []).includes(day) ? 'bg-emerald-500 text-white' : 'bg-white text-slate-400 border border-slate-200'}`}
                         >
-                          {day.slice(0, 3)}
+                          {day === 'Monday' ? 'Lun' : day === 'Tuesday' ? 'Mar' : day === 'Wednesday' ? 'Mer' : day === 'Thursday' ? 'Jeu' : day === 'Friday' ? 'Ven' : day === 'Saturday' ? 'Sam' : 'Dim'}
                         </button>
                       ))}
                     </div>
                   </div>
                   <label className="flex items-center gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100 cursor-pointer">
                     <input type="checkbox" checked={shiftForm.isDefault || false} onChange={e => setShiftForm({...shiftForm, isDefault: e.target.checked})} className="w-4 h-4 accent-amber-500" />
-                    <span className="text-xs font-bold text-amber-700">Set as Default Shift (auto-assigned to new employees)</span>
+                    <span className="text-xs font-bold text-amber-700">Définir comme horaire par défaut (attribué automatiquement aux nouveaux employés)</span>
                   </label>
                 </div>
               )}
@@ -494,38 +493,38 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
               {modalType === 'SHIFT_OVERRIDE' && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Select Employee</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Sélectionner un employé</label>
                     <select required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm" value={shiftOverrideForm.employeeId} onChange={e => setShiftOverrideForm({...shiftOverrideForm, employeeId: e.target.value})}>
-                      <option value="">-- Choose Staff --</option>
+                      <option value="">— Choisir un employé —</option>
                       {employees.map(e => <option key={e.id} value={e.id}>{e.name} ({e.employeeId})</option>)}
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Assign to Shift</label>
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Assigner à l'horaire</label>
                     <select required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm" value={shiftOverrideForm.shiftId} onChange={e => setShiftOverrideForm({...shiftOverrideForm, shiftId: e.target.value})}>
                       {shifts.map(s => <option key={s.id} value={s.id}>{s.name} ({s.startTime}-{s.endTime})</option>)}
                     </select>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Start Date</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Date de début</label>
                       <input type="date" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={shiftOverrideForm.startDate} onChange={e => setShiftOverrideForm({...shiftOverrideForm, startDate: e.target.value})} />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">End Date</label>
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Date de fin</label>
                       <input type="date" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={shiftOverrideForm.endDate} onChange={e => setShiftOverrideForm({...shiftOverrideForm, endDate: e.target.value})} />
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Reason (Optional)</label>
-                    <input className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" placeholder="e.g. Ramadan shift" value={shiftOverrideForm.reason} onChange={e => setShiftOverrideForm({...shiftOverrideForm, reason: e.target.value})} />
+                    <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Motif (Optionnel)</label>
+                    <input className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" placeholder="ex: Horaire du Ramadan" value={shiftOverrideForm.reason} onChange={e => setShiftOverrideForm({...shiftOverrideForm, reason: e.target.value})} />
                   </div>
                 </div>
               )}
 
               <div className="flex gap-3 pt-4 border-t border-slate-50">
-                <button type="button" disabled={isSaving} onClick={() => setShowModal(false)} className="flex-1 py-4 bg-slate-100 rounded-2xl font-semibold uppercase text-[10px] tracking-widest transition-colors hover:bg-slate-200">Cancel</button>
-                <button type="submit" disabled={isSaving} className="flex-1 py-4 bg-primary text-white rounded-2xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-lg transition-colors hover:bg-primary-hover">{isSaving ? <RefreshCw className="animate-spin" size={16} /> : <><Save size={16} /> Confirm</>}</button>
+                <button type="button" disabled={isSaving} onClick={() => setShowModal(false)} className="flex-1 py-4 bg-slate-100 rounded-2xl font-semibold uppercase text-[10px] tracking-widest transition-colors hover:bg-slate-200">Annuler</button>
+                <button type="submit" disabled={isSaving} className="flex-1 py-4 bg-primary text-white rounded-2xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-lg transition-colors hover:bg-primary-hover">{isSaving ? <RefreshCw className="animate-spin" size={16} /> : <><Save size={16} /> Confirmer</>}</button>
               </div>
             </form>
           </div>

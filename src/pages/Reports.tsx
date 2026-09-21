@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   FileText, Calendar, Clock, RefreshCw, User as UserIcon, Search, FileSpreadsheet, FileDown, MapPin,
@@ -34,7 +33,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
   const [reportType, setReportType] = useState('ATTENDANCE');
   const [periodPreset, setPeriodPreset] = useState<string>('THIS_MONTH');
   
-  // Data States
+  // États des données
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
@@ -44,23 +43,23 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [shiftOverrides, setShiftOverrides] = useState<any[]>([]);
 
-  // Log State
+  // État des journaux (logs)
   const [emailLogs, setEmailLogs] = useState<any[]>([]);
   const [isHookMissing, setIsHookMissing] = useState(false);
   
-  // Filter States
+  // États des filtres
   const [selectedDepts, setSelectedDepts] = useState<string[]>([]);
   const [employeeFilter, setEmployeeFilter] = useState('All Employees');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   
-  // Recipient State
+  // État des destinataires
   const [customRecipients, setCustomRecipients] = useState('');
 
-  // Org Info for PDF header
+  // Informations de l'organisation pour l'en-tête du PDF
   const [orgInfo, setOrgInfo] = useState<{ name: string; address: string; logoDataUrl: string | null }>({ name: '', address: '', logoDataUrl: null });
 
-  // UI States
+  // États de l'interface
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isEmailing, setIsEmailing] = useState(false);
@@ -72,13 +71,13 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
   });
 
   const columnOptions = [
-    { key: 'Employee_ID', label: 'Employee ID', icon: UserIcon },
-    { key: 'Name', label: 'Full Name', icon: Layout },
-    { key: 'Date', label: 'Entry Date', icon: Calendar },
-    { key: 'Status_Type', label: 'Status', icon: CheckCircle2 },
-    { key: 'Check_In', label: 'Clock In', icon: Clock },
-    { key: 'Check_Out', label: 'Clock Out', icon: Clock },
-    { key: 'Location', label: 'GPS Address', icon: MapPin },
+    { key: 'Employee_ID', label: 'ID de l’employé', icon: UserIcon },
+    { key: 'Name', label: 'Nom complet', icon: Layout },
+    { key: 'Date', label: 'Date d’entrée', icon: Calendar },
+    { key: 'Status_Type', label: 'Statut', icon: CheckCircle2 },
+    { key: 'Check_In', label: 'Arrivée', icon: Clock },
+    { key: 'Check_Out', label: 'Départ', icon: Clock },
+    { key: 'Location', label: 'Adresse GPS', icon: MapPin },
     { key: 'Latitude', label: 'Latitude', icon: Search },
     { key: 'Longitude', label: 'Longitude', icon: Search },
     { key: 'Remarks', label: 'Notes', icon: FileText },
@@ -95,15 +94,15 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
         return l.status === 'PENDING' && diffSeconds > 10;
       });
       setIsHookMissing(recentPending);
-    } catch(e) { console.warn("Failed to fetch logs"); }
+    } catch(e) { console.warn("Échec de la récupération des journaux"); }
   };
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // Reports page needs a wide window (quarterly/annual summaries).
-        // Default service window is 30d; override to ~1 year here.
+        // La page des rapports nécessite une large fenêtre (résumés trimestriels/annuels).
+        // La fenêtre de service par défaut est de 30 jours ; on l'étend ici à environ 1 an.
         const yearAgo = new Date();
         yearAgo.setDate(yearAgo.getDate() - 365);
         const sinceYearAgo = yearAgo.toISOString().split('T')[0];
@@ -129,15 +128,15 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
         setSelectedDepts(depts);
         setCustomRecipients(config.defaultReportRecipient || user.email || '');
 
-        // Fetch organization info for PDF header
+        // Récupération des informations de l'organisation pour l'en-tête du PDF
         try {
           const branding = await organizationService.getOrgBranding();
           setOrgInfo(branding);
-        } catch (e) { console.warn("Failed to fetch org info for PDF header"); }
+        } catch (e) { console.warn("Échec de la récupération des infos de l’organisation pour l’en-tête du PDF"); }
 
         await fetchLogs();
       } catch (err) {
-        console.error("Report data load failed", err);
+        console.error("Échec du chargement des données du rapport", err);
       } finally {
         setIsLoading(false);
       }
@@ -165,7 +164,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
     );
   };
 
-  // Sync date range when period preset changes
+  // Synchronisation de la plage de dates lors du changement de période prédéfinie
   useEffect(() => {
     if (periodPreset === 'CUSTOM') return;
     const range = getDateRangeFromPreset(periodPreset);
@@ -191,7 +190,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
     let combinedData: any[] = [];
     const isAttendanceReport = reportType === 'ATTENDANCE' || reportType === 'ABSENT' || reportType === 'LATE';
 
-    // 1. Filter Records
+    // 1. Filtrer les enregistrements
     const filteredAttendance = attendance.filter(item => {
       if (item.date < startDate || item.date > endDate) return false;
       const emp = employees.find(e => e.id === item.employeeId);
@@ -211,11 +210,11 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
     });
 
     if (isAttendanceReport) {
-      // Consolidate Attendance (Utilize Shared Logic)
-      // This ensures Min(CheckIn) and Max(CheckOut) are used
+      // Consolidation des présences (utilisation de la logique partagée)
+      // Cela garantit l'utilisation de Min(CheckIn) et Max(CheckOut)
       combinedData = consolidateAttendance(filteredAttendance);
 
-      // Gap Analysis — per-employee shift working days
+      // Analyse des écarts (Gap Analysis) — jours de travail des équipes par employé
       if (appConfig) {
         const globalWorkingDays = appConfig.workingDays || [];
         const defaultShift = shifts.find(s => s.isDefault);
@@ -229,16 +228,16 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
           return true;
         });
 
-        // Normalize 3-letter day abbreviations (DB default) to full names
+        // Normalisation des abréviations de jours à 3 lettres (par défaut dans la BDD) en noms complets
         const DAY_MAP: Record<string, string> = {
           MON: 'Monday', TUE: 'Tuesday', WED: 'Wednesday', THU: 'Thursday',
           FRI: 'Friday', SAT: 'Saturday', SUN: 'Sunday',
         };
         const normDays = (days: string[]) => days.map(d => DAY_MAP[d.toUpperCase()] || d);
 
-        // Helper to resolve shift working days for an employee on a given date
+        // Fonction auxiliaire pour déterminer les jours de travail d'un employé à une date donnée
         const getWorkingDays = (emp: Employee, dateStr: string): string[] => {
-          // Check overrides first
+          // Vérifier d'abord les dérogations (overrides)
           const override = shiftOverrides.find(
             (o: any) => o.employeeId === emp.id && dateStr >= o.startDate && dateStr <= o.endDate
           );
@@ -246,18 +245,18 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
             const oShift = shifts.find(s => s.id === override.shiftId);
             if (oShift) return normDays(oShift.workingDays);
           }
-          // Employee assignment
+          // Assignation de l'employé
           if (emp.shiftId) {
             const aShift = shifts.find(s => s.id === emp.shiftId);
             if (aShift) return normDays(aShift.workingDays);
           }
-          // Default shift
+          // Équipe par défaut
           if (defaultShift) return normDays(defaultShift.workingDays);
-          // Global fallback (already full names from appConfig)
+          // Valeur de secours globale (déjà en noms complets depuis appConfig)
           return globalWorkingDays;
         };
 
-        // Use a set for quick lookup
+        // Utilisation d'un Set pour une recherche rapide
         const presentSet = new Set(combinedData.map(d => `${d.employeeId}_${d.date}`));
 
         for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
@@ -288,8 +287,8 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
                 status: 'ABSENT',
                 checkIn: '-',
                 checkOut: '-',
-                location: { address: 'Not Detected' },
-                remarks: 'System Generated: No punch-in detected.'
+                location: { address: 'Non détecté' },
+                remarks: 'Généré par le système : Aucun pointage détecté.'
               });
             }
           });
@@ -309,11 +308,11 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
     });
   }, [reportType, startDate, endDate, selectedDepts, employeeFilter, attendance, employees, leaves, appConfig, holidays]);
 
-  // Compute per-employee summary for the Summary tab
+  // Calcul du résumé par employé pour l'onglet Résumé
   const employeeSummaries = useMemo<EmployeeAttendanceSummary[]>(() => {
     if (!appConfig || employees.length === 0) return [];
 
-    // Consolidate filtered attendance (same logic as reportData for consistency)
+    // Consolidation des présences filtrées (même logique que reportData pour la cohérence)
     const filteredAttendance = attendance.filter(item => {
       if (item.date < startDate || item.date > endDate) return false;
       const emp = employees.find(e => e.id === item.employeeId);
@@ -325,7 +324,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
 
     const consolidated = consolidateAttendance(filteredAttendance);
 
-    // Approved leaves in range
+    // Congés approuvés dans la plage
     const approvedLeaves = leaves.filter(l => {
       if (l.status !== 'APPROVED') return false;
       return l.startDate <= endDate && l.endDate >= startDate;
@@ -368,7 +367,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
   };
 
   const downloadCSV = () => {
-    if (reportData.length === 0) { showToast("No data to export.", "warning"); return; }
+    if (reportData.length === 0) { showToast("Aucune donnée à exporter.", "warning"); return; }
     setIsGenerating(true);
     setTimeout(() => {
       const cleanData = getCleanReportData();
@@ -386,7 +385,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
   };
 
   const downloadPDF = async () => {
-    if (reportData.length === 0) { showToast("No data to export.", "warning"); return; }
+    if (reportData.length === 0) { showToast("Aucune donnée à exporter.", "warning"); return; }
     setIsGeneratingPDF(true);
     try {
       const jsPDFModule = await import('jspdf');
@@ -397,7 +396,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
 
-      // --- Header ---
+      // --- En-tête ---
       let cursorY = 15;
       const logoSize = 20;
       let textStartX = 14;
@@ -407,7 +406,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
           const logoDims = await getScaledLogoDims(orgInfo.logoDataUrl, logoSize);
           doc.addImage(orgInfo.logoDataUrl, 'PNG', 14, cursorY - 5, logoDims.w, logoDims.h);
           textStartX = 14 + logoDims.w + 6;
-        } catch { /* skip logo on error */ }
+        } catch { /* ignorer le logo en cas d'erreur */ }
       }
 
       if (orgInfo.name) {
@@ -424,19 +423,19 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
 
       cursorY += Math.max(logoSize, 14) + 6;
 
-      // --- Title & Date Range ---
+      // --- Titre & Plage de dates ---
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(30, 41, 59);
-      doc.text(`${reportType} Report`, 14, cursorY);
+      doc.text(`Rapport ${reportType}`, 14, cursorY);
       cursorY += 6;
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 116, 139);
-      doc.text(`Date Range: ${startDate} to ${endDate}`, 14, cursorY);
+      doc.text(`Plage de dates : ${startDate} au ${endDate}`, 14, cursorY);
       cursorY += 10;
 
-      // --- Summary Stats ---
+      // --- Statistiques récapitulatives ---
       const totalRecords = reportData.length;
       const presentCount = reportData.filter((r: any) => r.status === 'PRESENT').length;
       const absentCount = reportData.filter((r: any) => r.status === 'ABSENT').length;
@@ -446,16 +445,16 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(30, 41, 59);
-      doc.text('Summary', 14, cursorY);
+      doc.text('Résumé', 14, cursorY);
       cursorY += 5;
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(71, 85, 105);
-      const statsText = `Total: ${totalRecords}    Present: ${presentCount}    Absent: ${absentCount}    Late: ${lateCount}    Other: ${otherCount}`;
+      const statsText = `Total : ${totalRecords}    Présents : ${presentCount}    Absents : ${absentCount}    En retard : ${lateCount}    Autre : ${otherCount}`;
       doc.text(statsText, 14, cursorY);
       cursorY += 8;
 
-      // --- Table ---
+      // --- Tableau ---
       const cleanData = getCleanReportData();
       const columns = Object.keys(cleanData[0]);
       const tableHeaders = columns.map(col => {
@@ -476,7 +475,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
         styles: { cellPadding: 2, overflow: 'linebreak' },
       });
 
-      // --- Footer on each page ---
+      // --- Pied de page sur chaque page ---
       const totalPages = (doc as any).internal.getNumberOfPages();
       const now = new Date().toLocaleString();
       for (let i = 1; i <= totalPages; i++) {
@@ -485,26 +484,26 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
         doc.setFontSize(7);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(148, 163, 184);
-        doc.text(`Generated by OpenHRApp on ${now}`, 14, pageHeight - 8);
-        doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, pageHeight - 8, { align: 'right' });
+        doc.text(`Généré par OpenHRApp le ${now}`, 14, pageHeight - 8);
+        doc.text(`Page ${i} sur ${totalPages}`, pageWidth - 14, pageHeight - 8, { align: 'right' });
       }
 
       doc.save(`OpenHRApp_${reportType}_Export.pdf`);
     } catch (err: any) {
-      console.error("PDF generation failed:", err);
-      showToast("Failed to generate PDF: " + (err?.message || err), "error");
+      console.error("Échec de la génération du PDF :", err);
+      showToast("Échec de la génération du PDF : " + (err?.message || err), "error");
     } finally {
       setIsGeneratingPDF(false);
     }
   };
 
-  // --- Summary Tab Exports ---
+  // --- Exportations de l'onglet Résumé ---
 
   const downloadSummaryCSV = () => {
-    if (employeeSummaries.length === 0) { showToast("No summary data to export.", "warning"); return; }
+    if (employeeSummaries.length === 0) { showToast("Aucune donnée de résumé à exporter.", "warning"); return; }
     setIsGenerating(true);
     setTimeout(() => {
-      const headers = ['Employee ID', 'Name', 'Department', 'Designation', 'Working Days', 'Present', 'Absent', 'Late', 'Leave', 'Half Days', 'Attendance %'];
+      const headers = ['ID de l’employé', 'Nom', 'Département', 'Poste', 'Jours travaillés', 'Présent', 'Absent', 'En retard', 'Congé', 'Demi-journées', '% de présence'];
       const rows = employeeSummaries.map(s => [
         s.employeeId, s.employeeName, s.department, s.designation,
         s.totalWorkingDays, s.presentDays, s.absentDays, s.lateDays,
@@ -513,7 +512,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
       const csvContent = 'data:text/csv;charset=utf-8,﻿' + headers.join(',') + '\n' + rows.join('\n');
       const link = document.createElement('a');
       link.setAttribute('href', encodeURI(csvContent));
-      link.setAttribute('download', `OpenHRApp_Employee_Summary_${startDate}_to_${endDate}.csv`);
+      link.setAttribute('download', `OpenHRApp_Resume_Employe_${startDate}_au_${endDate}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -522,7 +521,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
   };
 
   const downloadSummaryPDF = async () => {
-    if (employeeSummaries.length === 0) { showToast("No summary data to export.", "warning"); return; }
+    if (employeeSummaries.length === 0) { showToast("Aucune donnée de résumé à exporter.", "warning"); return; }
     setIsGeneratingPDF(true);
     try {
       const jsPDFModule = await import('jspdf');
@@ -533,7 +532,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
 
-      // --- Header (reuse same pattern) ---
+      // --- En-tête (réutilisation du même motif) ---
       let cursorY = 15;
       const logoSize = 20;
       let textStartX = 14;
@@ -543,7 +542,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
           const logoDims = await getScaledLogoDims(orgInfo.logoDataUrl, logoSize);
           doc.addImage(orgInfo.logoDataUrl, 'PNG', 14, cursorY - 5, logoDims.w, logoDims.h);
           textStartX = 14 + logoDims.w + 6;
-        } catch { /* skip logo on error */ }
+        } catch { /* ignorer le logo en cas d'erreur */ }
       }
 
       if (orgInfo.name) {
@@ -560,19 +559,19 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
 
       cursorY += Math.max(logoSize, 14) + 6;
 
-      // --- Title & Period ---
+      // --- Titre & Période ---
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(30, 41, 59);
-      doc.text('Employee Attendance Summary', 14, cursorY);
+      doc.text('Résumé des présences des employés', 14, cursorY);
       cursorY += 6;
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(100, 116, 139);
-      doc.text(`Period: ${startDate} to ${endDate}  •  ${employeeSummaries.length} Employees`, 14, cursorY);
+      doc.text(`Période : ${startDate} au ${endDate}  •  ${employeeSummaries.length} employés`, 14, cursorY);
       cursorY += 10;
 
-      // --- Summary Stats ---
+      // --- Statistiques récapitulatives ---
       const totalPresent = employeeSummaries.reduce((s, e) => s + e.presentDays, 0);
       const totalAbsent = employeeSummaries.reduce((s, e) => s + e.absentDays, 0);
       const totalLate = employeeSummaries.reduce((s, e) => s + e.lateDays, 0);
@@ -584,19 +583,19 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(30, 41, 59);
-      doc.text('Summary', 14, cursorY);
+      doc.text('Résumé', 14, cursorY);
       cursorY += 5;
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(71, 85, 105);
       doc.text(
-        `Total Present: ${totalPresent}    Absent: ${totalAbsent}    Late: ${totalLate}    Leave: ${totalLeave}    Avg. Attendance: ${avgAttendance}%`,
+        `Total Présents : ${totalPresent}    Absents : ${totalAbsent}    En retard : ${totalLate}    Congés : ${totalLeave}    Présence moyenne : ${avgAttendance}%`,
         14, cursorY
       );
       cursorY += 8;
 
-      // --- Table ---
-      const tableHeaders = ['#', 'Employee', 'Dept', 'Work Days', 'Present', 'Absent', 'Late', 'Leave', 'Half', '%'];
+      // --- Tableau ---
+      const tableHeaders = ['#', 'Employé', 'Dept', 'Jours trav.', 'Présent', 'Absent', 'Retard', 'Congé', 'Demi', '%'];
       const tableRows = employeeSummaries.map((s, i) => [
         i + 1, s.employeeName, s.department, s.totalWorkingDays,
         s.presentDays, s.absentDays, s.lateDays, s.leaveDays, s.halfDays, `${s.attendancePercentage}%`
@@ -626,7 +625,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
         },
       });
 
-      // --- Footer ---
+      // --- Pied de page ---
       const totalPages = (doc as any).internal.getNumberOfPages();
       const now = new Date().toLocaleString();
       for (let i = 1; i <= totalPages; i++) {
@@ -635,48 +634,48 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
         doc.setFontSize(7);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(148, 163, 184);
-        doc.text(`Generated by OpenHRApp on ${now}`, 14, pageHeight - 8);
-        doc.text(`Page ${i} of ${totalPages}`, pageWidth - 14, pageHeight - 8, { align: 'right' });
+        doc.text(`Généré par OpenHRApp le ${now}`, 14, pageHeight - 8);
+        doc.text(`Page ${i} sur ${totalPages}`, pageWidth - 14, pageHeight - 8, { align: 'right' });
       }
 
-      doc.save(`OpenHRApp_Employee_Summary_${startDate}_to_${endDate}.pdf`);
+      doc.save(`OpenHRApp_Resume_Employe_${startDate}_au_${endDate}.pdf`);
     } catch (err: any) {
-      console.error("Summary PDF generation failed:", err);
-      showToast("Failed to generate PDF: " + (err?.message || err), "error");
+      console.error("Échec de la génération du PDF du résumé :", err);
+      showToast("Échec de la génération du PDF : " + (err?.message || err), "error");
     } finally {
       setIsGeneratingPDF(false);
     }
   };
 
   const handleEmailSummaryReport = async () => {
-    if (employeeSummaries.length === 0) { showToast("No summary data to email.", "warning"); return; }
+    if (employeeSummaries.length === 0) { showToast("Aucune donnée de résumé à envoyer par e-mail.", "warning"); return; }
     setIsEmailing(true);
     try {
       const rawTarget = customRecipients;
-      if (!rawTarget) throw new Error("Please enter at least one recipient email address.");
+      if (!rawTarget) throw new Error("Veuillez saisir au moins une adresse e-mail de destinataire.");
       const targets = rawTarget.split(',').map(t => t.trim()).filter(t => t.includes('@'));
-      if (targets.length === 0) throw new Error("No valid email addresses found.");
+      if (targets.length === 0) throw new Error("Aucune adresse e-mail valide trouvée.");
 
       const periodLabel = periodPreset.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      const dateRange = `${startDate} to ${endDate}`;
+      const dateRange = `${startDate} au ${endDate}`;
 
       for (const target of targets) {
         await emailService.sendEmployeeSummaryReport(target, employeeSummaries, periodLabel, dateRange);
       }
-      showToast(`Summary report queued for ${targets.length} recipient(s).`, "success");
+      showToast(`Rapport de résumé mis en file d'attente pour ${targets.length} destinataire(s).`, "success");
       setTimeout(fetchLogs, 1000);
-    } catch (err: any) { showToast(err.message || "Email relay failed.", "error"); }
+    } catch (err: any) { showToast(err.message || "Échec de l'envoi de l'e-mail.", "error"); }
     finally { setIsEmailing(false); }
   };
 
   const handleEmailSummary = async () => {
-    if (reportData.length === 0) { showToast("There is no data in the current report to email.", "warning"); return; }
+    if (reportData.length === 0) { showToast("Il n'y a aucune donnée dans le rapport actuel à envoyer par e-mail.", "warning"); return; }
     setIsEmailing(true);
     try {
       const rawTarget = customRecipients;
-      if (!rawTarget) throw new Error("Please enter at least one recipient email address.");
+      if (!rawTarget) throw new Error("Veuillez saisir au moins une adresse e-mail de destinataire.");
       const targets = rawTarget.split(',').map(t => t.trim()).filter(t => t.includes('@'));
-      if (targets.length === 0) throw new Error("No valid email addresses found.");
+      if (targets.length === 0) throw new Error("Aucune adresse e-mail valide trouvée.");
 
       const BATCH_SIZE = 350;
       const chunks = [];
@@ -686,45 +685,45 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
       for (const target of targets) {
         for (let i = 0; i < chunks.length; i++) {
            const chunk = chunks[i];
-           const suffix = chunks.length > 1 ? ` [Part ${i+1}/${chunks.length}]` : '';
+           const suffix = chunks.length > 1 ? ` [Partie ${i+1}/${chunks.length}]` : '';
            await emailService.sendDailyAttendanceSummary(target, chunk as Attendance[], suffix);
            totalEmails++;
         }
       }
-      showToast(`Report summary queued for ${targets.length} recipient(s).`, "success");
+      showToast(`Résumé du rapport mis en file d'attente pour ${targets.length} destinataire(s).`, "success");
       setTimeout(fetchLogs, 1000);
-    } catch (err: any) { showToast(err.message || "Email relay failed.", "error"); } 
+    } catch (err: any) { showToast(err.message || "Échec de l'envoi de l'e-mail.", "error"); } 
     finally { setIsEmailing(false); }
   };
 
-  if (isLoading) return <div className="flex flex-col items-center justify-center h-64 text-slate-400"><RefreshCw className="w-8 h-8 text-indigo-600 animate-spin mb-4" /><p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Initializing Reporting Engine...</p></div>;
+  if (isLoading) return <div className="flex flex-col items-center justify-center h-64 text-slate-400"><RefreshCw className="w-8 h-8 text-indigo-600 animate-spin mb-4" /><p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Initialisation du moteur de rapports...</p></div>;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2"><h1 className="text-3xl font-bold text-slate-900 tracking-tight">Audit & Reports</h1><HelpButton helpPointId="reports.generator" /></div>
-          <p className="text-slate-500 font-medium text-sm">Employee attendance summary & detailed record extraction</p>
+          <div className="flex items-center gap-2"><h1 className="text-3xl font-bold text-slate-900 tracking-tight">Audit & Rapports</h1><HelpButton helpPointId="reports.generator" /></div>
+          <p className="text-slate-500 font-medium text-sm">Résumé des présences des employés et extraction de dossiers détaillés</p>
         </div>
       </header>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <div className="xl:col-span-2 space-y-8">
 
-          {/* ===== SHARED FILTERS ===== */}
+          {/* ===== FILTRES PARTAGÉS ===== */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 md:p-12 space-y-8">
-            {/* Period Presets */}
+            {/* Préréglages de période */}
             <div className="space-y-4">
               <div className="flex items-center justify-between px-1">
-                <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest">Period</p>
+                <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest">Période</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { key: 'THIS_WEEK', label: 'This Week', icon: CalendarDays },
-                  { key: 'THIS_MONTH', label: 'This Month', icon: Calendar },
-                  { key: 'THIS_YEAR', label: 'This Year', icon: TrendingUp },
-                  { key: 'LAST_MONTH', label: 'Last Month', icon: Calendar },
-                  { key: 'LAST_YEAR', label: 'Last Year', icon: TrendingUp },
+                  { key: 'THIS_WEEK', label: 'Cette semaine', icon: CalendarDays },
+                  { key: 'THIS_MONTH', label: 'Ce mois-ci', icon: Calendar },
+                  { key: 'THIS_YEAR', label: 'Cette année', icon: TrendingUp },
+                  { key: 'LAST_MONTH', label: 'Le mois dernier', icon: Calendar },
+                  { key: 'LAST_YEAR', label: 'L’année dernière', icon: TrendingUp },
                 ].map(p => (
                   <button key={p.key} onClick={() => handlePresetClick(p.key)}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all border ${
@@ -737,24 +736,24 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider transition-all border ${
                     periodPreset === 'CUSTOM' ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-slate-50 text-slate-500 border-slate-100 hover:border-indigo-200 hover:text-indigo-600'
                   }`}>
-                  <CalendarDays size={14} />Custom
+                  <CalendarDays size={14} />Personnalisé
                 </button>
               </div>
               {periodPreset === 'CUSTOM' && (
                 <div className="flex gap-2 pt-2">
-                  <div className="flex-1 min-w-0 space-y-1"><label className="text-[8px] font-semibold text-slate-400 uppercase tracking-[0.2em] px-1">From</label><input type="date" className="w-full min-w-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-bold outline-none" value={startDate} onChange={handleDateChange(setStartDate)} /></div>
-                  <div className="flex-1 min-w-0 space-y-1"><label className="text-[8px] font-semibold text-slate-400 uppercase tracking-[0.2em] px-1">To</label><input type="date" className="w-full min-w-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-bold outline-none" value={endDate} onChange={handleDateChange(setEndDate)} /></div>
+                  <div className="flex-1 min-w-0 space-y-1"><label className="text-[8px] font-semibold text-slate-400 uppercase tracking-[0.2em] px-1">Du</label><input type="date" className="w-full min-w-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-bold outline-none" value={startDate} onChange={handleDateChange(setStartDate)} /></div>
+                  <div className="flex-1 min-w-0 space-y-1"><label className="text-[8px] font-semibold text-slate-400 uppercase tracking-[0.2em] px-1">Au</label><input type="date" className="w-full min-w-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-bold outline-none" value={endDate} onChange={handleDateChange(setEndDate)} /></div>
                 </div>
               )}
             </div>
 
-            {/* Department Filter */}
+            {/* Filtre par département */}
             <div className="space-y-4">
               <div className="flex items-center justify-between px-1">
-                <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest">Departments ({selectedDepts.length}/{dbDepartments.length})</p>
+                <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest">Départements ({selectedDepts.length}/{dbDepartments.length})</p>
                 <div className="flex gap-4">
-                  <button onClick={() => setSelectedDepts(dbDepartments)} className="text-[9px] font-semibold uppercase text-indigo-600 hover:underline">Select All</button>
-                  <button onClick={() => setSelectedDepts([])} className="text-[9px] font-semibold uppercase text-rose-500 hover:underline">Clear All</button>
+                  <button onClick={() => setSelectedDepts(dbDepartments)} className="text-[9px] font-semibold uppercase text-indigo-600 hover:underline">Tout sélectionner</button>
+                  <button onClick={() => setSelectedDepts([])} className="text-[9px] font-semibold uppercase text-rose-500 hover:underline">Tout désélectionner</button>
                 </div>
               </div>
               <div className="max-h-60 overflow-y-auto no-scrollbar grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 p-1 border border-slate-50 rounded-3xl py-4 bg-slate-50/30">
@@ -770,48 +769,48 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
               </div>
             </div>
 
-            {/* Employee Scoping + Recipient */}
+            {/* Portée des employés + Destinataire */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[8px] font-semibold text-slate-400 uppercase tracking-[0.2em] px-1">Employee Scoping</label>
+                <label className="text-[8px] font-semibold text-slate-400 uppercase tracking-[0.2em] px-1">Portée des employés</label>
                 <select className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-xs outline-none" value={employeeFilter} onChange={e => setEmployeeFilter(e.target.value)}>
-                  <option value="All Employees">All Active Employees</option>
+                  <option value="All Employees">Tous les employés actifs</option>
                   {employees.filter(e => { if (selectedDepts.length === 0) return true; return selectedDepts.includes(e.department || ''); }).map(e => <option key={e.id} value={e.id}>{e.name} ({e.employeeId})</option>)}
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-[8px] font-semibold text-slate-400 uppercase tracking-[0.2em] px-1">Recipient(s)</label>
+                <label className="text-[8px] font-semibold text-slate-400 uppercase tracking-[0.2em] px-1">Destinataire(s)</label>
                 <input type="text" placeholder="email1@example.com, email2@example.com" className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-xs outline-none" value={customRecipients} onChange={e => setCustomRecipients(e.target.value)}/>
               </div>
             </div>
           </div>
 
-          {/* ===== SECTION 1: EMPLOYEE SUMMARY ===== */}
+          {/* ===== SECTION 1 : RÉSUMÉ DES EMPLOYÉS ===== */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 md:p-12 space-y-6">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-indigo-100 rounded-xl"><PieChart size={20} className="text-indigo-600" /></div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Employee Summary Report</h2>
-                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Per-employee attendance breakdown</p>
+                <h2 className="text-lg font-bold text-slate-900">Rapport de résumé des employés</h2>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Répartition des présences par employé</p>
               </div>
             </div>
 
-            {/* Stat Cards */}
+            {/* Cartes de statistiques */}
             {employeeSummaries.length === 0 ? (
               <div className="text-center py-12 bg-slate-50 rounded-2xl border border-slate-100">
                 <Users size={40} className="mx-auto text-slate-300 mb-3" />
-                <p className="text-sm font-semibold text-slate-400">No employee data for this period</p>
-                <p className="text-xs text-slate-400 mt-1">Try adjusting the date range or department filters.</p>
+                <p className="text-sm font-semibold text-slate-400">Aucune donnée d'employé pour cette période</p>
+                <p className="text-xs text-slate-400 mt-1">Essayez d'ajuster la plage de dates ou les filtres de département.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 {[
-                  { label: 'Employees', value: employeeSummaries.length, color: 'bg-indigo-50 text-indigo-700 border-indigo-100', icon: Users },
-                  { label: 'Total Present', value: employeeSummaries.reduce((s: any, e: any) => s + e.presentDays, 0), color: 'bg-emerald-50 text-emerald-700 border-emerald-100', icon: CheckCircle2 },
-                  { label: 'Total Absent', value: employeeSummaries.reduce((s: any, e: any) => s + e.absentDays, 0), color: 'bg-rose-50 text-rose-700 border-rose-100', icon: AlertCircle },
-                  { label: 'Total Late', value: employeeSummaries.reduce((s: any, e: any) => s + e.lateDays, 0), color: 'bg-amber-50 text-amber-700 border-amber-100', icon: Clock },
-                  { label: 'Total Leave', value: employeeSummaries.reduce((s: any, e: any) => s + e.leaveDays, 0), color: 'bg-blue-50 text-blue-700 border-blue-100', icon: FileText },
-                  { label: 'Avg. Att.', value: employeeSummaries.length > 0 ? `${Math.round(employeeSummaries.reduce((s: any, e: any) => s + e.attendancePercentage, 0) / employeeSummaries.length)}%` : '—', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: PieChart },
+                  { label: 'Employés', value: employeeSummaries.length, color: 'bg-indigo-50 text-indigo-700 border-indigo-100', icon: Users },
+                  { label: 'Total Présents', value: employeeSummaries.reduce((s: any, e: any) => s + e.presentDays, 0), color: 'bg-emerald-50 text-emerald-700 border-emerald-100', icon: CheckCircle2 },
+                  { label: 'Total Absents', value: employeeSummaries.reduce((s: any, e: any) => s + e.absentDays, 0), color: 'bg-rose-50 text-rose-700 border-rose-100', icon: AlertCircle },
+                  { label: 'Total En retard', value: employeeSummaries.reduce((s: any, e: any) => s + e.lateDays, 0), color: 'bg-amber-50 text-amber-700 border-amber-100', icon: Clock },
+                  { label: 'Total Congés', value: employeeSummaries.reduce((s: any, e: any) => s + e.leaveDays, 0), color: 'bg-blue-50 text-blue-700 border-blue-100', icon: FileText },
+                  { label: 'Prés. Moy.', value: employeeSummaries.length > 0 ? `${Math.round(employeeSummaries.reduce((s: any, e: any) => s + e.attendancePercentage, 0) / employeeSummaries.length)}%` : '—', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: PieChart },
                 ].map((stat: any) => (
                   <div key={stat.label} className={`${stat.color} rounded-2xl p-4 border text-center`}>
                     <stat.icon size={18} className="mx-auto mb-1.5 opacity-60" />
@@ -822,48 +821,50 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
               </div>
             )}
             <p className="text-[9px] text-slate-400 text-center">
-              Per-employee breakdown is included in the CSV / PDF export and email report.
+              La répartition par employé est incluse dans l'export CSV / PDF et le rapport par e-mail.
             </p>
 
-            {/* Summary Export Buttons */}
+            {/* Boutons d'exportation du résumé */}
             <div className="pt-4 border-t border-slate-50 space-y-3">
               <div className="flex gap-3">
-                <button onClick={downloadSummaryCSV} disabled={isGenerating || employeeSummaries.length === 0} className="flex-1 flex items-center justify-center gap-3 py-4 bg-primary text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-primary-hover transition-all active:scale-95 disabled:opacity-50">{isGenerating ? <RefreshCw className="animate-spin" size={16} /> : <FileSpreadsheet size={16} />} CSV Summary</button>
-                <button onClick={downloadSummaryPDF} disabled={isGeneratingPDF || employeeSummaries.length === 0} className="flex-1 flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-50">{isGeneratingPDF ? <RefreshCw className="animate-spin" size={16} /> : <FileDown size={16} />} PDF Summary</button>
+                <button onClick={downloadSummaryCSV} disabled={isGenerating || employeeSummaries.length === 0} className="flex-1 flex items-center justify-center gap-3 py-4 bg-primary text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-primary-hover transition-all active:scale-95 disabled:opacity-50">{isGenerating ? <RefreshCw className="animate-spin" size={16} /> : <FileSpreadsheet size={16} />} Résumé CSV</button>
+                <button onClick={downloadSummaryPDF} disabled={isGeneratingPDF || employeeSummaries.length === 0} className="flex-1 flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-50">{isGeneratingPDF ? <RefreshCw className="animate-spin" size={16} /> : <FileDown size={16} />} Résumé PDF</button>
               </div>
-              <button onClick={handleEmailSummaryReport} disabled={isEmailing || employeeSummaries.length === 0} className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-indigo-50 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-50">{isEmailing ? <RefreshCw className="animate-spin" size={16} /> : <Mail size={16} />} Email Summary Report</button>
+              <button onClick={handleEmailSummaryReport} disabled={isEmailing || employeeSummaries.length === 0} className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-indigo-50 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-50">{isEmailing ? <RefreshCw className="animate-spin" size={16} /> : <Mail size={16} />} Envoyer le rapport de résumé par e-mail</button>
             </div>
           </div>
 
-          {/* ===== SECTION 2: DETAIL RECORDS ===== */}
+          {/* ===== SECTION 2 : DOSSIERS DÉTAILLÉS ===== */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 md:p-12 space-y-8">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-slate-100 rounded-xl"><FileText size={20} className="text-slate-700" /></div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Detail Records Report</h2>
-                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Individual attendance & leave records</p>
+                <h2 className="text-lg font-bold text-slate-900">Rapport des dossiers détaillés</h2>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Enregistrements individuels de présence et de congés</p>
               </div>
             </div>
 
-            {/* Report Type */}
+            {/* Type de rapport */}
             <div className="space-y-3">
-              <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest">Report Type</p>
+              <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest">Type de rapport</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {['ATTENDANCE', 'ABSENT', 'LATE', 'LEAVE'].map((id) => (
                   <button key={id} onClick={() => setReportType(id)} className={`flex items-center gap-2 p-4 rounded-xl border transition-all ${reportType === id ? 'bg-slate-900 text-white border-slate-900 shadow-lg' : 'bg-white border-slate-100 hover:bg-slate-50'}`}>
                     <div className={`p-2 rounded-lg ${reportType === id ? 'bg-white/10' : 'bg-indigo-500 text-white'}`}><FileText size={14} /></div>
-                    <span className="font-semibold text-[10px] uppercase tracking-tight">{id}</span>
+                    <span className="font-semibold text-[10px] uppercase tracking-tight">
+                      {id === 'ATTENDANCE' ? 'PRÉSENCE' : id === 'ABSENT' ? 'ABSENT' : id === 'LATE' ? 'EN RETARD' : 'CONGÉ'}
+                    </span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Configure Columns (collapsible) */}
+            {/* Configurer les colonnes (repliable) */}
             <details className="group">
               <summary className="flex items-center gap-2 cursor-pointer text-[10px] font-semibold uppercase text-slate-400 tracking-widest hover:text-slate-600 transition-colors">
                 <Settings2 size={14} />
-                Configure Export Columns ({Object.values(enabledColumns).filter(Boolean).length} active)
-                <span className="ml-auto text-[9px] text-slate-300 group-open:hidden">Click to expand</span>
+                Configurer les colonnes d'exportation ({Object.values(enabledColumns).filter(Boolean).length} actives)
+                <span className="ml-auto text-[9px] text-slate-300 group-open:hidden">Cliquer pour développer</span>
               </summary>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-50">
                 {columnOptions.map((col) => (
@@ -878,30 +879,30 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
               </div>
             </details>
 
-            {/* Detail Export Buttons */}
+            {/* Boutons d'exportation détaillée */}
             <div className="pt-4 border-t border-slate-50 space-y-3">
               <div className="flex gap-3">
-                <button onClick={downloadCSV} disabled={isGenerating || reportData.length === 0} className="flex-1 flex items-center justify-center gap-3 py-4 bg-primary text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-primary-hover transition-all active:scale-95 disabled:opacity-50">{isGenerating ? <RefreshCw className="animate-spin" size={16} /> : <FileSpreadsheet size={16} />} CSV Export</button>
-                <button onClick={downloadPDF} disabled={isGeneratingPDF || reportData.length === 0} className="flex-1 flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-50">{isGeneratingPDF ? <RefreshCw className="animate-spin" size={16} /> : <FileDown size={16} />} PDF Export</button>
+                <button onClick={downloadCSV} disabled={isGenerating || reportData.length === 0} className="flex-1 flex items-center justify-center gap-3 py-4 bg-primary text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-primary-hover transition-all active:scale-95 disabled:opacity-50">{isGenerating ? <RefreshCw className="animate-spin" size={16} /> : <FileSpreadsheet size={16} />} Export CSV</button>
+                <button onClick={downloadPDF} disabled={isGeneratingPDF || reportData.length === 0} className="flex-1 flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-xl font-semibold text-[10px] uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-50">{isGeneratingPDF ? <RefreshCw className="animate-spin" size={16} /> : <FileDown size={16} />} Export PDF</button>
               </div>
-              <button onClick={handleEmailSummary} disabled={isEmailing || reportData.length === 0} className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-indigo-50 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-50">{isEmailing ? <RefreshCw className="animate-spin" size={16} /> : <Mail size={16} />} Email Detail Report</button>
+              <button onClick={handleEmailSummary} disabled={isEmailing || reportData.length === 0} className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-3 hover:bg-indigo-50 hover:text-indigo-600 transition-all shadow-sm disabled:opacity-50">{isEmailing ? <RefreshCw className="animate-spin" size={16} /> : <Mail size={16} />} Envoyer le rapport détaillé par e-mail</button>
             </div>
           </div>
 
         </div>
 
-        {/* ===== LIVE PREVIEW SIDEBAR (always summary) ===== */}
+        {/* ===== BARRE LATÉRALE D'APERÇU EN DIRECT (toujours en mode résumé) ===== */}
         <div className="bg-[#0f172a] rounded-2xl p-8 text-white shadow-xl space-y-8 flex flex-col sticky top-24 h-fit animate-in zoom-in duration-700">
            <div className="flex-1 space-y-8">
-             <div className="flex items-center justify-between"><h3 className="text-xl font-semibold flex items-center gap-3"><Search className="text-indigo-400" /> Live Preview</h3><div className="p-2 bg-white/10 rounded-xl cursor-pointer hover:bg-white/20 transition-all" onClick={fetchLogs} title="Refresh Email Status"><RefreshCw size={16} /></div></div>
+             <div className="flex items-center justify-between"><h3 className="text-xl font-semibold flex items-center gap-3"><Search className="text-indigo-400" /> Aperçu en direct</h3><div className="p-2 bg-white/10 rounded-xl cursor-pointer hover:bg-white/20 transition-all" onClick={fetchLogs} title="Actualiser le statut des e-mails"><RefreshCw size={16} /></div></div>
              <div className="p-8 bg-white/5 rounded-xl border border-white/10 text-center space-y-6">
-               <div><p className="text-[9px] font-semibold text-slate-400 uppercase tracking-[0.2em] mb-1">Employees</p><p className="text-6xl font-semibold text-white">{employeeSummaries.length}</p></div>
+               <div><p className="text-[9px] font-semibold text-slate-400 uppercase tracking-[0.2em] mb-1">Employés</p><p className="text-6xl font-semibold text-white">{employeeSummaries.length}</p></div>
                <div className="grid grid-cols-2 gap-2">
                  {[
-                   { label: 'Present', count: employeeSummaries.reduce((s, e) => s + e.presentDays, 0), color: 'text-emerald-400' },
-                   { label: 'Absent', count: employeeSummaries.reduce((s, e) => s + e.absentDays, 0), color: 'text-rose-400' },
-                   { label: 'Late', count: employeeSummaries.reduce((s, e) => s + e.lateDays, 0), color: 'text-amber-400' },
-                   { label: 'Leave', count: employeeSummaries.reduce((s, e) => s + e.leaveDays, 0), color: 'text-blue-400' },
+                   { label: 'Présents', count: employeeSummaries.reduce((s, e) => s + e.presentDays, 0), color: 'text-emerald-400' },
+                   { label: 'Absents', count: employeeSummaries.reduce((s, e) => s + e.absentDays, 0), color: 'text-rose-400' },
+                   { label: 'En retard', count: employeeSummaries.reduce((s, e) => s + e.lateDays, 0), color: 'text-amber-400' },
+                   { label: 'Congés', count: employeeSummaries.reduce((s, e) => s + e.leaveDays, 0), color: 'text-blue-400' },
                  ].map(stat => (
                    <div key={stat.label} className="bg-white/5 rounded-xl p-3 text-center">
                      <p className={`text-lg font-bold ${stat.color}`}>{stat.count}</p>
@@ -911,7 +912,7 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
                </div>
                <div className="h-px bg-white/10 w-1/2 mx-auto"></div>
                <div>
-                 <p className="text-[8px] font-semibold text-indigo-400 uppercase tracking-widest mb-1">Avg. Attendance</p>
+                 <p className="text-[8px] font-semibold text-indigo-400 uppercase tracking-widest mb-1">Présence moyenne</p>
                  <p className="text-3xl font-bold text-white">
                    {employeeSummaries.length > 0
                      ? `${Math.round(employeeSummaries.reduce((s, e) => s + e.attendancePercentage, 0) / employeeSummaries.length)}%`
@@ -920,15 +921,15 @@ const Reports: React.FC<ReportsProps> = ({ user }) => {
                </div>
              </div>
              <div className="space-y-4">
-               <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-widest text-slate-500"><Activity size={14} className="text-indigo-400" /> Recent Email Activity</div>
+               <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-widest text-slate-500"><Activity size={14} className="text-indigo-400" /> Activité récente des e-mails</div>
                <div className="bg-slate-900 border border-white/10 rounded-3xl p-2 max-h-48 overflow-y-auto no-scrollbar space-y-1">
-                 {emailLogs.length === 0 ? (<p className="text-center text-[9px] font-semibold text-slate-600 uppercase py-4">No recent activity</p>) : (emailLogs.map(log => (<div key={log.id} className="p-3 bg-white/5 rounded-2xl flex items-start justify-between gap-2"><div className="min-w-0"><p className="text-[9px] font-bold text-white truncate">{log.recipient_email}</p><p className="text-[8px] font-medium text-slate-500 truncate">{log.subject}</p></div><div className={`px-2 py-0.5 rounded-full text-[8px] font-semibold uppercase ${log.status === 'SENT' ? 'bg-emerald-500/20 text-emerald-400' : log.status === 'FAILED' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'}`}>{log.status}</div></div>)))}
+                 {emailLogs.length === 0 ? (<p className="text-center text-[9px] font-semibold text-slate-600 uppercase py-4">Aucune activité récente</p>) : (emailLogs.map(log => (<div key={log.id} className="p-3 bg-white/5 rounded-2xl flex items-start justify-between gap-2"><div className="min-w-0"><p className="text-[9px] font-bold text-white truncate">{log.recipient_email}</p><p className="text-[8px] font-medium text-slate-500 truncate">{log.subject}</p></div><div className={`px-2 py-0.5 rounded-full text-[8px] font-semibold uppercase ${log.status === 'SENT' ? 'bg-emerald-500/20 text-emerald-400' : log.status === 'FAILED' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'}`}>{log.status}</div></div>)))}
                </div>
-               {emailLogs.some(l => l.status === 'FAILED') && (<div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex gap-2"><AlertCircle size={14} className="text-rose-400 flex-shrink-0" /><p className="text-[9px] font-medium text-rose-300 leading-tight">Some emails failed. Verify SMTP settings in Admin Panel &gt; Settings &gt; Mail.</p></div>)}
-               {isHookMissing && (<div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-2"><HelpCircle size={14} className="text-amber-400 flex-shrink-0" /><div className="space-y-1"><p className="text-[9px] font-bold text-amber-300 leading-tight uppercase">Backend Hook Not Detected</p><p className="text-[8px] font-medium text-amber-400/80 leading-tight">Emails are stuck in PENDING. Ensure <code>main.pb.js</code> is in your PocketBase <code>pb_hooks</code> folder.</p></div></div>)}
+               {emailLogs.some(l => l.status === 'FAILED') && (<div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex gap-2"><AlertCircle size={14} className="text-rose-400 flex-shrink-0" /><p className="text-[9px] font-medium text-rose-300 leading-tight">Certains e-mails ont échoué. Vérifiez les paramètres SMTP dans Panneau d'admin &gt; Paramètres &gt; E-mail.</p></div>)}
+               {isHookMissing && (<div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-2"><HelpCircle size={14} className="text-amber-400 flex-shrink-0" /><div className="space-y-1"><p className="text-[9px] font-bold text-amber-300 leading-tight uppercase">Hook de backend non détecté</p><p className="text-[8px] font-medium text-amber-400/80 leading-tight">Les e-mails sont bloqués en attente (PENDING). Assurez-vous que <code>main.pb.js</code> se trouve dans le dossier <code>pb_hooks</code> de votre PocketBase.</p></div></div>)}
              </div>
            </div>
-           <div className="p-6 bg-indigo-500/10 rounded-xl border border-indigo-500/20"><p className="text-[9px] font-semibold text-indigo-300 uppercase tracking-[0.3em] mb-2">Technical Info</p><div className="space-y-1 text-[10px] font-bold text-slate-300 uppercase"><p>Format: CSV / PDF</p><p>Mode: Per-Employee Summary + Detail Records</p></div></div>
+           <div className="p-6 bg-indigo-500/10 rounded-xl border border-indigo-500/20"><p className="text-[9px] font-semibold text-indigo-300 uppercase tracking-[0.3em] mb-2">Informations techniques</p><div className="space-y-1 text-[10px] font-bold text-slate-300 uppercase"><p>Format : CSV / PDF</p><p>Mode : Résumé par employé + Dossiers détaillés</p></div></div>
         </div>
       </div>
     </div>

@@ -53,7 +53,7 @@ export const ManagerDashboard: React.FC<Props> = ({ data, isLoading, onNavigate 
                 </div>
 
                 <p className="text-center text-sm text-slate-500 font-medium">
-                  Il vous reste<span className="font-semibold text-slate-900">{totalRemaining} jours</span> restant poour l'année en cours.
+                  Il vous reste <span className="font-semibold text-slate-900">{totalRemaining} jours</span> restant pour l'année en cours.
                 </p>
 
                 <button 

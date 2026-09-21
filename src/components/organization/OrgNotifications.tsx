@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Bell, Mail, Moon, Save, Loader2 } from 'lucide-react';
 import { OrgNotificationConfig, NotificationType, EmailDigestFrequency } from '../../types';
@@ -10,20 +9,20 @@ interface Props {
 }
 
 const NOTIFICATION_TYPE_LABELS: Record<NotificationType, { label: string; description: string }> = {
-  ANNOUNCEMENT: { label: 'Announcements', description: 'Noticeboard and company-wide announcements' },
-  LEAVE: { label: 'Leave Requests', description: 'Leave submissions, approvals, and rejections' },
-  ATTENDANCE: { label: 'Attendance', description: 'Check-in reminders, late alerts, missed check-outs' },
-  REVIEW: { label: 'Performance Reviews', description: 'Review cycle updates and assessment notifications' },
-  SYSTEM: { label: 'System', description: 'System alerts, maintenance, and admin notifications' },
-  NEW_REGISTRATION: { label: 'New Registrations', description: 'New organization sign-up alerts' },
-  UPGRADE_REQUEST: { label: 'Upgrade Requests', description: 'Organization upgrade request alerts' },
+  ANNOUNCEMENT: { label: 'Annonces', description: 'Tableau d’affichage et annonces à l’échelle de l’entreprise' },
+  LEAVE: { label: 'Demandes de congé', description: 'Soumissions, approbations et rejets de congés' },
+  ATTENDANCE: { label: 'Présence', description: 'Rappels de pointage, alertes de retard, pointages de sortie manqués' },
+  REVIEW: { label: 'Évaluations de performance', description: 'Mises à jour des cycles d’évaluation et notifications d’appréciation' },
+  SYSTEM: { label: 'Système', description: 'Alertes système, maintenance et notifications administrateur' },
+  NEW_REGISTRATION: { label: 'Nouvelles inscriptions', description: 'Alertes d’inscription de nouvelles organisations' },
+  UPGRADE_REQUEST: { label: 'Demandes de mise à niveau', description: 'Alertes de demande de mise à niveau d’organisation' },
 };
 
 const DIGEST_OPTIONS: { value: EmailDigestFrequency; label: string }[] = [
-  { value: 'IMMEDIATE', label: 'Immediate' },
-  { value: 'DAILY', label: 'Daily Digest' },
-  { value: 'WEEKLY', label: 'Weekly Digest' },
-  { value: 'OFF', label: 'Off' },
+  { value: 'IMMEDIATE', label: 'Immédiat' },
+  { value: 'DAILY', label: 'Résumé quotidien' },
+  { value: 'WEEKLY', label: 'Résumé hebdomadaire' },
+  { value: 'OFF', label: 'Désactivé' },
 ];
 
 export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
@@ -56,7 +55,7 @@ export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
       await onSave(localConfig);
       setHasChanges(false);
     } catch {
-      showToast('Failed to save notification config.', 'error');
+      showToast('Échec de l’enregistrement de la configuration des notifications.', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -64,13 +63,13 @@ export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
 
   return (
     <div className="space-y-6">
-      {/* Section 1: Enabled Notification Types */}
+      {/* Section 1 : Types de notifications activés */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
           <Bell size={18} className="text-primary" />
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Enabled Notification Types</h3>
-            <p className="text-[10px] text-slate-400 font-medium">Control which notification types are active for your organization</p>
+            <h3 className="text-sm font-bold text-slate-800">Types de notifications activés</h3>
+            <p className="text-[10px] text-slate-400 font-medium">Contrôlez les types de notifications actifs pour votre organisation</p>
           </div>
         </div>
         <div className="p-6 space-y-3">
@@ -95,13 +94,13 @@ export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
         </div>
       </div>
 
-      {/* Section 2: Email Digest */}
+      {/* Section 2 : Résumé par e-mail */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
           <Mail size={18} className="text-primary" />
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Email Digest Frequency</h3>
-            <p className="text-[10px] text-slate-400 font-medium">Default email digest frequency for all users</p>
+            <h3 className="text-sm font-bold text-slate-800">Fréquence des résumés par e-mail</h3>
+            <p className="text-[10px] text-slate-400 font-medium">Fréquence par défaut des résumés par e-mail pour tous les utilisateurs</p>
           </div>
         </div>
         <div className="p-6">
@@ -120,13 +119,13 @@ export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
         </div>
       </div>
 
-      {/* Section 3: Quiet Hours */}
+      {/* Section 3 : Heures de silence */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
           <Moon size={18} className="text-primary" />
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Quiet Hours</h3>
-            <p className="text-[10px] text-slate-400 font-medium">Suppress notifications during specified hours</p>
+            <h3 className="text-sm font-bold text-slate-800">Heures de silence</h3>
+            <p className="text-[10px] text-slate-400 font-medium">Désactivez les notifications pendant les heures spécifiées</p>
           </div>
         </div>
         <div className="p-6 space-y-4">
@@ -137,13 +136,13 @@ export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
               onChange={e => updateConfig({ quietHoursEnabled: e.target.checked })}
               className="w-4 h-4 accent-primary"
             />
-            <span className="text-sm font-semibold text-slate-700">Enable Quiet Hours</span>
+            <span className="text-sm font-semibold text-slate-700">Activer les heures de silence</span>
           </label>
 
           {localConfig.quietHoursEnabled && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1 min-w-0">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Start Time</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Heure de début</label>
                 <input
                   type="time"
                   value={localConfig.quietHoursStart}
@@ -152,7 +151,7 @@ export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
                 />
               </div>
               <div className="space-y-1 min-w-0">
-                <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">End Time</label>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Heure de fin</label>
                 <input
                   type="time"
                   value={localConfig.quietHoursEnd}
@@ -165,7 +164,7 @@ export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
         </div>
       </div>
 
-      {/* Save Button */}
+      {/* Bouton Enregistrer */}
       {hasChanges && (
         <div className="flex justify-end">
           <button
@@ -174,7 +173,7 @@ export const OrgNotifications: React.FC<Props> = ({ config, onSave }) => {
             className="flex items-center gap-2 px-8 py-3.5 bg-primary text-white rounded-xl font-semibold text-sm shadow-lg hover:bg-primary-hover transition-all disabled:opacity-50"
           >
             {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-            Save Notification Settings
+            Enregistrer les paramètres de notification
           </button>
         </div>
       )}

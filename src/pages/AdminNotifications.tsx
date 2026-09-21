@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Bell, Send, Trash2, Search, Loader2 } from 'lucide-react';
 import { hrService } from '../services/hrService';
@@ -19,13 +18,13 @@ interface Props {
 }
 
 const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
-  ANNOUNCEMENT: 'Announcements',
-  LEAVE: 'Leave Requests',
-  ATTENDANCE: 'Attendance',
-  REVIEW: 'Performance Reviews',
-  SYSTEM: 'System',
-  NEW_REGISTRATION: 'New Registrations',
-  UPGRADE_REQUEST: 'Upgrade Requests',
+  ANNOUNCEMENT: 'Annonces',
+  LEAVE: 'Demandes de congé',
+  ATTENDANCE: 'Présences',
+  REVIEW: 'Évaluations des performances',
+  SYSTEM: 'Système',
+  NEW_REGISTRATION: 'Nouvelles inscriptions',
+  UPGRADE_REQUEST: 'Demandes de mise à niveau',
 };
 
 const TYPE_COLORS: Record<string, string> = {
@@ -51,7 +50,7 @@ const AdminNotifications: React.FC<Props> = (_props) => {
       const notifs = await hrService.getAllNotifications();
       setNotifications(notifs.slice(0, 100));
     } catch {
-      console.error('Failed to load notifications');
+      console.error('Échec du chargement des notifications');
     }
   }, []);
 
@@ -60,7 +59,7 @@ const AdminNotifications: React.FC<Props> = (_props) => {
       const emps = await hrService.getEmployees();
       setEmployees(emps.map((e: any) => ({ id: e.id, name: e.name, department: e.department || '', role: e.role })));
     } catch {
-      console.error('Failed to load employees');
+      console.error('Échec du chargement des employés');
     }
   }, []);
 
@@ -73,7 +72,7 @@ const AdminNotifications: React.FC<Props> = (_props) => {
     init();
   }, [loadNotifications, loadEmployees]);
 
-  // Subscribe for real-time updates
+  // S'abonner aux mises à jour en temps réel
   useEffect(() => {
     const unsub = hrService.subscribe(() => {
       loadNotifications();
@@ -82,24 +81,24 @@ const AdminNotifications: React.FC<Props> = (_props) => {
   }, [loadNotifications]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this notification?')) return;
+    if (!confirm('Supprimer cette notification ?')) return;
     try {
       await hrService.deleteNotification(id);
       setNotifications(prev => prev.filter(n => n.id !== id));
     } catch {
-      showToast('Failed to delete notification.', 'error');
+      showToast('Échec de la suppression de la notification.', 'error');
     }
   };
 
   const handleDeleteAll = async () => {
-    if (!confirm('Are you sure you want to delete ALL notifications?\n\nThis will permanently remove all notifications (read and unread) for the entire organization.\n\nThis action cannot be undone.')) return;
+    if (!confirm("Êtes-vous sûr de vouloir supprimer TOUTES les notifications ?\n\nCela supprimera définitivement toutes les notifications (lues et non lues) pour l'organisation entière.\n\nCette action est irréversible.")) return;
     setIsDeletingAll(true);
     try {
       const deleted = await hrService.deleteAllNotifications();
       setNotifications([]);
-      showToast(`Successfully deleted ${deleted} notifications.`, 'success');
+      showToast(` ${deleted} notifications supprimées avec succès.`, 'success');
     } catch {
-      showToast('Failed to delete all notifications.', 'error');
+      showToast('Échec de la suppression de toutes les notifications.', 'error');
     } finally {
       setIsDeletingAll(false);
     }
@@ -115,7 +114,7 @@ const AdminNotifications: React.FC<Props> = (_props) => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
+      {/* En-tête */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-primary/10 rounded-2xl">
@@ -123,7 +122,7 @@ const AdminNotifications: React.FC<Props> = (_props) => {
           </div>
           <div>
             <div className="flex items-center gap-2"><h1 className="text-2xl font-bold text-slate-900">Notifications</h1><HelpButton helpPointId="notifications.admin" size={16} /></div>
-            <p className="text-xs text-slate-400 font-medium">Send and manage notifications for your organization</p>
+            <p className="text-xs text-slate-400 font-medium">Envoyer et gérer les notifications de votre organisation</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -133,25 +132,25 @@ const AdminNotifications: React.FC<Props> = (_props) => {
             className="inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-red-700 bg-red-50 rounded-xl hover:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isDeletingAll ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-            Delete All
+            Tout supprimer
           </button>
           <button
             onClick={() => setShowSendModal(true)}
             className="inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-primary rounded-xl hover:opacity-90 transition-colors shadow-sm"
           >
-            <Send size={16} /> Send Notification
+            <Send size={16} /> Envoyer une notification
           </button>
         </div>
       </div>
 
-      {/* Search & Filter */}
+      {/* Recherche & Filtre */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
         <div className="flex gap-3">
           <div className="flex-1 relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Search notifications..."
+              placeholder="Rechercher des notifications..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
@@ -162,7 +161,7 @@ const AdminNotifications: React.FC<Props> = (_props) => {
             onChange={e => setTypeFilter(e.target.value)}
             className="text-xs border border-slate-200 rounded-xl px-3 py-2 focus:outline-none"
           >
-            <option value="ALL">All Types</option>
+            <option value="ALL">Tous les types</option>
             {(Object.keys(NOTIFICATION_TYPE_LABELS) as NotificationType[]).map(type => (
               <option key={type} value={type}>{NOTIFICATION_TYPE_LABELS[type]}</option>
             ))}
@@ -170,11 +169,11 @@ const AdminNotifications: React.FC<Props> = (_props) => {
         </div>
       </div>
 
-      {/* Notification List */}
+      {/* Liste des notifications */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-800">
-            All Notifications {!isLoading && <span className="text-slate-400 font-medium">({filtered.length})</span>}
+            Toutes les notifications {!isLoading && <span className="text-slate-400 font-medium">({filtered.length})</span>}
           </h3>
         </div>
 
@@ -186,7 +185,7 @@ const AdminNotifications: React.FC<Props> = (_props) => {
           ) : filtered.length === 0 ? (
             <div className="text-center py-12">
               <Bell size={32} className="mx-auto text-slate-200 mb-3" />
-              <p className="text-sm text-slate-400">No notifications found.</p>
+              <p className="text-sm text-slate-400">Aucune notification trouvée.</p>
             </div>
           ) : (
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
@@ -203,14 +202,14 @@ const AdminNotifications: React.FC<Props> = (_props) => {
                       <p className="font-medium text-sm text-slate-900 truncate">{notif.title}</p>
                     </div>
                     <p className="text-[10px] text-slate-400 mt-0.5">
-                      To: {notif.userId?.slice(0, 8)}... | {notif.created ? new Date(notif.created).toLocaleDateString() : '—'}
-                      {notif.isRead && ' | Read'}
+                      À : {notif.userId?.slice(0, 8)}... | {notif.created ? new Date(notif.created).toLocaleDateString() : '—'}
+                      {notif.isRead && ' | Lu'}
                     </p>
                   </div>
                   <button
                     onClick={() => handleDelete(notif.id)}
                     className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                    title="Delete notification"
+                    title="Supprimer la notification"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -221,7 +220,7 @@ const AdminNotifications: React.FC<Props> = (_props) => {
         </div>
       </div>
 
-      {/* Send Notification Modal */}
+      {/* Modale d'envoi de notification */}
       {showSendModal && (
         <AdminNotificationFormModal
           employees={employees}

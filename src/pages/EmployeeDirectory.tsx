@@ -704,7 +704,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                     {emp.status === 'INACTIVE' ? (
                       <button onClick={() => handleReactivate(emp)} title="Reactivate employee" className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-all"><UserCheck size={14} /></button>
                     ) : (
-                      <button onClick={() => handleOffboard(emp)} title="Offboard employee" className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-all"><UserX size={14} /></button>
+                      <button onClick={() => handleOffboard(emp)} title="Départ d'employé" className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-all"><UserX size={14} /></button>
                     )}
                     <button onClick={() => handleDelete(emp)} className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-all"><Trash2 size={14} /></button>
                   </div>
@@ -958,9 +958,9 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                   <AlertTriangle size={24} />
                 </div>
                 <h3 className="text-xl font-semibold uppercase tracking-tight">
-                  {confirmAction.type === 'delete' ? 'Delete Employee' :
-                   confirmAction.type === 'offboard' ? 'Offboard Employee' :
-                   'Reactivate Employee'}
+                 {confirmAction.type === 'delete' ? 'Supprimer l’employé' :
+                   confirmAction.type === 'offboard' ? 'Suspendre l’employé' :
+                   'Réactiver l’employé'}
                 </h3>
               </div>
               <button onClick={handleCancelAction} className="hover:bg-white/10 p-2 rounded-xl transition-all">
@@ -975,7 +975,7 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                     Êtes-vous sûr de vouloir supprimer définitivement <strong className="text-slate-900">{confirmAction.employee.name}</strong>?
                   </p>
                   <div className="bg-rose-50 border border-rose-100 rounded-2xl p-5 space-y-3">
-                    <p className="text-xs font-bold text-rose-700 uppercase tracking-widest">⚠ This action will permanently remove:</p>
+                    <p className="text-xs font-bold text-rose-700 uppercase tracking-widest">⚠ Cette action supprimera définitivement :</p>
                     <ul className="text-xs text-rose-600 space-y-1.5 list-disc pl-4">
                       <li>Le compte de connexion et l'adresse e-mail de l'employé dans le système</li>
                       <li>Toutes les données de profil, l'avatar et les paramètres</li>
@@ -994,10 +994,10 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
               {confirmAction.type === 'offboard' && (
                 <div className="space-y-4">
                  <p className="text-sm text-slate-700 leading-relaxed">
-                    Procéder au départ de <strong className="text-slate-900">{confirmAction.employee.name}</strong> ? Leur accès sera immédiatement révoqué.
+                    Procéder à la suspension de <strong className="text-slate-900">{confirmAction.employee.name}</strong> ? Leur accès sera immédiatement révoqué.
                   </p>
                   <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5 space-y-3">
-                    <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">Conséquences du départ :</p>
+                    <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">Conséquences du suspension :</p>
                     <ul className="text-xs text-amber-600 space-y-1.5 list-disc pl-4">
                       <li><strong>Révocation de l'accès</strong> — l'employé ne pourra plus se connecter</li>
                       <li>Statut du compte défini sur « Inactif »</li>
@@ -1052,8 +1052,8 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
                     confirmAction.type === 'offboard' ? <UserX size={18} /> :
                     <UserCheck size={18} />
                   )}
-                 {confirmAction.type === 'delete' ? 'Supprimer définitivement' :
-                   confirmAction.type === 'offboard' ? 'Confirmer le départ' :
+                 {confirmAction.type === 'delete' ? 'Supprimer ' :
+                   confirmAction.type === 'offboard' ? 'Confirmer' :
                    'Confirmer la réactivation'}
                 </button>
               </div>
