@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -18,6 +18,7 @@ import {
   Bell,
 } from 'lucide-react';
 import HelpButton from './onboarding/HelpButton';
+import { getSupabaseSignedUrl } from '../services/supabase';
 
 interface SidebarProps {
   currentPath: string;
@@ -29,6 +30,49 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate, onLogout, role, user }) => {
   const isSuperAdmin = role === 'SUPER_ADMIN';
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
+  const sourceAvatar = user?.avatar as string | undefined;
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    const loadAvatar = async () => {
+      setAvatarUrl(undefined);
+      if (!sourceAvatar) {
+        return;
+      }
+
+      const storageMarker = '/storage/v1/object/public/avatars/';
+      let storagePath: string | null = sourceAvatar;
+      if (/^https?:\/\//i.test(sourceAvatar)) {
+        try {
+          const parsedUrl = new URL(sourceAvatar);
+          const markerIndex = parsedUrl.pathname.indexOf(storageMarker);
+          if (markerIndex < 0) {
+            setAvatarUrl(sourceAvatar);
+            return;
+          }
+          storagePath = decodeURIComponent(parsedUrl.pathname.slice(markerIndex + storageMarker.length));
+        } catch {
+          setAvatarUrl(undefined);
+          return;
+        }
+      } else if (sourceAvatar.startsWith('data:')) {
+        setAvatarUrl(sourceAvatar);
+        return;
+      }
+
+      try {
+        const signedUrl = await getSupabaseSignedUrl('avatars', storagePath);
+        if (isCurrent) setAvatarUrl(signedUrl ?? undefined);
+      } catch {
+        if (isCurrent) setAvatarUrl(undefined);
+      }
+    };
+
+    void loadAvatar();
+    return () => { isCurrent = false; };
+  }, [sourceAvatar]);
 
   // Super Admin has a different menu
   const superAdminMenuItems = [
@@ -60,7 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate, onLogout, ro
       <div className="p-10 pb-8 flex flex-col items-center text-center">
         <div className="relative mb-4">
           <img
-            src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=random`}
+            src={avatarUrl || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=random`}
             className="w-24 h-24 rounded-full border-4 border-white shadow-xl bg-slate-50 object-cover"
             alt="Profile"
           />
