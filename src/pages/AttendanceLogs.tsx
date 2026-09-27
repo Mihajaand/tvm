@@ -603,8 +603,8 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
               <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-50">
                 {isAdmin ? (
                   <>
-                    <button onClick={() => handleDelete(selectedLog.id)} disabled={isProcessing} className="flex-1 py-5 bg-rose-50 text-rose-600 rounded-xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-rose-100 transition-all"><Trash2 size={16} /> Delete Record</button>
-                    <button onClick={handleUpdate} disabled={isProcessing} className="flex-[1.5] py-5 bg-primary text-white rounded-xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-xl hover:bg-primary-hover transition-all">{isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Save size={16} />} Save Corrections</button>
+                    <button onClick={() => handleDelete(selectedLog.id)} disabled={isProcessing} className="flex-1 py-5 bg-rose-50 text-rose-600 rounded-xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 hover:bg-rose-100 transition-all"><Trash2 size={16} /> Supprimer l'enregistrement</button>
+                    <button onClick={handleUpdate} disabled={isProcessing} className="flex-[1.5] py-5 bg-primary text-white rounded-xl font-semibold uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-xl hover:bg-primary-hover transition-all">{isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Save size={16} />} Enregistrer les corrections</button>
                   </>
                 ) : (
                   <button onClick={() => setSelectedLog(null)} className="w-full py-5 bg-slate-900 text-white rounded-xl font-semibold uppercase text-[10px] tracking-widest shadow-xl">Fermer</button>

@@ -88,7 +88,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, currentPath, onNaviga
                 {darkMode ? <Sun size={20} /> : <Moon size={20} />}
               </button>
               <NotificationBell onNavigate={handleNavigate} />
-              <div
+              {/* <div
                 className="cursor-pointer flex-shrink-0"
                 onClick={() => handleNavigate('profile')}
               >
@@ -99,7 +99,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, currentPath, onNaviga
                   width={40}
                   height={40}
                 />
-              </div>
+              </div> */}
            </div>
         </header>
 
