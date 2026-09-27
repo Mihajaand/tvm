@@ -210,7 +210,7 @@ export const OrgSystem: React.FC<Props> = ({ config, onSave }) => {
                   <span className="min-w-0">
                     <span className="flex items-center gap-2 text-sm font-bold text-slate-900">
                       <Sparkles size={15} className="text-primary shrink-0" />
-                      Mettez-nous en avant sur le site Web OpenHRApp
+                      Mettez-nous en avant sur le site Web
                     </span>
                     <span className="block mt-1.5 text-xs font-medium text-slate-500 leading-relaxed">
                       Affichez le nom et le logo de votre organisation dans la vitrine de notre page d'accueil.
