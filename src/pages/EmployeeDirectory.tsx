@@ -36,6 +36,7 @@ import { Employee, Team, User, Shift } from '../types';
 import { useSubscription } from '../context/SubscriptionContext';
 import HelpButton from '../components/onboarding/HelpButton';
 import { useToast } from '../context/ToastContext';
+import { convertFileToWebP } from '../utils/imageConvert';
 
 
 const getScaledLogoDims = (dataUrl: string, maxSize: number): Promise<{ w: number; h: number }> =>
@@ -233,14 +234,25 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
     return `OpenHRApp_${selectedExportDepts.length}_Departments_Directory.${ext}`;
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Veuillez choisir un fichier image.', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    try {
+      const image = await convertFileToWebP(file, 0.8, 512);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormState({ ...formState, avatar: reader.result as string });
+      reader.onerror = () => showToast('Impossible de lire cette image.', 'error');
+      reader.onload = () => {
+        setFormState(prev => ({ ...prev, avatar: reader.result as string }));
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(image);
+    } catch {
+      showToast('Impossible de préparer cette photo. Essayez une autre image.', 'error');
     }
   };
 

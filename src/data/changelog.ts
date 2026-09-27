@@ -19,6 +19,7 @@ export const changelog: ChangelogRelease[] = [
     title: 'The app now opens directly on login',
     entries: [
       { type: 'improvement', description: 'Removed the outdated marketing hero from the initial HTML shell. The root page now shows the login screen as soon as the app starts, without a hero flash before React loads.' },
+      { type: 'fix', description: 'Fixed employee profile photos: images are converted to WebP before upload, upload failures are reported instead of silently ignored, and the directory requests signed image URLs for its private avatar bucket.' },
     ],
   },
   {

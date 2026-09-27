@@ -83,23 +83,25 @@ Deno.serve(async (req: Request) => {
       return jsonError(400, 'Failed to create user: ' + createErr?.message);
     }
 
-    // admin.createUser does NOT auto-send verification email — trigger it explicitly
-    await adminClient.auth.resend({ type: 'signup', email });
-
     const userId = authData.user.id;
 
     // Upload avatar if provided
     let avatarPath: string | null = null;
     if (avatarFile && avatarFile.size > 0) {
-      try {
-        const path = `${userId}/avatar.webp`;
-        const { error: uploadErr } = await adminClient.storage
-          .from('avatars')
-          .upload(path, avatarFile, { upsert: true, contentType: 'image/webp' });
-        if (!uploadErr) avatarPath = path;
-      } catch (e) {
-        console.warn('[CREATE-EMPLOYEE] Avatar upload failed (non-fatal):', e);
+      if (avatarFile.type !== 'image/webp') {
+        await adminClient.auth.admin.deleteUser(userId);
+        return jsonError(400, 'Avatar must be converted to WebP before upload');
       }
+
+      const path = `${userId}/avatar.webp`;
+      const { error: uploadErr } = await adminClient.storage
+        .from('avatars')
+        .upload(path, avatarFile, { upsert: true, contentType: 'image/webp' });
+      if (uploadErr) {
+        await adminClient.auth.admin.deleteUser(userId);
+        return jsonError(400, 'Failed to upload avatar: ' + uploadErr.message);
+      }
+      avatarPath = path;
     }
 
     // Create profile.
@@ -129,6 +131,9 @@ Deno.serve(async (req: Request) => {
       await adminClient.auth.admin.deleteUser(userId);
       return jsonError(400, 'Failed to create profile: ' + profileInsertErr.message);
     }
+
+    // Send verification only after the profile and avatar are stored successfully.
+    await adminClient.auth.resend({ type: 'signup', email });
 
     return new Response(
       JSON.stringify({ success: true, userId }),

@@ -1,7 +1,8 @@
 
-import { supabase, isSupabaseConfigured, getSupabaseStorageUrl } from './supabase';
+import { supabase, isSupabaseConfigured, getSupabaseSignedUrl } from './supabase';
 import { apiClient, dedupe, resolveOrgId } from './api.client';
 import { Employee } from '../types';
+import { convertToWebP } from '../utils/imageConvert';
 
 let cachedEmployees: Employee[] | null = null;
 let empCacheTimestamp = 0;
@@ -11,7 +12,16 @@ const SUPABASE_FUNCTIONS_URL = import.meta.env.VITE_SUPABASE_URL
   ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`
   : null;
 
-function mapProfileToEmployee(r: any): Employee {
+async function mapProfileToEmployee(r: any): Promise<Employee> {
+  let avatar: string | undefined;
+  if (r.avatar) {
+    if (/^https?:\/\//i.test(r.avatar) || r.avatar.startsWith('data:')) {
+      avatar = r.avatar;
+    } else {
+      avatar = (await getSupabaseSignedUrl('avatars', r.avatar)) ?? undefined;
+    }
+  }
+
   return {
     id: r.id,
     employeeId: r.employee_id || '',
@@ -24,7 +34,7 @@ function mapProfileToEmployee(r: any): Employee {
     role: (r.role || 'EMPLOYEE').toUpperCase(),
     department: r.department || 'Unassigned',
     designation: r.designation || 'Staff',
-    avatar: r.avatar ? getSupabaseStorageUrl('avatars', r.avatar) : undefined,
+    avatar,
     joiningDate: r.joining_date || '',
     mobile: r.mobile || '',
     emergencyContact: r.emergency_contact || '',
@@ -64,7 +74,7 @@ export const employeeService = {
         if (error) throw error;
 
         console.log(`[EmployeeService] Fetched ${data?.length ?? 0} employees`);
-        const result = (data ?? []).map(mapProfileToEmployee);
+        const result = await Promise.all((data ?? []).map(mapProfileToEmployee));
         cachedEmployees = result;
         empCacheTimestamp = Date.now();
         return result;
@@ -97,7 +107,10 @@ export const employeeService = {
 
     // Avatar: data URL → Blob
     if (emp.avatar && typeof emp.avatar === 'string' && emp.avatar.startsWith('data:')) {
-      const blob = await (await fetch(emp.avatar)).blob();
+      const blob = await convertToWebP(emp.avatar, 0.8, 512);
+      if (blob.type !== 'image/webp') {
+        throw new Error('La photo ne peut pas être convertie au format requis. Choisissez une autre image.');
+      }
       formData.append('avatar', blob, 'avatar.webp');
     }
 
@@ -142,16 +155,16 @@ export const employeeService = {
 
     // Avatar upload to storage
     if (updates.avatar && typeof updates.avatar === 'string' && updates.avatar.startsWith('data:')) {
-      try {
-        const blob = await (await fetch(updates.avatar)).blob();
-        const path = `${id}/avatar.webp`;
-        const { error: uploadErr } = await supabase.storage
-          .from('avatars')
-          .upload(path, blob, { upsert: true, contentType: 'image/webp' });
-        if (!uploadErr) payload.avatar = path;
-      } catch (e) {
-        console.warn('[EmployeeService] Avatar upload failed:', e);
+      const blob = await convertToWebP(updates.avatar, 0.8, 512);
+      if (blob.type !== 'image/webp') {
+        throw new Error('La photo ne peut pas être convertie au format requis. Choisissez une autre image.');
       }
+      const path = `${id}/avatar.webp`;
+      const { error: uploadErr } = await supabase.storage
+        .from('avatars')
+        .upload(path, blob, { upsert: true, contentType: 'image/webp' });
+      if (uploadErr) throw new Error(`Échec de l’enregistrement de la photo : ${uploadErr.message}`);
+      payload.avatar = path;
     }
 
     // Self-service password change via supabase.auth.updateUser.
