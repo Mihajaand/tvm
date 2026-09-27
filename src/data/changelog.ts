@@ -15,6 +15,13 @@ export interface ChangelogRelease {
 
 export const changelog: ChangelogRelease[] = [
   {
+    date: '2026-09-27',
+    title: 'The app now opens directly on login',
+    entries: [
+      { type: 'improvement', description: 'Removed the outdated marketing hero from the initial HTML shell. The root page now shows the login screen as soon as the app starts, without a hero flash before React loads.' },
+    ],
+  },
+  {
     date: '2026-08-26',
     title: 'Closed a cross-organization data leak, added a full audit trail, and put anti-spam on registration',
     entries: [
