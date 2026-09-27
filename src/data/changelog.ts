@@ -21,6 +21,7 @@ export const changelog: ChangelogRelease[] = [
       { type: 'improvement', description: 'Removed the outdated marketing hero from the initial HTML shell. The root page now shows the login screen as soon as the app starts, without a hero flash before React loads.' },
       { type: 'fix', description: 'Fixed employee profile photos: images are converted to WebP before upload, upload failures are reported instead of silently ignored, and the directory and sidebar request signed image URLs for the private avatar bucket.' },
       { type: 'improvement', description: 'Attendance now records the configured workplace name when the GPS position falls within its geofence radius, while preserving the exact GPS coordinates. Outside all configured areas, the recorded address remains the current coordinates.' },
+      { type: 'improvement', description: 'Translated attendance status labels in the logs and detail view into French while preserving the original status codes for filtering and storage.' },
     ],
   },
   {

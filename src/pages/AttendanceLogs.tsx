@@ -31,6 +31,18 @@ const LogSkeleton = () => (
   </div>
 );
 
+const getStatusLabel = (status?: string) => {
+  const labels: Record<string, string> = {
+    PRESENT: 'Présent',
+    LATE: 'En retard',
+    ABSENT: 'Absent',
+    LEAVE: 'Congé',
+    EARLY_OUT: 'Sortie anticipée',
+    HALF_DAY: 'Demi-journée',
+  };
+  return status ? labels[status] || status : 'Inconnu';
+};
+
 const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', filterEmployeeId }) => {
   const { showToast } = useToast();
   const isAdmin = user.role === 'ADMIN' || user.role === 'HR';
@@ -381,7 +393,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                       log.status === 'ABSENT' ? 'bg-rose-50 text-rose-600' : 
                       'bg-emerald-50 text-emerald-600'
                     }`}>
-                      {log.status}
+                      {getStatusLabel(log.status)}
                     </span>
                   </div>
                   <div className="flex flex-col gap-1">
@@ -516,7 +528,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Status</label>
+                      <label className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest px-1">Statut</label>
                       {isAdmin ? (
                         <select 
                           className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold"
@@ -531,7 +543,7 @@ const AttendanceLogs: React.FC<AttendanceLogsProps> = ({ user, viewMode = 'MY', 
                         </select>
                       ) : (
                         <div className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold text-primary uppercase">
-                          {selectedLog.status}
+                          {getStatusLabel(selectedLog.status)}
                         </div>
                       )}
                     </div>
