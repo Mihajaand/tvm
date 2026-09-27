@@ -7,6 +7,7 @@ import CompetencyRatingCard from './CompetencyRatingCard';
 import AttendanceLeaveCard from './AttendanceLeaveCard';
 import ReviewStatusBadge from './ReviewStatusBadge';
 import HelpButton from '../onboarding/HelpButton';
+import { useToast } from '../../context/ToastContext';
 
 interface Props {
   user: any;
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews, onRefresh, readOnly = false, reviewConfig }) => {
+  const { showToast } = useToast();
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -75,8 +77,10 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
       await hrService.submitManagerReview(selectedReview.id, ratings);
       setSelectedReviewId(null);
       onRefresh();
+      showToast('Évaluation du manager soumise.', 'success');
     } catch (e) {
       console.error('Failed to submit manager review:', e);
+      showToast('Impossible de soumettre l’évaluation du manager.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -93,24 +97,24 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1">
           <Users size={20} className="text-primary" />
-          <div className="flex items-center gap-2"><h2 className="text-xl font-bold text-slate-900">Team Reviews</h2><HelpButton helpPointId="review.manager" size={16} /></div>
+          <div className="flex items-center gap-2"><h2 className="text-xl font-bold text-slate-900">Évaluations de l’équipe</h2><HelpButton helpPointId="review.manager" size={16} /></div>
         </div>
-        <p className="text-sm text-slate-500">Review and rate your direct reports' performance assessments.</p>
+        <p className="text-sm text-slate-500">Consultez et évaluez les auto-évaluations des membres de votre équipe.</p>
       </div>
 
       {directReportReviews.length === 0 && (
         <div className="bg-slate-50 border border-slate-100 rounded-2xl p-8 text-center">
           <Users size={40} className="mx-auto text-slate-300 mb-3" />
-          <p className="text-slate-500 font-medium">No reviews from your direct reports yet.</p>
+          <p className="text-slate-500 font-medium">Aucune évaluation de vos collaborateurs pour le moment.</p>
         </div>
       )}
 
       {/* Pending Reviews List */}
       {pendingReviews.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-slate-700 mb-3">Awaiting Your Review ({pendingReviews.length})</h3>
+          <h3 className="text-sm font-semibold text-slate-700 mb-3">En attente de votre évaluation ({pendingReviews.length})</h3>
           <div className="space-y-2">
             {pendingReviews.map(review => (
               <button
@@ -123,7 +127,7 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-sm text-slate-900">{review.employeeName}</p>
-                    <p className="text-xs text-slate-400">Submitted {review.submittedAt ? new Date(review.submittedAt).toLocaleDateString() : 'recently'}</p>
+                    <p className="text-xs text-slate-400">Soumise le {review.submittedAt ? new Date(review.submittedAt).toLocaleDateString('fr-FR') : 'récemment'}</p>
                   </div>
                   <ReviewStatusBadge status={review.status} />
                 </div>
@@ -137,9 +141,9 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
       {selectedReview && (
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-900">{selectedReview.employeeName}'s Review</h3>
+            <h3 className="font-bold text-slate-900">Évaluation de {selectedReview.employeeName}</h3>
             <button onClick={() => setSelectedReviewId(null)} className="text-xs text-slate-400 hover:text-slate-600">
-              Close
+              Fermer
             </button>
           </div>
 
@@ -159,7 +163,7 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
                     rating={selfRating?.rating || 0}
                     comment={selfRating?.comment || ''}
                     readOnly
-                    label="Employee Self"
+                    label="Auto-évaluation"
                     ratingScale={ratingScale}
                   />
                   {/* Manager's rating */}
@@ -172,7 +176,7 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
                     onRatingChange={canRate ? (v) => updateRating(comp.id, v) : undefined}
                     onCommentChange={canRate ? (v) => updateComment(comp.id, v) : undefined}
                     readOnly={!canRate}
-                    label="Your Rating"
+                    label="Votre évaluation"
                     ratingScale={ratingScale}
                   />
                 </div>
@@ -188,12 +192,12 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-all disabled:opacity-50"
               >
                 {isProcessing ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                Submit Manager Review
+                Soumettre l’évaluation
               </button>
             </div>
           )}
           {canRate && !allRated && (
-            <p className="text-xs text-slate-400 text-right">Please rate all {competencies.length} competencies before submitting.</p>
+            <p className="text-xs text-slate-400 text-right">Évaluez les {competencies.length} compétences avant de soumettre.</p>
           )}
         </div>
       )}
@@ -201,7 +205,7 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
       {/* Already Reviewed */}
       {reviewedByMe.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-slate-700 mb-3">Reviewed ({reviewedByMe.length})</h3>
+          <h3 className="text-sm font-semibold text-slate-700 mb-3">Déjà évaluées ({reviewedByMe.length})</h3>
           <div className="space-y-2">
             {reviewedByMe.map(review => (
               <div key={review.id} className="bg-white border border-slate-100 rounded-xl p-4">
@@ -209,7 +213,7 @@ const ManagerReviewModule: React.FC<Props> = ({ user: _user, directReportReviews
                   <div>
                     <p className="font-medium text-sm text-slate-900">{review.employeeName}</p>
                     <p className="text-xs text-slate-400">
-                      Reviewed {review.managerReviewedAt ? new Date(review.managerReviewedAt).toLocaleDateString() : ''}
+                      Évaluée le {review.managerReviewedAt ? new Date(review.managerReviewedAt).toLocaleDateString('fr-FR') : ''}
                     </p>
                   </div>
                   <ReviewStatusBadge status={review.status} />

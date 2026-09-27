@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Loader2, AlertTriangle } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
@@ -7,12 +6,14 @@ import { hrService } from '../services/hrService';
 import EmployeeReviewModule from '../components/review/EmployeeReviewModule';
 import ManagerReviewModule from '../components/review/ManagerReviewModule';
 import HRReviewModule from '../components/review/HRReviewModule';
+import { useToast } from '../context/ToastContext';
 
 interface Props {
   user: any;
 }
 
 const PerformanceReview: React.FC<Props> = ({ user }) => {
+  const { showToast } = useToast();
   const isAdmin = user.role === 'ADMIN' || user.role === 'HR' || user.role === 'SUPER_ADMIN';
   const isManager = user.role === 'MANAGER' || user.role === 'TEAM_LEAD' || user.role === 'MANAGEMENT';
 
@@ -29,9 +30,10 @@ const PerformanceReview: React.FC<Props> = ({ user }) => {
         setEmployees(emps.map((e: any) => ({ id: e.id, name: e.name, department: e.department || '' })))
       ).catch((err) => {
         console.error('Failed to load employees for performance review:', err);
+        showToast('Impossible de charger la liste des employés pour les évaluations.', 'error');
       });
     }
-  }, [isAdmin]);
+  }, [isAdmin, showToast]);
 
   if (isLoading) {
     return (
@@ -67,8 +69,8 @@ const PerformanceReview: React.FC<Props> = ({ user }) => {
           <AlertTriangle className="w-5 h-5 flex-shrink-0" />
           <span className="text-sm">
             {subscription?.status === 'EXPIRED'
-              ? 'Your trial has expired. Review submissions are disabled. You can still view existing reviews.'
-              : 'Your account is suspended. Please contact support.'}
+              ? 'Votre période d’essai a expiré. Les soumissions sont désactivées, mais vous pouvez consulter les évaluations existantes.'
+              : 'Votre compte est suspendu. Veuillez contacter le support.'}
           </span>
         </div>
       )}

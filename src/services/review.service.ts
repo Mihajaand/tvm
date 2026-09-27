@@ -9,6 +9,7 @@ import {
   LeaveSummary,
 } from '../types';
 import { consolidateAttendance } from '../utils/attendanceUtils';
+import { toNullableReviewDate } from '../utils/reviewCycleDates';
 
 const LEGACY_COMPETENCY_KEYS = [
   'AGILITY', 'COLLABORATION', 'CUSTOMER_FOCUS',
@@ -135,8 +136,8 @@ export const reviewService = {
         cycle_type: data.cycleType,
         start_date: data.startDate,
         end_date: data.endDate,
-        review_start_date: data.reviewStartDate,
-        review_end_date: data.reviewEndDate,
+        review_start_date: toNullableReviewDate(data.reviewStartDate),
+        review_end_date: toNullableReviewDate(data.reviewEndDate),
         active_competencies: data.activeCompetencies || [],
         is_active: data.isActive || false,
         status: data.status || 'UPCOMING',
@@ -144,7 +145,7 @@ export const reviewService = {
       })
       .select()
       .single();
-    if (error) throw new Error('Failed to create review cycle');
+    if (error) throw new Error(`Failed to create review cycle: ${error.message}`);
     apiClient.notify();
     return mapCycleRecord(record);
   },
@@ -156,14 +157,14 @@ export const reviewService = {
     if (data.cycleType !== undefined)          payload.cycle_type = data.cycleType;
     if (data.startDate !== undefined)          payload.start_date = data.startDate;
     if (data.endDate !== undefined)            payload.end_date = data.endDate;
-    if (data.reviewStartDate !== undefined)    payload.review_start_date = data.reviewStartDate;
-    if (data.reviewEndDate !== undefined)      payload.review_end_date = data.reviewEndDate;
+    if (data.reviewStartDate !== undefined)    payload.review_start_date = toNullableReviewDate(data.reviewStartDate);
+    if (data.reviewEndDate !== undefined)      payload.review_end_date = toNullableReviewDate(data.reviewEndDate);
     if (data.activeCompetencies !== undefined) payload.active_competencies = data.activeCompetencies;
     if (data.isActive !== undefined)           payload.is_active = data.isActive;
     if (data.status !== undefined)             payload.status = data.status;
     const { data: record, error } = await supabase
       .from('review_cycles').update(payload).eq('id', id).select().single();
-    if (error) throw new Error('Failed to update review cycle');
+    if (error) throw new Error(`Failed to update review cycle: ${error.message}`);
     apiClient.notify();
     return mapCycleRecord(record);
   },

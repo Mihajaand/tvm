@@ -7,6 +7,7 @@ import CompetencyRatingCard from './CompetencyRatingCard';
 import AttendanceLeaveCard from './AttendanceLeaveCard';
 import ReviewStatusBadge from './ReviewStatusBadge';
 import HelpButton from '../onboarding/HelpButton';
+import { useToast } from '../../context/ToastContext';
 
 
 const getScaledLogoDims = (dataUrl: string, maxSize: number): Promise<{ w: number; h: number }> =>
@@ -33,6 +34,7 @@ interface Props {
 }
 
 const EmployeeReviewModule: React.FC<Props> = ({ user, activeCycle, upcomingCycle, myReview, pastReviews, onRefresh, readOnly = false, reviewConfig, cycles }) => {
+  const { showToast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [expandedHistoryId, setExpandedHistoryId] = useState<string | null>(null);
@@ -88,8 +90,10 @@ const EmployeeReviewModule: React.FC<Props> = ({ user, activeCycle, upcomingCycl
         manager?.name,
       );
       onRefresh();
+      showToast('Votre auto-évaluation est prête.', 'success');
     } catch (e) {
       console.error("Échec de la création de l'évaluation :", e);
+      showToast('Impossible de démarrer votre auto-évaluation.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -106,8 +110,10 @@ const EmployeeReviewModule: React.FC<Props> = ({ user, activeCycle, upcomingCycl
       }));
       await hrService.submitSelfAssessment(myReview.id, selfRatings);
       onRefresh();
+      showToast('Votre auto-évaluation a été soumise.', 'success');
     } catch (e) {
       console.error("Échec de la soumission de l'auto-évaluation :", e);
+      showToast('Impossible de soumettre votre auto-évaluation.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -339,8 +345,10 @@ const EmployeeReviewModule: React.FC<Props> = ({ user, activeCycle, upcomingCycl
       const safeCycleName = resolvedCycleName.replace(/[^a-zA-Z0-9_-]/g, '_');
       const safeName = (review.employeeName || user.name || 'Employee').replace(/[^a-zA-Z0-9_-]/g, '_');
       doc.save(`Performance_Review_${safeCycleName}_${safeName}.pdf`);
+      showToast('Le rapport PDF a été téléchargé.', 'success');
     } catch (err) {
       console.error("Échec de la génération du PDF de l'évaluation", err);
+      showToast('Impossible de générer le rapport PDF.', 'error');
     } finally {
       setGeneratingPdfId(null);
     }

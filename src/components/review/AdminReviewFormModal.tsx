@@ -94,6 +94,13 @@ const AdminReviewFormModal: React.FC<Props> = ({ mode, review, employees, cycles
             </div>
           )}
 
+          {mode === 'create' && cycles.length === 0 && (
+            <div className="p-4 bg-amber-50 border border-amber-100 text-amber-800 text-xs font-semibold rounded-2xl flex gap-2 items-start">
+              <AlertCircle size={16} className="shrink-0 mt-0.5" />
+              Créez d’abord un cycle d’évaluation avant d’ajouter une évaluation individuelle.
+            </div>
+          )}
+
           {/* Sélecteur d'employé (création uniquement) */}
           {mode === 'create' && (
             <div className="space-y-1">
@@ -172,7 +179,7 @@ const AdminReviewFormModal: React.FC<Props> = ({ mode, review, employees, cycles
           {/* Soumission */}
           <button
             type="submit"
-            disabled={isProcessing}
+            disabled={isProcessing || (mode === 'create' && (!employeeId || !cycleId))}
             className={`w-full py-5 ${headerColor} text-white rounded-xl font-semibold uppercase tracking-widest text-[10px] shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 hover:opacity-90 transition-all`}
           >
             {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Send size={16} />} {submitLabel}

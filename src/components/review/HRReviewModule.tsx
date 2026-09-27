@@ -12,6 +12,7 @@ import ReviewStatusBadge from './ReviewStatusBadge';
 import HelpButton from '../onboarding/HelpButton';
 import AttendanceLeaveCard from './AttendanceLeaveCard';
 import AdminReviewFormModal from './AdminReviewFormModal';
+import { useToast } from '../../context/ToastContext';
 
 interface Employee {
   id: string;
@@ -42,6 +43,7 @@ const CYCLE_STATUSES: { value: ReviewCycleStatus; label: string }[] = [
 ];
 
 const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees = [], onRefresh, readOnly = false, reviewConfig }) => {
+  const { showToast } = useToast();
   const [showCycleForm, setShowCycleForm] = useState(false);
   const [editingCycle, setEditingCycle] = useState<ReviewCycle | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -123,7 +125,7 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
         reviewStartDate: cycleForm.reviewStartDate,
         reviewEndDate: cycleForm.reviewEndDate,
         status: cycleForm.status,
-        isActive: cycleForm.isActive,
+        isActive: cycleForm.status === 'OPEN',
         activeCompetencies: competencies.map(c => c.id),
         organizationId: '',
       };
@@ -134,8 +136,10 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
       }
       resetCycleForm();
       onRefresh();
+      showToast(editingCycle ? 'Cycle d’évaluation mis à jour.' : 'Cycle d’évaluation créé.', 'success');
     } catch (e) {
       console.error('Échec de l\'enregistrement du cycle :', e);
+      showToast('Impossible d’enregistrer le cycle. Vérifiez les dates et réessayez.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -147,8 +151,10 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
     try {
       await hrService.deleteReviewCycle(id);
       onRefresh();
+      showToast('Cycle d’évaluation supprimé.', 'success');
     } catch (e) {
       console.error('Échec de la suppression du cycle :', e);
+      showToast('Impossible de supprimer ce cycle d’évaluation.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -163,8 +169,10 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
       setFinalRemarks('');
       setOverallRating('');
       onRefresh();
+      showToast('Évaluation finalisée.', 'success');
     } catch (e) {
       console.error('Échec de la finalisation de l\'évaluation :', e);
+      showToast('Impossible de finaliser cette évaluation.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -177,8 +185,10 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
       await hrService.deleteReview(id);
       setSelectedReviewId(null);
       onRefresh();
+      showToast('Évaluation supprimée.', 'success');
     } catch (e) {
       console.error('Échec de la suppression de l\'évaluation :', e);
+      showToast('Impossible de supprimer cette évaluation.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -293,8 +303,10 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
       await hrService.setReviewConfig(editConfig);
       setShowSettings(false);
       onRefresh();
+      showToast('Paramètres d’évaluation enregistrés.', 'success');
     } catch (e) {
       console.error('Échec de l\'enregistrement de la configuration des évaluations :', e);
+      showToast('Impossible d’enregistrer les paramètres d’évaluation.', 'error');
     } finally {
       setIsProcessing(false);
     }
@@ -435,7 +447,10 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
                   </select>
                   <select
                     value={cycleForm.status}
-                    onChange={e => setCycleForm(f => ({ ...f, status: e.target.value as ReviewCycleStatus }))}
+                    onChange={e => {
+                      const status = e.target.value as ReviewCycleStatus;
+                      setCycleForm(f => ({ ...f, status, isActive: status === 'OPEN' }));
+                    }}
                     className="text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   >
                     {CYCLE_STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -469,7 +484,7 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
                 </div>
 
                 <label className="flex items-center gap-2 text-sm text-slate-700">
-                  <input type="checkbox" checked={cycleForm.isActive} onChange={e => setCycleForm(f => ({ ...f, isActive: e.target.checked }))}
+                  <input type="checkbox" checked={cycleForm.status === 'OPEN'} onChange={e => setCycleForm(f => ({ ...f, status: e.target.checked ? 'OPEN' : 'UPCOMING', isActive: e.target.checked }))}
                     className="rounded border-slate-300" />
                   Définir comme cycle actif
                 </label>
@@ -502,7 +517,9 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
             {!readOnly && (
               <button
                 onClick={openCreateReview}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-primary rounded-lg hover:opacity-90 transition-colors"
+                disabled={cycles.length === 0}
+                title={cycles.length === 0 ? 'Créez d’abord un cycle d’évaluation.' : undefined}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-primary rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Plus size={14} /> Créer une évaluation
               </button>
@@ -520,6 +537,10 @@ const HRReviewModule: React.FC<Props> = ({ user, cycles, allReviews, employees =
             </select>
           </div>
         </div>
+
+        {!readOnly && cycles.length === 0 && (
+          <p className="text-xs text-slate-500">Créez d’abord un cycle d’évaluation pour pouvoir ajouter des évaluations individuelles.</p>
+        )}
 
         {filteredReviews.length === 0 && (
           <div className="bg-slate-50 rounded-xl p-6 text-center">

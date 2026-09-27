@@ -190,22 +190,22 @@ export function buildHash(path: string, params?: Record<string, any> | null): st
  * which are stripped before matching.
  */
 function parseHash(raw: string): DeepLinkRoute | null {
-  // Normalize: strip leading '#', strip query/search suffix, trim
-  let hash = raw.replace(/^#/, '').replace(/[?#].*$/, '').trim();
+  // Keep the # prefix because every route pattern is expressed as a hash route.
+  let hash = raw.replace(/\?.*$/, '').trim();
 
   // Empty or root hash → no route
-  if (!hash || hash === '/') return null;
+  if (!hash || hash === '#' || hash === '#/') return null;
 
   // Ensure leading slash for consistency
-  if (!hash.startsWith('/')) {
-    hash = '/' + hash;
+  if (!hash.startsWith('#/')) {
+    hash = hash.startsWith('#') ? '#/' + hash.slice(1) : '#/' + hash;
   }
 
   // Remove trailing slash for consistent matching (patterns are slash-agnostic)
   hash = hash.replace(/\/+$/, '');
 
   // Guard: don't parse Supabase auth hashes
-  if (hash.includes('token=') || hash.startsWith('/auth/')) return null;
+  if (hash.includes('token=') || hash.startsWith('#/auth/')) return null;
   if (hash.includes('type=recovery')) return null;
   if (hash.includes('error=')) return null;
 

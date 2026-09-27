@@ -43,7 +43,7 @@ export const usePerformanceReview = (user: any) => {
         cycles = await hrService.getReviewCycles();
       } catch (e: any) {
         console.error('[usePerformanceReview] Failed to fetch cycles:', e);
-        setError('Failed to load review cycles. Check browser console for details.');
+        setError('Impossible de charger les cycles d’évaluation. Réessayez dans quelques instants.');
       }
 
       try {
@@ -120,7 +120,7 @@ export const usePerformanceReview = (user: any) => {
       });
     } catch (e) {
       console.error('[usePerformanceReview] Critical fetch failure:', e);
-      setError('Failed to load performance review data.');
+      setError('Impossible de charger les données des évaluations. Réessayez dans quelques instants.');
     } finally {
       setIsLoading(false);
     }

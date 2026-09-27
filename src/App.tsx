@@ -101,8 +101,8 @@ const parseTutorialRoute = (pathname: string) => {
 const AppContent: React.FC = () => {
   const { user, isLoading, isConfigured, setConfigured, login, logout } = useAuth();
   const { subscription, isLoading: isSubscriptionLoading } = useSubscription();
-  const [currentPath, setCurrentPath] = useState('dashboard');
-  const [navParams, setNavParams] = useState<any>(null);
+  const [currentPath, setCurrentPath] = useState(() => getCurrentRoute()?.path ?? 'dashboard');
+  const [navParams, setNavParams] = useState<any>(() => getCurrentRoute()?.params ?? null);
 
   // Public Pages State
   const [showRegister, setShowRegister] = useState(false);

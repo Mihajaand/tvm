@@ -23,6 +23,8 @@ export const changelog: ChangelogRelease[] = [
       { type: 'improvement', description: 'Attendance now records the configured workplace name when the GPS position falls within its geofence radius, while preserving the exact GPS coordinates. Outside all configured areas, the recorded address remains the current coordinates.' },
       { type: 'improvement', description: 'Translated attendance status labels in the logs and detail view into French while preserving the original status codes for filtering and storage.' },
       { type: 'improvement', description: 'Translated the HR leave creation and editing form, leave statuses and administration dialogs into French while keeping workflow codes and custom organization leave names intact.' },
+      { type: 'fix', description: 'Repaired the Performance review-cycle workflow by adding the missing cycle status and active-competency fields, storing blank optional review dates as null, synchronizing open cycles with active status, and showing action results instead of silently logging failures.' },
+      { type: 'improvement', description: 'Completed the French localization of Performance status badges, manager actions, attendance and leave summaries, and prevented creating individual reviews before a cycle exists.' },
     ],
   },
   {
