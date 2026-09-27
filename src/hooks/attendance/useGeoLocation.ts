@@ -1,7 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { OFFICE_LOCATIONS } from '../../constants';
 import { hrService } from '../../services/hrService';
 import { OfficeLocation } from '../../types';
+import { findMatchingOfficeLocation } from '../../utils/geofencing';
 
 // Position de secours si aucune géofence n'est disponible
 const DEFAULT_FALLBACK_LOCATION = {
@@ -15,6 +16,8 @@ export const useGeoLocation = () => {
   const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [geoFences, setGeoFences] = useState<OfficeLocation[]>(OFFICE_LOCATIONS);
+  const geoFencesRef = useRef<OfficeLocation[]>(OFFICE_LOCATIONS);
+  const configLoadRef = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -22,13 +25,14 @@ export const useGeoLocation = () => {
       try {
         const config = await hrService.getConfig();
         if (isMounted && config?.officeLocations && config.officeLocations.length > 0) {
+          geoFencesRef.current = config.officeLocations;
           setGeoFences(config.officeLocations);
         }
       } catch (e) {
         // En cas d'erreur de chargement de la config, on garde les valeurs par défaut
       }
     };
-    loadConfig();
+    configLoadRef.current = loadConfig();
     return () => { isMounted = false; };
   }, []);
 
@@ -50,6 +54,8 @@ export const useGeoLocation = () => {
     setIsLocating(true);
     setError(null);
 
+    await configLoadRef.current;
+
     if (!navigator.geolocation) {
       applyFallback("Géolocalisation non supportée (Contourné)");
       return;
@@ -68,11 +74,12 @@ export const useGeoLocation = () => {
       const pos = await getPositionPromise;
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
+      const matchingOffice = findMatchingOfficeLocation(lat, lng, geoFencesRef.current);
 
       setLocation({
         lat,
         lng,
-        address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+        address: matchingOffice?.name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`
       });
     } catch (err) {
       console.warn("Échec ou refus de la géolocalisation, application du contournement automatique :", err);

@@ -29,7 +29,7 @@ export const OrgPlacement: React.FC<Props> = ({ locations, onAdd, onEdit, onDele
                    </div>
                 </div>
                 <p className="text-[10px] font-mono text-slate-500">{loc.lat.toFixed(4)}, {loc.lng.toFixed(4)}</p>
-                <p className="text-[10px] font-bold text-primary mt-1 uppercase tracking-wider">{loc.radius}m Radian</p>
+                <p className="text-[10px] font-bold text-primary mt-1 uppercase tracking-wider">Rayon : {loc.radius} m</p>
              </div>
            ))}
            {locations.length === 0 && <p className="col-span-full text-center text-slate-400 text-xs font-bold uppercase tracking-widest py-10">Aucun emplacement dynamique. Utilisation des paramètres par défaut.</p>}
