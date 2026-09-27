@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, RefreshCw, X, ArrowRight, FileCheck, Ban, Plus, List, Clock } from 'lucide-react';
 import { hrService } from '../../services/hrService';
-import { LeaveRequest } from '../../types';
+import { CustomLeaveType, LeaveRequest } from '../../types';
 import { useToast } from '../../context/ToastContext';
 import HelpButton from '../onboarding/HelpButton';
 import AdminLeaveFormModal from './AdminLeaveFormModal';
 import AdminAllLeaves from './AdminAllLeaves';
+import { getLeaveTypeLabel } from '../../utils/leaveLabels';
 
 interface Props {
   user: any;
@@ -27,12 +28,15 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editTarget, setEditTarget] = useState<LeaveRequest | null>(null);
   const [employees, setEmployees] = useState<{ id: string; name: string; department: string }[]>([]);
+  const [leaveTypes, setLeaveTypes] = useState<CustomLeaveType[]>([]);
 
   useEffect(() => {
     const loadEmployees = async () => {
       try {
         const emps = await hrService.getEmployees();
         setEmployees(emps.map(e => ({ id: e.id, name: e.name, department: e.department })));
+        const types = await hrService.getLeaveTypes().catch(() => []);
+        setLeaveTypes(types);
       } catch { /* ignorer */ }
     };
     loadEmployees();
@@ -40,6 +44,10 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
 
   const pendingHR = requests.filter(r => r.status === 'PENDING_HR');
   const pendingCount = requests.filter(r => r.status === 'PENDING_HR' || r.status === 'PENDING_MANAGER').length;
+  const getTypeLabel = (type: string) => getLeaveTypeLabel(
+    type,
+    leaveTypes.find(leaveType => leaveType.id.toUpperCase() === type.toUpperCase())?.name
+  );
 
   const handleVerify = async (action: 'APPROVED' | 'REJECTED') => {
     if (!showVerify || readOnly) return;
@@ -128,7 +136,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                     <h4 className="font-semibold text-slate-900 uppercase tracking-tighter text-lg">{req.employeeName}</h4>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md text-[9px] font-semibold uppercase tracking-widest flex items-center gap-1"><ShieldCheck size={10} /> Approuvé par le manager</span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{req.type}</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{getTypeLabel(req.type)}</span>
                     </div>
                   </div>
                 </div>
@@ -157,7 +165,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                     <h4 className="font-semibold text-slate-900 uppercase tracking-tighter text-lg">{req.employeeName}</h4>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-md text-[9px] font-semibold uppercase tracking-widest flex items-center gap-1"><Clock size={10} /> En attente du manager</span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{req.type}</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{getTypeLabel(req.type)}</span>
                     </div>
                   </div>
                 </div>
@@ -191,6 +199,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
         <div className="bg-white rounded-xl border border-slate-100 p-8 shadow-sm">
           <AdminAllLeaves
             requests={requests}
+            leaveTypes={leaveTypes}
             onEdit={(leave) => setEditTarget(leave)}
             onRefresh={onRefresh}
             readOnly={readOnly}
@@ -216,7 +225,7 @@ export const HRLeaveModule: React.FC<Props> = ({ requests, onRefresh, readOnly =
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Type</p>
-                    <p className="text-xs font-bold text-slate-700">{showVerify.type}</p>
+                    <p className="text-xs font-bold text-slate-700">{getTypeLabel(showVerify.type)}</p>
                   </div>
                   <div>
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Durée</p>

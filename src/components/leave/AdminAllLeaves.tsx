@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { Edit3, Trash2, CheckCircle, XCircle, RefreshCw, AlertTriangle, FileCheck, Search } from 'lucide-react';
 import { hrService } from '../../services/hrService';
-import { LeaveRequest } from '../../types';
+import { CustomLeaveType, LeaveRequest } from '../../types';
 import { useToast } from '../../context/ToastContext';
+import { getLeaveStatusLabel, getLeaveTypeLabel } from '../../utils/leaveLabels';
 
 interface Props {
   requests: LeaveRequest[];
+  leaveTypes: CustomLeaveType[];
   onEdit: (leave: LeaveRequest) => void;
   onRefresh: () => void;
   readOnly?: boolean;
@@ -30,7 +32,7 @@ const statusBar = (status: string) => {
   }
 };
 
-const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly = false }) => {
+const AdminAllLeaves: React.FC<Props> = ({ requests, leaveTypes, onEdit, onRefresh, readOnly = false }) => {
   const { showToast } = useToast();
   const [deleteTarget, setDeleteTarget] = useState<LeaveRequest | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -38,11 +40,15 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
   const [approveRemarks, setApproveRemarks] = useState('');
   const [isApproving, setIsApproving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const getTypeLabel = (type: string) => getLeaveTypeLabel(
+    type,
+    leaveTypes.find(leaveType => leaveType.id.toUpperCase() === type.toUpperCase())?.name
+  );
 
   const filtered = requests.filter(r =>
     r.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    r.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    r.status.toLowerCase().includes(searchTerm.toLowerCase())
+    getTypeLabel(r.type).toLowerCase().includes(searchTerm.toLowerCase()) ||
+    getLeaveStatusLabel(r.status).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDelete = async () => {
@@ -51,7 +57,7 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
     try {
       await hrService.adminDeleteLeave(deleteTarget.id);
       onRefresh();
-    } catch { showToast('Delete failed', 'error'); }
+    } catch { showToast('Échec de la suppression du congé.', 'error'); }
     finally {
       setIsDeleting(false);
       setDeleteTarget(null);
@@ -66,7 +72,7 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
       onRefresh();
       setApproveTarget(null);
       setApproveRemarks('');
-    } catch { showToast('Action failed', 'error'); }
+    } catch { showToast('Impossible de traiter cette demande.', 'error'); }
     finally { setIsApproving(false); }
   };
 
@@ -95,11 +101,11 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
               <div className="min-w-0">
                 <h4 className="font-semibold text-slate-800 text-sm uppercase leading-tight truncate">{req.employeeName}</h4>
                 <div className="flex flex-wrap items-center gap-2 mt-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{req.type}</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{getTypeLabel(req.type)}</span>
                   <span className="text-[10px] font-bold text-slate-300">|</span>
                   <span className="text-[10px] font-bold text-slate-400">{req.startDate?.split(' ')[0]} — {req.endDate?.split(' ')[0]}</span>
                   <span className="text-[10px] font-bold text-slate-300">|</span>
-                  <span className="text-[10px] font-bold text-slate-400">{req.totalDays}d</span>
+                  <span className="text-[10px] font-bold text-slate-400">{req.totalDays} jour(s)</span>
                 </div>
                 {req.reason && (
                   <p className="text-[10px] font-bold text-slate-400 mt-1 truncate max-w-xs" title={req.reason}>"{req.reason}"</p>
@@ -109,7 +115,7 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
 
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className={`px-3 py-1 rounded-lg text-[9px] font-semibold uppercase whitespace-nowrap ${statusBadge(req.status)}`}>
-                {req.status.replace('_', ' ')}
+                {getLeaveStatusLabel(req.status)}
               </span>
 
               {/* Approve/Reject for any pending */}
@@ -127,7 +133,7 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
                 <button
                   onClick={() => onEdit(req)}
                   className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-amber-600 hover:border-amber-200 transition-colors"
-                  title="Edit"
+                  title="Modifier"
                 >
                   <Edit3 size={14} />
                 </button>
@@ -138,7 +144,7 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
                 <button
                   onClick={() => setDeleteTarget(req)}
                   className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-rose-600 hover:border-rose-200 transition-colors"
-                  title="Delete"
+                  title="Supprimer"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -149,7 +155,7 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
         {filtered.length === 0 && (
           <div className="text-center py-16">
             <FileCheck size={48} className="text-slate-200 mx-auto mb-4" />
-            <p className="text-slate-400 font-semibold uppercase text-xs tracking-widest">Aucune congé trouvé</p>
+            <p className="text-slate-400 font-semibold uppercase text-xs tracking-widest">Aucune demande de congé trouvée</p>
           </div>
         )}
       </div>
@@ -165,8 +171,8 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
             <div className="p-8 space-y-6">
               <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
                 <p className="text-sm font-semibold text-slate-800">{deleteTarget.employeeName}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{deleteTarget.type} — {deleteTarget.startDate?.split(' ')[0]} à {deleteTarget.endDate?.split(' ')[0]}</p>
-                <p className="text-[10px] font-bold text-slate-400">Status: {deleteTarget.status.replace('_', ' ')}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{getTypeLabel(deleteTarget.type)} — {deleteTarget.startDate?.split(' ')[0]} au {deleteTarget.endDate?.split(' ')[0]}</p>
+                <p className="text-[10px] font-bold text-slate-400">Statut : {getLeaveStatusLabel(deleteTarget.status)}</p>
               </div>
               <p className="text-xs font-bold text-slate-500 text-center">Cette action est irréversible. L'enregistrement de congé sera définitivement supprimé.</p>
               <div className="flex gap-4">
@@ -185,7 +191,7 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in">
             <div className="p-8 bg-emerald-600 text-white flex justify-between items-center">
-              <div className="flex items-center gap-3"><CheckCircle size={20} /><h3 className="text-lg font-semibold uppercase tracking-tight">Revoir l'administrateur</h3></div>
+              <div className="flex items-center gap-3"><CheckCircle size={20} /><h3 className="text-lg font-semibold uppercase tracking-tight">Examiner la demande</h3></div>
               <button onClick={() => { setApproveTarget(null); setApproveRemarks(''); }} className="hover:bg-white/10 p-2 rounded-lg transition-colors"><span className="sr-only">Fermer</span>✕</button>
             </div>
             <div className="p-8 space-y-6">
@@ -198,11 +204,11 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Type</p>
-                    <p className="text-xs font-bold text-slate-700">{approveTarget.type}</p>
+                    <p className="text-xs font-bold text-slate-700">{getTypeLabel(approveTarget.type)}</p>
                   </div>
                   <div>
                     <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Durée</p>
-                    <p className="text-xs font-bold text-slate-700">{approveTarget.totalDays} Day(s)</p>
+                    <p className="text-xs font-bold text-slate-700">{approveTarget.totalDays} jour(s)</p>
                   </div>
                 </div>
                 <div className="w-full h-px bg-slate-200" />
@@ -213,17 +219,17 @@ const AdminAllLeaves: React.FC<Props> = ({ requests, onEdit, onRefresh, readOnly
                 <div className="w-full h-px bg-slate-200" />
                 <div>
                   <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Raison</p>
-                  <p className="text-xs font-bold text-slate-700">"{approveTarget.reason || 'No reason provided'}"</p>
+                    <p className="text-xs font-bold text-slate-700">"{approveTarget.reason || 'Aucun motif précisé'}"</p>
                 </div>
                 <div className="w-full h-px bg-slate-200" />
                 <div>
                   <p className="text-[10px] font-semibold text-amber-500 uppercase tracking-widest">Statut Actuel</p>
-                  <p className="text-xs font-bold text-slate-700">{approveTarget.status.replace('_', ' ')}</p>
+                  <p className="text-xs font-bold text-slate-700">{getLeaveStatusLabel(approveTarget.status)}</p>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Commentaires de l'administrateur (Facultatif)</p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Remarques de l’administration (facultatif)</p>
                 <textarea
                   placeholder="Ajouter des notes d'approbation ou de rejet..."
                   className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold min-h-[80px] outline-none focus:ring-4 focus:ring-emerald-50 transition-all"

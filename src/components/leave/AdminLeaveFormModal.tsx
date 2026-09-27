@@ -4,6 +4,7 @@ import { X, Send, RefreshCw, AlertCircle, UserPlus, Edit3 } from 'lucide-react';
 import { hrService } from '../../services/hrService';
 import { LeaveRequest, CustomLeaveType } from '../../types';
 import { DEFAULT_LEAVE_TYPES } from '../../constants';
+import { getLeaveStatusLabel, getLeaveTypeLabel } from '../../utils/leaveLabels';
 
 interface Employee {
   id: string;
@@ -37,11 +38,11 @@ const AdminLeaveFormModal: React.FC<Props> = ({ mode, leave, employees, onClose,
 
   useEffect(() => {
     hrService.getLeaveTypes().then(setLeaveTypes).catch((err) => {
-      console.error('Failed to load leave types:', err);
+      console.error('Échec du chargement des types de congé :', err);
     });
   }, []);
 
-  // Auto-calc total days (simple calendar diff — admin can override)
+  // Calcul automatique du nombre de jours calendaires, modifiable par l'administration.
   useEffect(() => {
     if (startDate && endDate) {
       const s = new Date(startDate);
@@ -60,15 +61,15 @@ const AdminLeaveFormModal: React.FC<Props> = ({ mode, leave, employees, onClose,
     setError(null);
 
     if (mode === 'create' && !employeeId) {
-      setError('Please select an employee.');
+      setError('Veuillez sélectionner un employé.');
       return;
     }
     if (!startDate || !endDate) {
-      setError('Please select start and end dates.');
+      setError('Veuillez sélectionner les dates de début et de fin.');
       return;
     }
     if (totalDays <= 0) {
-      setError('Total days must be greater than 0.');
+      setError('Le nombre de jours doit être supérieur à zéro.');
       return;
     }
 
@@ -99,7 +100,8 @@ const AdminLeaveFormModal: React.FC<Props> = ({ mode, leave, employees, onClose,
       }
       onSaved();
     } catch (err: any) {
-      setError(err.message || 'Operation failed');
+      console.error('Échec de l’enregistrement du congé :', err);
+      setError('Impossible d’enregistrer le congé. Vérifiez les informations et réessayez.');
     } finally {
       setIsProcessing(false);
     }
@@ -107,8 +109,8 @@ const AdminLeaveFormModal: React.FC<Props> = ({ mode, leave, employees, onClose,
 
   const headerColor = mode === 'create' ? 'bg-primary' : 'bg-amber-600';
   const HeaderIcon = mode === 'create' ? UserPlus : Edit3;
-  const headerTitle = mode === 'create' ? 'Create Leave (Admin)' : 'Edit Leave (Admin)';
-  const submitLabel = mode === 'create' ? 'Create Leave' : 'Save Changes';
+  const headerTitle = mode === 'create' ? 'Créer une demande de congé' : 'Modifier la demande de congé';
+  const submitLabel = mode === 'create' ? 'Créer le congé' : 'Enregistrer les modifications';
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
@@ -128,17 +130,17 @@ const AdminLeaveFormModal: React.FC<Props> = ({ mode, leave, employees, onClose,
             </div>
           )}
 
-          {/* Employee Selector (create only) */}
+          {/* Sélection de l'employé (création uniquement) */}
           {mode === 'create' && (
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Employee</label>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Employé</label>
               <select
                 required
                 className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-semibold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all"
                 value={employeeId}
                 onChange={e => setEmployeeId(e.target.value)}
               >
-                <option value="">— Select Employee —</option>
+                <option value="">— Sélectionner un employé —</option>
                 {employees.map(emp => (
                   <option key={emp.id} value={emp.id}>{emp.name} ({emp.department})</option>
                 ))}
@@ -146,24 +148,24 @@ const AdminLeaveFormModal: React.FC<Props> = ({ mode, leave, employees, onClose,
             </div>
           )}
 
-          {/* Edit mode: show employee name as read-only */}
+          {/* En modification, le nom de l'employé est en lecture seule */}
           {mode === 'edit' && leave && (
             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Employee</p>
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Employé</p>
               <p className="text-sm font-semibold text-slate-800 mt-1">{leave.employeeName}</p>
             </div>
           )}
 
-          {/* Leave Type */}
+          {/* Type de congé */}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Leave Type</label>
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Type de congé</label>
             <select
               className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-semibold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all"
               value={type}
               onChange={e => setType(e.target.value)}
             >
               {leaveTypes.map(t => (
-                <option key={t.id} value={t.id}>{t.name}</option>
+                <option key={t.id} value={t.id}>{getLeaveTypeLabel(t.id, t.name)}</option>
               ))}
             </select>
           </div>
@@ -171,45 +173,45 @@ const AdminLeaveFormModal: React.FC<Props> = ({ mode, leave, employees, onClose,
           {/* Dates */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Start Date</label>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Date de début</label>
               <input type="date" required className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all" value={startDate} onChange={e => setStartDate(e.target.value)} />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">End Date</label>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Date de fin</label>
               <input type="date" required className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all" value={endDate} onChange={e => setEndDate(e.target.value)} />
             </div>
           </div>
 
-          {/* Total Days (auto-calculated, editable override) */}
+          {/* Nombre de jours (calculé automatiquement et modifiable) */}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Total Days</label>
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Nombre de jours</label>
             <input type="number" min={0} step={0.5} required className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all" value={totalDays} onChange={e => setTotalDays(Number(e.target.value))} />
           </div>
 
-          {/* Reason */}
+          {/* Motif */}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Reason</label>
-            <textarea placeholder="Leave reason..." className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm min-h-[80px] outline-none focus:ring-4 focus:ring-primary-light transition-all" value={reason} onChange={e => setReason(e.target.value)} />
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Motif</label>
+            <textarea placeholder="Précisez le motif du congé…" className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm min-h-[80px] outline-none focus:ring-4 focus:ring-primary-light transition-all" value={reason} onChange={e => setReason(e.target.value)} />
           </div>
 
-          {/* Status */}
+          {/* Statut */}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Status</label>
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Statut</label>
             <select
               className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-semibold text-sm outline-none focus:ring-4 focus:ring-primary-light transition-all"
               value={status}
               onChange={e => setStatus(e.target.value)}
             >
               {STATUS_OPTIONS.map(s => (
-                <option key={s} value={s}>{s.replace('_', ' ')}</option>
+                <option key={s} value={s}>{getLeaveStatusLabel(s)}</option>
               ))}
             </select>
           </div>
 
-          {/* Remarks */}
+          {/* Remarques */}
           <div className="space-y-1">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Admin Remarks</label>
-            <textarea placeholder="Optional admin notes..." className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm min-h-[60px] outline-none focus:ring-4 focus:ring-primary-light transition-all" value={remarks} onChange={e => setRemarks(e.target.value)} />
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest px-1">Remarques de l’administration</label>
+            <textarea placeholder="Notes facultatives de l’administration…" className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm min-h-[60px] outline-none focus:ring-4 focus:ring-primary-light transition-all" value={remarks} onChange={e => setRemarks(e.target.value)} />
           </div>
 
           {/* Submit */}
