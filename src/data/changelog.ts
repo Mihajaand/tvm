@@ -16,9 +16,10 @@ export interface ChangelogRelease {
 export const changelog: ChangelogRelease[] = [
   {
     date: '2026-10-27',
-    title: 'Employee account actions fixed',
+    title: 'Employee and office location improvements',
     entries: [
       { type: 'fix', description: 'Fixed employee delete, deactivate, and reactivate requests being rejected by the Supabase Edge Function gateway. Employee management requests now send the required project API key alongside the signed-in user token; employee creation uses the same corrected request headers.' },
+      { type: 'improvement', description: 'Added an interactive Leaflet map to office placement. Administrators can set locations by searching an address, using device geolocation, clicking or dragging the map marker, or entering coordinates manually; each saved geofence radius is previewed on the map.' },
     ],
   },
   {

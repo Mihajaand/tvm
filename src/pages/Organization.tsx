@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Loader2, Save, X, RefreshCw, MapPin, AlertTriangle, Search
+  Loader2, Save, X, RefreshCw, AlertTriangle, Search
 } from 'lucide-react';
 import { useOrganization } from '../hooks/organization/useOrganization';
 import { hrService } from '../services/hrService';
@@ -12,6 +12,7 @@ import { useToast } from '../context/ToastContext';
 import { OrgStructure } from '../components/organization/OrgStructure';
 import { OrgTeams } from '../components/organization/OrgTeams';
 import { OrgPlacement } from '../components/organization/OrgPlacement';
+import OfficeLocationMap from '../components/organization/OfficeLocationMap';
 import { OrgWorkflow } from '../components/organization/OrgWorkflow';
 import { OrgLeaves } from '../components/organization/OrgLeaves';
 import { OrgHolidays } from '../components/organization/OrgHolidays';
@@ -117,6 +118,20 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
     if (!canWrite) {
       showToast('Votre abonnement ne permet pas les modifications. Veuillez effectuer une mise à niveau pour continuer.', 'warning');
       return;
+    }
+    if (modalType === 'LOCATION') {
+      const { lat, lng, radius } = locationForm;
+      if (
+        !Number.isFinite(lat) || lat! < -90 || lat! > 90 ||
+        !Number.isFinite(lng) || lng! < -180 || lng! > 180
+      ) {
+        showToast('Choisissez un point valide sur la carte ou vérifiez la latitude et la longitude.', 'error');
+        return;
+      }
+      if (!Number.isFinite(radius) || radius! <= 0) {
+        showToast('Le rayon autorisé doit être supérieur à 0 mètre.', 'error');
+        return;
+      }
     }
     try {
       if (modalType === 'HOLIDAY') {
@@ -345,7 +360,7 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
       {/* Logique de fenêtre modale partagée */}
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-          <div className={`bg-white rounded-xl w-full shadow-2xl overflow-hidden animate-in zoom-in ${modalType === 'TEAM' || modalType === 'LOCATION' || modalType === 'OVERRIDE' || modalType === 'SHIFT' || modalType === 'SHIFT_OVERRIDE' ? 'max-w-xl' : 'max-w-md'}`}>
+          <div className={`bg-white rounded-xl w-full shadow-2xl overflow-hidden animate-in zoom-in ${modalType === 'LOCATION' ? 'max-w-4xl' : modalType === 'TEAM' || modalType === 'OVERRIDE' || modalType === 'SHIFT' || modalType === 'SHIFT_OVERRIDE' ? 'max-w-xl' : 'max-w-md'}`}>
             <div className="bg-primary p-6 flex justify-between items-center text-white">
                <h3 className="text-sm font-semibold uppercase tracking-widest">Configuration de {modalType}</h3>
                <button onClick={() => setShowModal(false)}><X size={24} /></button>
@@ -367,14 +382,72 @@ const Organization: React.FC<OrganizationProps> = ({ initialTab }) => {
               )}
 
               {modalType === 'LOCATION' && (
-                 <div className="space-y-4">
-                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Nom du bureau</label><input required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.name} onChange={e => setLocationForm({...locationForm, name: e.target.value})} /></div>
-                    <div className="grid grid-cols-2 gap-4">
-                       <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Latitude</label><input type="number" step="any" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.lat} onChange={e => setLocationForm({...locationForm, lat: parseFloat(e.target.value)})} /></div>
-                       <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Longitude</label><input type="number" step="any" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.lng} onChange={e => setLocationForm({...locationForm, lng: parseFloat(e.target.value)})} /></div>
+                 <div className="space-y-5">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Nom du bureau</label>
+                      <input required className="w-full rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 font-bold" value={locationForm.name || ''} onChange={e => setLocationForm({...locationForm, name: e.target.value})} />
                     </div>
-                    <div className="space-y-1"><label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Rayon (Mètres)</label><input type="number" required className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={locationForm.radius} onChange={e => setLocationForm({...locationForm, radius: parseInt(e.target.value)})} /></div>
-                    <a href="https://www.google.com/maps" target="_blank" rel="noreferrer" className="text-[10px] text-primary font-bold hover:underline flex items-center gap-1 justify-end"><MapPin size={10}/> Ouvrir Google Maps pour trouver la Latitude/Longitude</a>
+
+                    <div className="grid gap-4 lg:grid-cols-[1fr_1.2fr]">
+                      <div className="space-y-4">
+                        <div className="rounded-2xl border border-teal-100 bg-teal-50/70 p-4">
+                          <p className="text-xs font-black uppercase tracking-wider text-teal-900">Définir le point central</p>
+                          <p className="mt-1 text-xs leading-relaxed text-teal-800/80">Recherchez une adresse, utilisez votre position ou cliquez directement sur la carte. Vous pouvez aussi déplacer le repère.</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Latitude</label>
+                            <input
+                              type="number"
+                              step="any"
+                              required
+                              min="-90"
+                              max="90"
+                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm font-bold"
+                              value={Number.isFinite(locationForm.lat) ? locationForm.lat : ''}
+                              onChange={e => setLocationForm({ ...locationForm, lat: e.target.value === '' ? Number.NaN : parseFloat(e.target.value) })}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Longitude</label>
+                            <input
+                              type="number"
+                              step="any"
+                              required
+                              min="-180"
+                              max="180"
+                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-mono text-sm font-bold"
+                              value={Number.isFinite(locationForm.lng) ? locationForm.lng : ''}
+                              onChange={e => setLocationForm({ ...locationForm, lng: e.target.value === '' ? Number.NaN : parseFloat(e.target.value) })}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-semibold text-slate-400 uppercase px-1">Rayon accepté (mètres)</label>
+                          <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            required
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold"
+                            value={Number.isFinite(locationForm.radius) ? locationForm.radius : ''}
+                            onChange={e => setLocationForm({ ...locationForm, radius: e.target.value === '' ? Number.NaN : parseInt(e.target.value, 10) })}
+                          />
+                          <p className="px-1 text-[10px] text-slate-500">Le cercle sur la carte se met à jour avec ce rayon.</p>
+                        </div>
+                      </div>
+                      <OfficeLocationMap
+                        locations={[{
+                          name: locationForm.name || 'Nouvel emplacement',
+                          lat: locationForm.lat ?? Number.NaN,
+                          lng: locationForm.lng ?? Number.NaN,
+                          radius: locationForm.radius ?? Number.NaN,
+                        }]}
+                        interactive
+                        onLocationChange={(lat, lng) => setLocationForm(current => ({ ...current, lat, lng }))}
+                        heightClass="h-[340px] sm:h-[380px]"
+                      />
+                    </div>
                  </div>
               )}
 

@@ -330,13 +330,13 @@ const EmployeeDirectory: React.FC<EmployeeDirectoryProps> = ({ user, selectedEmp
       const { type, employee } = confirmAction;
       if (type === 'delete') {
         await hrService.deleteEmployee(employee.id);
-        showToast(`${employee.name} has been permanently deleted`, 'success');
+        showToast(`Le compte de ${employee.name} a été supprimé`, 'success');
       } else if (type === 'offboard') {
         await hrService.offboardEmployee(employee.id);
-        showToast(`${employee.name} has been offboarded — login access revoked`, 'success');
+        showToast(`Le compte de ${employee.name} a été désactivé`, 'success');
       } else if (type === 'reactivate') {
         await hrService.reactivateEmployee(employee.id);
-        showToast(`${employee.name} has been reactivated`, 'success');
+        showToast(`Le compte de ${employee.name} est activé`, 'success');
       }
       setConfirmAction(null);
     } catch (err: any) {
