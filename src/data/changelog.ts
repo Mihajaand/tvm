@@ -15,6 +15,13 @@ export interface ChangelogRelease {
 
 export const changelog: ChangelogRelease[] = [
   {
+    date: '2026-10-27',
+    title: 'Employee account actions fixed',
+    entries: [
+      { type: 'fix', description: 'Fixed employee delete, deactivate, and reactivate requests being rejected by the Supabase Edge Function gateway. Employee management requests now send the required project API key alongside the signed-in user token; employee creation uses the same corrected request headers.' },
+    ],
+  },
+  {
     date: '2026-09-27',
     title: 'The app now opens directly on login',
     entries: [

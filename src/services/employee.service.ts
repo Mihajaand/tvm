@@ -116,7 +116,10 @@ export const employeeService = {
 
     const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/create-employee`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${session.access_token}` },
+      headers: {
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${session.access_token}`,
+      },
       body: formData,
     });
 
@@ -212,6 +215,7 @@ export const employeeService = {
     const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/delete-employee`, {
       method: 'POST',
       headers: {
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
         Authorization: `Bearer ${session.access_token}`,
         'Content-Type': 'application/json',
       },
@@ -234,6 +238,7 @@ export const employeeService = {
     const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/admin-offboard-employee`, {
       method: 'POST',
       headers: {
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
         Authorization: `Bearer ${session.access_token}`,
         'Content-Type': 'application/json',
       },
@@ -256,6 +261,7 @@ export const employeeService = {
     const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/admin-offboard-employee`, {
       method: 'POST',
       headers: {
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
         Authorization: `Bearer ${session.access_token}`,
         'Content-Type': 'application/json',
       },
